@@ -1,5 +1,5 @@
 # OC-API
-OpenAPI descriptions of the SVA Open Caching interface based on CDNI modeling.
+OpenAPI descriptions of the SVA Open Caching interface based on CDNI modeling (RFC8006, RFC8007, RFC8008, RFC8004)
 # Format
 The files are JSON objects, yaml formated according to OpenAPI.
 # Viewing/editing
