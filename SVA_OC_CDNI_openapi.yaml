@@ -380,15 +380,13 @@ components:
       description: 'A Footprint object describes the footprint to which a LocationRule can be applied, e.g., an IPv4 address range or a geographic location.'
       properties:
         footprint-type:
-          type: string
-          enum: [ipv4cidr, ipv6cidr, asn, contrycode, gps]
+           $ref: '#/components/schemas/MI_footprinttype'
         footprint-value:
           oneOf:
             - $ref: '#/components/schemas/MI_ipv4cidr'
             - $ref: '#/components/schemas/MI_ipv6cidr'
             - $ref: '#/components/schemas/MI_asn'
             - $ref: '#/components/schemas/MI_countrycode'
-            - $ref: '#/components/schemas/MI_BPK_gpsRectangle'
           discriminator:
               propertyName: footprint-type
     MI.TimeWindowACL:
@@ -553,6 +551,9 @@ components:
           provided scheme in for HTTP redirection to the uCDN.'
           type: string
           enum: [http, https]
+    MI_footprinttype:
+      type: string
+      enum: [ipv4cidr, ipv6cidr, asn, contrycode, gps]
     MI_link:
       type: object
       description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
@@ -598,25 +599,6 @@ components:
     MI_countrycode: 
       description: ' An ISO 3166-1 alpha-2 code [ISO3166-1] in lowercase.'
       type: string
-    MI_BPK_gpsRectangle:
-      description: 'A rectangle surface expressed as an array of two GPS points (left/upper and right/bottom)' 
-      type: array
-      minItems: 2
-      maxItems: 2
-      items: 
-        $ref: '#/components/schemas/MI_gps'
-    MI_gps:
-      type: object
-      description: 'GPS coordinates'
-      properties:
-        latitude:
-          type: number
-          minimum: -90
-          maximum: 90
-        longitude:
-          type: number
-          minimum: -180
-          maximum: 180
     MI_payloadtype:
       type: string
       enum: [MI.HostIndex, MI.HostMatch, MI.HostMetadata, MI.PathMatch, MI.PatternMatch, MI.PathMetadata, MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, 
