@@ -679,12 +679,14 @@ components:
           description: 'Estimate of the time at which the dCDN expects to complete the activity.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         status:
-          type: string
-          enum: [pending, active, complete, processed, failed, canceling, canceled]
+          $ref: '#/components/schemas/CI_status'
         errors:
           type: array
           items:
             $ref: '#/components/schemas/CI_error'
+    CI_status:
+      type: string
+      enum: [pending, active, complete, processed, failed, canceling, canceled]
     CI_error:
       type: object
       required:
