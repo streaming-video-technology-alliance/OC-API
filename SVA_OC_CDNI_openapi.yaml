@@ -9,22 +9,7 @@ info:
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
-tags:
-  - name: Control
-    description: SVA Open Caching Interface (OCS) - Control
-paths:
-  /ISP/CI/control:
-    get:
-      tags:
-        - OC_BOOT
-      summary: initiate the usage of OC API. It is right now a place holder.
-      operationId: OC_BOOT
-      responses:
-        '200':
-          description: Registration is ok
-        '400':
-          description: Invalid status value
-          content: {} 
+paths: 
   /ISP/CI/provision:
     post:
       tags:
@@ -51,7 +36,7 @@ paths:
           content: {}
 components:
   schemas:
-# FCI (Footprint & capacity) Interface: RFC 8008 extended with RFC 8004 (FCI.RedirectTarget)
+# FCI (Footprint & capacity) Interface: RFC 8008 extended with RFC 8804 (FCI.RedirectTarget)
     FCI_capabilitytype:
       type: string
       enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
