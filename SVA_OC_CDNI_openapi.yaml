@@ -116,7 +116,8 @@ components:
         host: 
           description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as
          described in Section 3.2 of [RFC3986].'
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the 
           provided scheme in for HTTP redirection to the dCDN.'
@@ -205,7 +206,8 @@ components:
         - host-metadata
       properties:
         host:
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
           In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, 
           the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
@@ -214,7 +216,8 @@ components:
           all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
           Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
         host-metadata:
-          $ref: '#/components/schemas/MI.HostMetadata'
+          allOf:
+            - $ref: '#/components/schemas/MI.HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
     MI.HostMetadata:
       type: object
@@ -520,7 +523,7 @@ components:
           description: 'Content Collection IDentifier for an application-specific purpose such as logging aggregation.'
     MI.FallbackTarget: 
       type: object
-      description: 'Extension from RFC 9004: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases 
+      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases 
       where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
       from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving 
       the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
@@ -530,7 +533,8 @@ components:
         host:
           description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that in case of DNS delegation, 
           it SHOULD NOT include a port number, and in case a port number is present, the dCDN MUST ignore it.'
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the 
           provided scheme in for HTTP redirection to the uCDN.'
@@ -644,13 +648,16 @@ components:
         - cdn-path 
       properties:
         cdn-path:
-          $ref: '#/components/schemas/CI_cdn-path'
+          allOf:
+            - $ref: '#/components/schemas/CI_cdn-path'
           description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
         cancel:
-          $ref: '#/components/schemas/CI_cancel'
+          allOf:
+            - $ref: '#/components/schemas/CI_cancel'
           description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
         trigger:
-          $ref: '#/components/schemas/CI_trigger'
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
           description: 'A specification of the trigger type and a set of data to act upon'
     ci-trigger-status:
       type: object
@@ -662,20 +669,24 @@ components:
         - status
       properties:
         trigger:
-          $ref: '#/components/schemas/CI_trigger'
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
           description: 'The Trigger Specification POSTed in the body of the CI/T Command.
           Note that this need not be a byte-for-byte copy.  
           For example, in the JSON representation the dCDN may re-serialize the information differently.'
         ctime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Time at which the CI/T Command was received by the dCDN.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         mtime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Time at which the Trigger Status Resource was last modified.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
         etime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Estimate of the time at which the dCDN expects to complete the activity.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         status:
@@ -700,16 +711,20 @@ components:
           type: string
           enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
         metadata.urls:
-          $ref: '#/components/schemas/CI_urls'
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         content.urls:
-          $ref: '#/components/schemas/CI_urls'
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         metadata.patterns:
-          $ref: '#/components/schemas/CI_patterns'
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
           description: 'The metadata the trigger applies to'
         content.patterns:
-          $ref: '#/components/schemas/CI_patterns'
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
           description: 'The content the trigger applies to'
         description:
           type: string
@@ -750,10 +765,12 @@ components:
             type: string
             enum: [preposition, invalidate, purge]
           metadata.urls:
-            $ref: '#/components/schemas/CI_urls'
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
             description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.urls:
-            $ref: '#/components/schemas/CI_urls'
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
             description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.ccid:
             type: array
@@ -762,10 +779,12 @@ components:
             description: 'The Content Collection IDentifier of content the trigger applies to.  
             The "ccid" is a grouping of content, as defined by [RFC8006]'
           metadata.patterns:
-            $ref: '#/components/schemas/CI_patterns'
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
             description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
           content.patterns:
-            $ref: '#/components/schemas/CI_patterns'
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
             description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
