@@ -9,31 +9,6 @@ info:
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
-paths: 
-  /ISP/CI/provision:
-    post:
-      tags:
-        - OC_PROVISION
-      summary: Creates a trigger to preposition a metadata set for provisioning the ISP's OC infrastructure
-      description: According to SVA OpenCAching specification and RFC 8007 for the Trigger protcool and RFC 8006 for the metadata structure
-      operationId: OC_MI_CREATE
-      requestBody:
-        description: the metadataset or a link to the set to be considered/processed by the ISP
-        content:
-          application/cdni;ptype=ci-trigger-command:
-            schema:
-              $ref: '#/components/schemas/ci-trigger-command'
-        required: true
-      responses:
-        201:
-          description: Command is ok
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                $ref: '#/components/schemas/ci-trigger-status' 
-        400:
-          description: Command is invalid
-          content: {}
 components:
   schemas:
 # FCI (Footprint & capacity) Interface: RFC 8008 extended with RFC 8804 (FCI.RedirectTarget)
