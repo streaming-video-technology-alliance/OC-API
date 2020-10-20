@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CDNI schema extended with SVA Open Caching nes objects and properties
+  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).
+  This API itself is not elaborated. What matters in this file is the model (schema)'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 0.1.0
+externalDocs:
+    description: Find out more
+    url: 'https://www.streamingvideoalliance.org/'
+components:
+  schemas:
+    FCI_capabilitytype_SVA:
+      allOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_capabilitytype'
+        - type: string
+          enum: [FCI.Logging.sva, FCI.Capacity.sva]
+    FCI_genericbase_SVA:
+      allOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
+        - type: object
+          description: 'A Generic FCI base object is a wrapper for managing individual FCI properties in an opaque manner'
+          required:
+            - capability-type
+            - capability-value
+          properties:
+            capability-type:
+              $ref: '#/components/schemas/FCI_capabilitytype_SVA'
+            capability-value:
+              oneOf:
+                - $ref: '#/components/schemas/FCI.Logging.sva'
+                - $ref: '#/components/schemas/FCI.Capacity.sva'
+              discriminator: 
+                propertyName: capability-type
+            footprints:
+              type: array
+              description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
+              items:
+                $ref: '#/components/schemas/MI.Footprint.sva'
+    FCI.Logging.sva:
+      type: object
+      description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
+      as well as CDNI and SVA Logging fields that are marked as optional for the specified record-types [RFC7937].'
+      required:
+        - record-type
+      properties:
+        transport-types:
+          description: 'list of supported protocols for logs injection'
+          type: array
+          items:
+            type: object
+            description: 'possibly one protocol for one region'
+            required:
+              - transport
+            properties:
+              footprint:
+                $ref: '#/components/schemas/MI.Footprint.sva'    
+              transport:
+                $ref: '#/components/schemas/MI_Loggingtransporttype_SVA'
+        record-type: 
+          description: 'log record format/type supported'
+          allOf:
+            - $ref: '#/components/schemas/MI_Loggingrecordtype_SVA'
+        fields:
+          description: 'List of supported CDNI and SVA Logging fields that are optional for the specified record-type.
+          Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported".  
+          An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, 
+          the fields in that list MUST be interpreted as "the only optional fields that are supported".'
+          type: array 
+          items: 
+            oneOf:
+              - $ref: '#/components/schemas/MI_Loggingfieldname'
+              - $ref: '#/components/schemas/MI_Loggingfieldname_SVA'
+            discriminator:
+              propertyName: record-type
+              mapping:
+                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+        hash-fields:
+          description: 'List of fields that are obfuscated'
+          type: array 
+          items: 
+            oneOf:
+              - $ref: '#/components/schemas/MI_Loggingfieldname'
+              - $ref: '#/components/schemas/MI_Loggingfieldname_SVA'
+            discriminator:
+              propertyName: record-type
+              mapping:
+                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+    FCI.Capacity.sva:
+      description: 'capacity capabilities'
+      oneOf:
+        - $ref: '#/components/schemas/MI.Capacity.sva'
+    MI.footprint.sva:
+      allOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.footprint'
+        - type: object
+          properties:
+            footprint-type:
+              $ref: '#/components/schemas/MI_footprinttype_SVA'
+            footprint-value:
+              oneOf:
+                - $ref: '#/components/schemas/MI_BPK_gpsRectangle'
+              discriminator:
+                propertyName: footprint-type
+    MI_footprinttype_SVA:
+      allOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.footprinttype'
+        - type: string
+          enum: [ipv4cidr, ipv6cidr, asn, contrycode, gps]
+    MI_Loggingtransportcdni_SVA:
+      type: string
+      enum: [none]
+    MI_Loggingtransportkafka_SVA:
+      type: string
+      enum: [none]
+    MI_Loggingtransportlogstash_SVA:
+      type: string
+      enum: [none]
+    MI_Loggingtransporttype_SVA:
+      type: string
+      enum: [cdni, kafka, logstash]
+    MI_Loggingrecordtype_SVA:
+      type: string
+      enum: [cdni_http_request_v1, sva_http_request_v1]
+    MI_Loggingfieldname:
+      type: string
+      enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, 
+      sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
+    MI_Loggingfieldname_SVA:
+      type: string
+      enum: [time, duration, client-adress, result-codes, bytes, request-method, url, hierarchy-code, type, 
+      host-name, source-name, cache-key, aborted, error-codes_CND]

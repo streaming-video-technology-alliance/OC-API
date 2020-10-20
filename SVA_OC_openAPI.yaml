@@ -1,0 +1,237 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - SVA OC API
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 0.1.0
+externalDocs:
+    description: Find out more
+    url: 'https://www.streamingvideoalliance.org/'
+paths:
+  /OC/FCI/advertisement:
+    get:
+      tags:
+        - OC_FCI
+      summary: get the FCI advertisements
+      operationId: oc_fci_get_advertisement
+      description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained)'
+      parameters:
+        - name: footprint
+          in: query
+          description: 'It MAY be possible to query the FCI advertisement for a particular zone indicated through a JSON string conforming to MI.footprint'
+          required: false
+          schema:
+            type: object
+            allOf:
+              - $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.Footprint.sva'
+          style: form
+      responses:
+        '200':
+          description: 'FCI advertisement'
+          content:
+            application/cdni:
+              schema:
+                type: array
+                items:
+                  $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/FCI_genericbase_SVA'
+        '400':
+          description: 'No FCI advertisement'
+          content: {}
+        '401':
+          description: 'Invalid query parameter (not the expected format)'
+          content: {}
+  /OC/MI/provision:
+    post:
+      tags:
+        - OC_MI
+      summary: Communicates the metadata/configuration to the ISP with a simple API
+      description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately.
+      There is no possibility to retrieve the status afterwards. For a more complex metadata then use the CI API'
+      operationId: OC_MI_configure
+      requestBody:
+        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification 
+        and CDNI RFCs 8006'
+        content:
+          application/cdni;ptype=MI.HostIndex:
+            schema:
+              description: 'Note that MI objects must be embedded (no reference)'
+              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+        required: true
+      responses:
+        200:
+          description: Command is ok
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: ' the status can either be complete or failed'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+          content: {}
+  /OC/CI/provision:
+    post:
+      tags:
+        - OC_CI
+      summary: Communicates the metadata, configuration and/or content to the ISP with the CI API (RFC 8006)
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool 
+      and RFC 8006 (+ RFC8804) for the metadata structure'
+      operationId: OC_CI_provision
+      requestBody:
+        description: the metadataset or a link to the set to be considered/processed by the ISP
+        content:
+          application/cdni;ptype=ci-trigger-command:
+            schema:
+              description: 'for triggering the creation of a trigger command for metadata or content pre-positioning. 
+              The URL(s) present in the ci-trigger-commnd metadata.urls property should conformed to the callbacks format (see below)'
+              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-command'
+        required: true
+      callbacks:
+        requestMetadata:
+          /OC/MI/metadata/{pathName}:
+            get:
+              summary: ''
+              description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements 
+              referenced in the ci-trigger-command and potentially generic metadata object as specified in RFC8006/RFC8007'
+              tags:
+              - OC_MI
+              operationId: oc_mi_get_metadata
+              parameters:
+                - name: pathName
+                  in: path
+                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/MI/metadata/" followed by a path sufixe associated with 
+                  the metadata object to be retrieved according to the MI API'
+                  required: true
+                  schema:
+                    type: string
+                    format: uri
+              responses:
+                200:
+                  description: 'Returns the requested metadata object'
+                  content:
+                    application/cdni:
+                      schema:
+                        $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_GenericMetadata'
+                404:
+                  description: Not found
+                  content: {}
+        requestContent:
+          /OC/CI/content/{pathName}:
+            get:
+              summary: ''
+              description: 'This callback is used by the ISP OC/dCDN to retrieve the content elements 
+              referenced in the ci-trigger-command'
+              tags:
+              - OC_MI
+              operationId: oc_ci_get_content
+              parameters:
+                - name: pathName
+                  in: path
+                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/MI/metadata/" followed by a path sufixe associated with 
+                  the content object to be retrieved according to the MI API'
+                  required: true
+                  schema:
+                    type: string
+                    format: uri
+              responses:
+                200:
+                  description: 'returns the requested content (either a file or a playlist gathering the list of files to pre-position)'
+                  content:
+                      application:
+                       schema:
+                        type: string
+                404:
+                  description: Not found
+                  content: {}
+      responses:
+        201:
+          description: Created
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
+          links:
+            getTriggerId:
+              operationId: OC_CI_status
+              parameters:
+                triggerId: '$response.header.Location'
+                description: 'the value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}"'
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  
+  /OC/CI/status/{triggerId}:
+     get: 
+      summary: 'Get the CI trigger status'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006'
+      tags:
+        - OC_CI
+      operationId: OC_CI_status
+      parameters:
+        - in: path
+          name: triggerId
+          required: true
+          schema:
+            type: string
+            format: url
+      responses:
+        200:
+          description: preposioning metatdata/configuration status
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
+        304:
+          description: 'not modified'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}     
+  /OC/CI/metadata/{triggerId}:
+    get: 
+      summary: Get the dCDN/ISP metadata once the trigger status is "complete"
+      description: 'Get the dCDN/ISP metadata once the trigger status is "complete"'
+      tags:
+        - OC_CI
+      operationId: OC_CI_metadata
+      parameters:
+        - in: path
+          name: triggerId
+          required: true
+          schema:
+            type: string
+            format: url
+      responses:
+        200:
+          description: metadata attached to the dCDN/ISP
+          content:
+            application/cdni;ptype=ci-trigger-metadata:
+              schema:
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MId.HostIndex' 
+        304:
+          description: 'not modified'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}     
+security: [{bearerToken:[]}]
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
