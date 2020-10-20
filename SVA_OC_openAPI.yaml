@@ -3,7 +3,7 @@ info:
   title: Open Caching API - SVA OC API
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVA).'
   contact:
-    email: guillaume.bichot@broadpeak.tv
+    email: guillaume.bicopenapi-previewhot@broadpeak.tv
   version: 0.1.0
 externalDocs:
     description: Find out more
@@ -218,7 +218,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-metadata:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MId.HostIndex' 
+                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MId.HostIndex' 
         304:
           description: 'not modified'
           content: {}
