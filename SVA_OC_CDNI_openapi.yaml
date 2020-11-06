@@ -208,6 +208,7 @@ components:
             oneOf:
               - $ref: '#/components/schemas/MI_link'
               - $ref: '#/components/schemas/MI_GenericMetadata'
+              - $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
@@ -265,6 +266,7 @@ components:
             oneOf:
               - $ref: '#/components/schemas/MI_link'
               - $ref: '#/components/schemas/MI_GenericMetadata'
+              - $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 

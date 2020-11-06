@@ -1,8 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - CDNI schema extended with SVA Open Caching nes objects and properties
-  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).
-  This API itself is not elaborated. What matters in this file is the model (schema)'
+  title: Open Caching API - CDNI schema extended with SVA Open Caching  objects and properties
+  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 0.1.0
@@ -12,15 +11,12 @@ externalDocs:
 components:
   schemas:
     FCI_capabilitytype_SVA:
-      allOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_capabilitytype'
-        - type: string
           enum: [FCI.Logging.sva, FCI.Capacity.sva]
-    FCI_genericbase_SVA:
-      allOf:
+    FCI_genericbase:
+      oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
         - type: object
-          description: 'A Generic FCI base object is a wrapper for managing individual FCI properties in an opaque manner'
+          description: 'adding properties to the FCI_genericbase object'
           required:
             - capability-type
             - capability-value
@@ -29,6 +25,7 @@ components:
               $ref: '#/components/schemas/FCI_capabilitytype_SVA'
             capability-value:
               oneOf:
+                - $ref: '#/components/schemas/FCI.Metadata'
                 - $ref: '#/components/schemas/FCI.Logging.sva'
                 - $ref: '#/components/schemas/FCI.Capacity.sva'
               discriminator: 
@@ -37,7 +34,23 @@ components:
               type: array
               description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
               items:
-                $ref: '#/components/schemas/MI.Footprint.sva'
+                $ref: '#/components/schemas/MI.Footprint'
+    FCI.Metadata:
+      type: object
+      description: 'extension of CDNI FCI.Metadata'
+      required:
+        - metadata
+      properties:
+        metadata:
+          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI
+         Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as 
+         "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list
+         must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          type: array
+          items: 
+            allOf:
+              - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
+              - $ref: '#/components/schemas/MI_payloadtype_SVA'
     FCI.Logging.sva:
       type: object
       description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
@@ -55,7 +68,7 @@ components:
               - transport
             properties:
               footprint:
-                $ref: '#/components/schemas/MI.Footprint.sva'    
+                $ref: '#/components/schemas/MI.Footprint'    
               transport:
                 $ref: '#/components/schemas/MI_Loggingtransporttype_SVA'
         record-type: 
@@ -94,8 +107,8 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI.Capacity.sva'
 # MI extensions
-    MI.Footprint.sva:
-      allOf:
+    MI.Footprint:
+      oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
         - type: object
           properties:
@@ -107,10 +120,8 @@ components:
               discriminator:
                 propertyName: footprint-type
     MI_footprinttype_SVA:
-      allOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_footprinttype'
-        - type: string
-          enum: [ipv4cidr, ipv6cidr, asn, contrycode, gps]
+      type: string
+      enum: [gps]
     MI_gpsrectangle_SVA:
       description: 'A rectangle surface expressed as an array of two GPS points (left/upper and right/bottom)' 
       type: array
@@ -131,15 +142,13 @@ components:
           minimum: -180
           maximum: 180
     MI_payloadtype_SVA:
-      allOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-        - type: string
-          enum: [MI.Logging.sva, MI.Capacity.sva]
-    MI_GenericMetadata_SVA:
-      allOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
+      type: string
+      enum: [MI.Logging.sva, MI.Capacity.sva]
+    MI_GenericMetadata:
+      oneOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_GenericMetadata'
         - type: object
-          description: 'A GenericMetadata object is a wrapper for managing individual CDNI Metadata properties in an opaque manner'
+          description: 'GenericMetadata object extension by SVA'
           required:
             - generic-metadata-type
             - generic-metadata-value
@@ -148,6 +157,7 @@ components:
               $ref: '#/components/schemas/MI_payloadtype_SVA'
             generic-metadata-value:
               oneOf:
+                - $ref: '#/components/schemas/MI.RedirectionMode.sva'
                 - $ref: '#/components/schemas/MI.Logging.sva'
                 - $ref: '#/components/schemas/MI.Capacity.sva'       
               discriminator: 
@@ -164,6 +174,18 @@ components:
               type: boolean
               description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform 
               this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
+    MI.RedirectionMode.sva:
+      type: object
+      description: 'indicates the redirection mode, for what footprints and potential associated parameters (none for now)' 
+      required:
+        - type
+      properties:
+        type:
+          $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_redirectionmode'
+        footprints:
+          type: array
+          items:
+            $ref: '#/components/schemas/MI.Footprint'
     MI.Logging.sva:
       type: object
       description: 'logging configuration according to SVA (supersedes CDNI)'
@@ -255,7 +277,7 @@ components:
           description: 'the surrogates caches concerned by the capacity inquiry/monitoring'
           type: array
           items:
-            $ref: '#/components/schemas/MI.Footprint.sva'
+            $ref: '#/components/schemas/MI.Footprint'
         capacity-type:
           description: 'the type of capacity'
           type: array
