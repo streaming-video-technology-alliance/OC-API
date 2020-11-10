@@ -97,7 +97,7 @@ paths:
         404:
           description: Not found
           content: {}
-  /OC/CI/provision:
+  /OC/CI/trigger:
     post:
       tags:
         - OC_CI
@@ -203,6 +203,8 @@ paths:
       parameters:
         - in: path
           name: triggerId
+          description: 'the triggerId parameter corresponds to the "Location" header as part of the response 
+          corresponding to the /OC/MI/provision API (trigger command)'
           required: true
           schema:
             type: string
@@ -214,9 +216,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                allOf:
-                  - $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
-                  - $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MId.HostIndex'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         304:
           description: 'not modified'
           content: {}
@@ -226,7 +226,38 @@ paths:
         403:
           description: Forbidden
           content: {}     
-   
+  /OC/CI/metadata/{triggerId}:
+    get: 
+      summary: Get the dCDN/ISP metadata once the trigger status is "complete"
+      description: 'Get the dCDN/ISP metadata once the trigger status is "complete"'
+      tags:
+        - OC_CI
+      operationId: OC_CI_metadata
+      parameters:
+        - in: path
+          name: triggerId
+          description: 'the triggerId parameter corresponds to the "Location" header as part of the response 
+          corresponding to the /OC/MI/provision API (trigger command)'
+          required: true
+          schema:
+            type: string
+            format: url
+      responses:
+        200:
+          description: metadata attached to the dCDN/ISP
+          content:
+            application/cdni;ptype=ci-trigger-metadata:
+              schema:
+                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MId.HostIndex' 
+        304:
+          description: 'not modified'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}        
 security: [{bearerToken:[]}]
 components:
   securitySchemes:
