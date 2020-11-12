@@ -70,7 +70,7 @@ paths:
         - OC_MI
       summary: Communicates the metadata/configuration to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately.
-      There is no possibility to retrieve the status afterwards. For a more complex metadata then use the CI API'
+      The status of this action is associated with a URL returned in the Location header. For a more complex metadata then use the CI API'
       operationId: OC_MI_configure
       requestBody:
         description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification 
@@ -88,15 +88,20 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: ' the status can either be complete or failed'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+          links:
+            getTriggerId:
+              operationId: OC_CI_status
+              parameters:
+                triggerId: '$response.header.Location'
+                description: 'the value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}" 
+                or for removing the configuration (HTTP DELETE)'
         400:
           description: Command is invalid
-          content: {}
         403:
           description: Forbidden
         404:
           description: Not found
-          content: {}
   /OC/CI/trigger:
     post:
       tags:
@@ -192,7 +197,6 @@ paths:
         403:
           description: Forbidden
           content: {}
-  
   /OC/CI/status/{triggerId}:
     get: 
       summary: 'Check the CI trigger status'
@@ -211,8 +215,7 @@ paths:
             format: url
       responses:
         200:
-          description: 'preposioning metatdata/configuration or content status
-          in addition, if the status is complete MId.HostIndex is possibly filled in'
+          description: 'preposioning metatdata/configuration or content status'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
