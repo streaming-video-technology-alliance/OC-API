@@ -47,7 +47,9 @@ components:
         - delivery-protocols
       properties:
         delivery-protocols:
-          $ref: '#/components/schemas/MI_protocol'
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_protocol'
     FCI.AcquisitionProtocol:
       type: object
       description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the 
@@ -56,7 +58,9 @@ components:
         - acquisition-protocols
       properties:
         delivery-protocols:
-          $ref: '#/components/schemas/MI_protocol'
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_protocol'
     FCI.RedirectionMode:
       type: object
       description: 'List of supported CDNI redirection modes'
@@ -69,7 +73,7 @@ components:
             $ref: '#/components/schemas/FCI_redirectionmode'
     FCI.RedirectTarget:
       type: object
-      description: 'FCI extension per RFC8004'
+      description: 'FCI extension per RFC8804'
       properties:
         redirecting-hosts:
           description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was 
