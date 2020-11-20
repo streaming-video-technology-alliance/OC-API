@@ -50,7 +50,7 @@ components:
           items: 
             allOf:
               - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-              - $ref: '#/components/schemas/MI_payloadtype_SVA'
+              - $ref: '#/components/schemas/MI_payloadtype'
     FCI.Logging.sva:
       type: object
       description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
@@ -107,6 +107,138 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI.Capacity.sva'
 # MI extensions
+    MI.HostIndex:
+      type: object
+      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. 
+      An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find 
+      the HostMatch object that applies to the request'
+      required:
+        - hosts
+      properties:
+        hosts:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MI.HostMatch'
+              - $ref: '#/components/schemas/MI_link'
+          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, 
+          and the first HostMatch object that matches the content request being processed MUST be used'
+    MI.HostMatch:
+      type: object
+      required:
+        - host
+        - host-metadata
+      properties:
+        host:
+          allOf:
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
+          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
+          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, 
+          the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
+          All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
+          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support 
+          all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
+          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
+        host-metadata:
+          allOf:
+            - $ref: '#/components/schemas/MI.HostMetadata'
+          description: 'CDNI Metadata to apply when delivering content that matches this host'
+    MI.HostMetadata:
+      type: object
+      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) 
+      and possibly child PathMatch objects.'
+      required:
+        - metadata
+      properties:
+        metadata: 
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MI_link'
+              - $ref: '#/components/schemas/MI_GenericMetadata'
+        paths:
+          type: array
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
+          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          items:
+              $ref: '#/components/schemas/MI.PathMatch'
+    MI.PathMatch:
+      type: object
+      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, 
+      as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply 
+      if the resource URI matches the pattern within the PatternMatch object.'
+      required:
+        - path-pattern
+        - path-metadata
+      properties:
+        path-pattern:
+          oneOf:
+            - $ref: '#/components/schemas/MI_link'
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PatternMatch'
+        path-metadata:
+          oneOf:
+            - $ref: '#/components/schemas/MI_link'
+            - $ref: '#/components/schemas/MI.PathMetadata'
+    MI.PathMetadata:
+      type: object
+      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against 
+      the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then 
+      a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request 
+      is available at Request Routing time.  
+      dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.  
+      If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, 
+      in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      required:
+        - metadata
+      properties:
+        metadata:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MI_link'
+              - $ref: '#/components/schemas/MI_GenericMetadata'
+        paths:
+          type: array
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
+          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/MI_link'
+            - $ref: '#/components/schemas/MI.PathMatch'
+    MI.LocationACL:
+      type: object
+      description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content.
+      A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed 
+      regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location.
+      If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take.  
+      If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is an action of "deny".
+      Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, 
+      they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL 
+      and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine 
+      whether or not a request should be allowed.'
+      properties:
+        locations:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MI_link'
+              - $ref: '#/components/schemas/MI.LocationRule'
+    MI.LocationRule:
+      type: object
+      description: 'A LocationRule contains or references an array of Footprint objects and the corresponding action.'
+      required:
+        - footprints
+      properties:
+        footprints:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MI_link'
+              - $ref: '#/components/schemas/MI.Footprint'
+        action:
+          type: string
+          enum: [allow, deny]
+          default: deny
     MI.Footprint:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
@@ -141,9 +273,26 @@ components:
           type: number
           minimum: -180
           maximum: 180
-    MI_payloadtype_SVA:
-      type: string
-      enum: [MI.Logging.sva, MI.Capacity.sva]
+    MI_link:
+      type: object
+      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
+      if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property 
+      is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect 
+      the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain 
+      a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
+      required:
+        - href
+      properties:
+        href:
+          type: string
+          format: Uri
+        type:
+          $ref: '#/components/schemas/MI_payloadtype'
+    MI_payloadtype:
+      oneOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
+        - type: string
+          enum: [MI.Logging.sva, MI.Capacity.sva]
     MI_GenericMetadata:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_GenericMetadata'
@@ -154,10 +303,17 @@ components:
             - generic-metadata-value
           properties:
             generic-metadata-type:
-              $ref: '#/components/schemas/MI_payloadtype_SVA'
+              $ref: '#/components/schemas/MI_payloadtype'
             generic-metadata-value:
               oneOf:
-                - $ref: '#/components/schemas/MI.RedirectionMode.sva'
+                - $ref: '#/components/schemas/MI.HostIndex'
+                - $ref: '#/components/schemas/MI.HostMatch'
+                - $ref: '#/components/schemas/MI.HostMetadata'
+                - $ref: '#/components/schemas/MI.PathMatch'
+                - $ref: '#/components/schemas/MI.PathMetadata'
+                - $ref: '#/components/schemas/MI.LocationACL'
+                - $ref: '#/components/schemas/MI.LocationRule'
+                - $ref: '#/components/schemas/MI.Footprint'                
                 - $ref: '#/components/schemas/MI.Logging.sva'
                 - $ref: '#/components/schemas/MI.Capacity.sva'       
               discriminator: 
@@ -174,18 +330,6 @@ components:
               type: boolean
               description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform 
               this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
-    MI.RedirectionMode.sva:
-      type: object
-      description: 'indicates the redirection mode, for what footprints and potential associated parameters (none for now)' 
-      required:
-        - type
-      properties:
-        type:
-          $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_redirectionmode'
-        footprints:
-          type: array
-          items:
-            $ref: '#/components/schemas/MI.Footprint'
     MI.Logging.sva:
       type: object
       description: 'logging configuration according to SVA (supersedes CDNI)'
