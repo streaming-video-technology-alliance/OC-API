@@ -140,8 +140,9 @@ components:
           all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
           Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
         host-metadata:
-          allOf:
+          oneOf:
             - $ref: '#/components/schemas/MI.HostMetadata'
+            - $ref: '#/components/schemas/MI_link'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
     MI.HostMetadata:
       type: object
@@ -153,15 +154,15 @@ components:
         metadata: 
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI_GenericMetadata'
+            $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
           and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
-              $ref: '#/components/schemas/MI.PathMatch'
+            oneOf:
+              - $ref: '#/components/schemas/MI.PathMatch'
+              - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
       description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, 
@@ -194,9 +195,7 @@ components:
         metadata:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI_GenericMetadata'
+            $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
@@ -293,6 +292,19 @@ components:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
         - type: string
           enum: [MI.Logging.sva, MI.Capacity.sva]
+    MI_payloadvalue:
+      oneOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue'
+        - $ref: '#/components/schemas/MI.HostIndex'
+        - $ref: '#/components/schemas/MI.HostMatch'
+        - $ref: '#/components/schemas/MI.HostMetadata'
+        - $ref: '#/components/schemas/MI.PathMatch'
+        - $ref: '#/components/schemas/MI.PathMetadata'
+        - $ref: '#/components/schemas/MI.LocationACL'
+        - $ref: '#/components/schemas/MI.LocationRule'
+        - $ref: '#/components/schemas/MI.Footprint'                
+        - $ref: '#/components/schemas/MI.Logging.sva'
+        - $ref: '#/components/schemas/MI.Capacity.sva'          
     MI_GenericMetadata:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_GenericMetadata'
@@ -306,16 +318,8 @@ components:
               $ref: '#/components/schemas/MI_payloadtype'
             generic-metadata-value:
               oneOf:
-                - $ref: '#/components/schemas/MI.HostIndex'
-                - $ref: '#/components/schemas/MI.HostMatch'
-                - $ref: '#/components/schemas/MI.HostMetadata'
-                - $ref: '#/components/schemas/MI.PathMatch'
-                - $ref: '#/components/schemas/MI.PathMetadata'
-                - $ref: '#/components/schemas/MI.LocationACL'
-                - $ref: '#/components/schemas/MI.LocationRule'
-                - $ref: '#/components/schemas/MI.Footprint'                
-                - $ref: '#/components/schemas/MI.Logging.sva'
-                - $ref: '#/components/schemas/MI.Capacity.sva'       
+                - $ref: '#/components/schemas/MI_link'
+                - $ref: '#/components/schemas/MI_payloadvalue'        
               discriminator: 
                 propertyName: generic-metadata-type
             mandatory-to-enforce:
