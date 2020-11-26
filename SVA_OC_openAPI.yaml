@@ -145,7 +145,7 @@ paths:
                   content:
                     application/cdni:
                       schema:
-                        $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI_GenericMetadata'
+                        $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostIndex'
                 404:
                   description: Not found
                   content: {}
