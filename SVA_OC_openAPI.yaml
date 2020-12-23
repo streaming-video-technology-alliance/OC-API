@@ -15,7 +15,7 @@ paths:
     get:
       tags:
         - OC_FCI
-      summary: get the FCI advertisements
+      summary: get the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
       operationId: oc_fci_get_advertisement
       description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained)
       For enabling/disabling the usage of the callback, the client must call the API with/without the "callback_url" parameter'
@@ -70,7 +70,7 @@ paths:
     post:
       tags:
         - OC_CI
-      summary: Communicates the metadata/configuration to the ISP with a simple API
+      summary: Communicates the metadata/configuration (RFC8006) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately.
       The status of this action is associated with a URL returned in the Location header. For a more complex metadata then use the CI API'
       operationId: OC_CI_configure
@@ -108,7 +108,7 @@ paths:
     get:
       tags:
         - OC_CI
-      summary: 'Gets the whole configuration'
+      summary: 'Gets the whole metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the whole valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
       operationId: OC_CI_getConfiguration
       responses:
@@ -151,7 +151,7 @@ paths:
     post:
       tags:
         - OC_CI
-      summary: Communicates the metadata, configuration and/or content to the ISP with the CI API (RFC 8006)
+      summary: Communicates the metadata, configuration and/or content to the ISP with the CI/trigger API (RFC 8007)
       description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool 
       and RFC 8006 (+ RFC8804) for the metadata structure'
       operationId: OC_CI_provision
@@ -274,6 +274,35 @@ paths:
         403:
           description: Forbidden
           content: {} 
+  /OC/RI/routing_request:
+    post:
+      tags:
+        - OC_RI
+      summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975)
+      description: 'simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP'
+      operationId: OC_RI_routingrequest
+      requestBody:
+        description: 'The request according to RFC 7975'
+        content:
+          application/cdni;ptype=redirection-request:
+            schema:
+              description: ''
+              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/RI.Request'
+        required: true
+      responses:
+        200:
+          description: The RI request is ok
+          content:
+            application/cdni;ptype=redirection-response:
+              schema:
+                description: 'the reponse that contains information about the redirection target or an error to be used for building teh response to the user agent'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/RI.Response'
+        400:
+          description: Command is invalid
+        403:
+          description: Forbidden
+        404:
+          description: Not found
 components:
   securitySchemes:
     bearerToken:

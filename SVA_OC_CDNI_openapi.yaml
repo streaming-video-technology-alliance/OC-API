@@ -772,3 +772,214 @@ components:
     CI_time:
       type: number
       description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
+# RI interface (RFC7975)
+    RI_ipaddress:
+      type: string
+      pattern: /^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>\\.(?4)){3}))$/iD
+    RI_uri:
+      type: string
+      pattern: https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)
+    RI_method:
+      type: string
+      enum: [GET, HEAD]
+    RI_iprange:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/MI_ipv4cidr'
+          - $ref: '#/components/schemas/MI_ipv6cidr'
+    RI_qtype:
+      type: string
+      enum: [A, AAAA]
+    RI_qclass:
+      type: string
+      enum: [IN]
+    RI_error:
+      description: 'per RFC7975 / section 4.7'
+      type: object
+      required:
+        - error-code
+      properties:
+        error-code:
+          type: integer
+          enum: [100, 400, 500, 501, 502, 503, 504, 505, 506]
+        reason:
+          type: string
+          description: " the list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7"
+    RI.Request:
+      type: object
+      description: 'dns or http property is required. not both'
+      required:
+        - cdn-path
+        - max-hops
+      properties:
+        dns:
+          $ref: '#/components/schemas/RI_dnsredirectionrequest'
+        http:
+          $ref: '#/components/schemas/RI_httpredirectionrequest'
+        cdn-path:
+          description: 'no CDN traversal in SVA. The cdn-path MUST be reflected back in RI response and MUST contain the value of cdn-path received in the associated RI request with the final dCDNs CDN Provider ID appended.'
+          type: array
+          items: 
+            type: string
+        max-hops:
+          type: integer
+          default: 1
+      example: 
+        value: { 
+          "http": 
+          {
+            "c-ip": "198.51.100.1",
+            "cs-uri": "http://www.example.com/manifest.mpd",
+            "cs-version": "HTTP/1.1",
+            "cs-method": "GET",
+            "cdn-path": ["AS64496:0"],
+            "max-hops": 1
+          }}
+    RI.Response:
+      type: object
+      description: 'dns or http property is required. not both'
+      properties:
+        dns:
+          $ref: '#/components/schemas/RI_dnsredirectionresponse' 
+        http:
+          $ref: '#/components/schemas/RI_httpredirectionresponse'
+        scope:
+          $ref: '#/components/schemas/RI_iprange'
+        error:
+          $ref: '#/components/schemas/RI_error'
+      example: 
+        value: { 
+        "http": 
+        {
+          "sc-status": 307,
+          "sc-version": "HTTP/1.1",
+          "sc-reason": "Found",
+          "cs-uri": "http://www.example.com/manifest.mpd",
+          "sc-(location)": "http://ocn3.dCDN.com:8090/www.example.com/manifest.mpd"
+        }}
+    RI_dnsredirectionrequest:
+      type: object
+      required:
+        - resolver-ip
+        - qtype
+        - qclass
+        - qname
+      properties:
+        resolver-ip: 
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The IP address of the UA DNS resolver'
+        qtype:
+          allOf:
+            - $ref: '#/components/schemas/RI_qtype'
+          description: 'The type of Query made by the UA DNS resolver'
+        qclass:
+          allOf:
+            - $ref: '#/components/schemas/RI_qclass'
+          description: 'The DNS class of the query made by the UA DNS resolver '
+        qname:
+          type: string
+          description: 'The FQDN being quieried'
+        c-subnet:
+          allOf:
+            - $ref: '#/components/schemas/RI_iprange'
+          description: 'The IP address (or prefix) of the UA in Classless Inter-Domain Routing (CIDR) format.'
+    RI_httpredirectionrequest:
+      type: object
+      required:
+        - c-ip
+        - cs-uri
+        - cs-method
+        - cs-version
+      properties:
+        c-ip: 
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The IP address of the User Agent'
+        cs-uri:
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
+          description: 'The URI ([RFC7230]) requested by the User Agent'
+        cs-method:
+          allOf:
+            - $ref: '#/components/schemas/RI_method'
+          description: 'The HTTP method (Section 3.1.1 of [RFC7230]) requested by the User Agent'
+        cs-version:
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The URI ([RFC7230]) requested by the User Agent'
+    RI_statuscodes:
+      type: integer
+      enum: [302, 303, 307]
+    RI_version:
+      type: string
+      enum: [HTTP/1.1, http/2]
+    RI_reason:
+      type: string
+    RI_httpredirectionresponse:
+      type: object
+      required:
+        - sc-status
+        - sc-version
+        - sc-reason
+        - cs-uri
+        - sc-(location)
+      properties:
+        sc-status: 
+          allOf:
+            - $ref: '#/components/schemas/RI_statuscodes'
+          description: 'The status-code part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA (usually set to 302).'
+        sc-version:
+          allOf:
+            - $ref: '#/components/schemas/RI_version'
+          description: 'The HTTP-version part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA .'
+        sc-reason:
+          allOf:
+            - $ref: '#/components/schemas/RI_reason'
+          description: 'The reason-phrase part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA '
+        cs-uri:
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
+          description: 'The URI ([RFC7230]) requested by the User Agent'
+        sc-(location):
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
+          description: 'The content of the Location header to return to the UA: the URI ([RFC7230]) pointing to the redirect target (i.e. the OCN)'
+    RI_rcode:
+      type: integer
+      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22]
+    RI_dnsredirectionresponse:
+      type: object
+      description: 'MUST include at least one of the following keys: a, aaaa, or cname'
+      required:
+        - rcode
+        - name
+      properties:
+        rcode: 
+          allOf:
+            - $ref: '#/components/schemas/RI_rcode'
+          description: 'DNS response code [RFC6895]).'
+        name:
+          type: string
+          description: 'The FQDN the response relates to'
+        a:
+          type: array
+          items:
+            $ref: '#/components/schemas/RI_ipaddress'
+          description: 'IPv4 address(es) of the redirect target'
+        aaaa:
+          type: array
+          items:
+            $ref: '#/components/schemas/RI_ipaddress'
+          description: 'IPv6 address(es) of the redirect target'
+        cname :
+          type: array
+          items:
+            type: string
+          description: 'one (or more)  FQDN name(s) corresponding to the redirect target(s)'
+        ttl:
+          description: 'TTL in seconds of the DNS response'
+          type: integer
+          default: 0
+ 
