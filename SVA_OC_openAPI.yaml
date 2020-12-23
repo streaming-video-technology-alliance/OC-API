@@ -4,10 +4,12 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.2.0
+  version: 0.3.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
+security: 
+  - jwt: []
 paths:
   /OC/FCI/advertisement:
     get:
@@ -64,14 +66,14 @@ paths:
           description: 'Forbiden'
         '404':
           description: 'No FCI advertisement'
-  /OC/MI/provision:
+  /OC/CI/configure:
     post:
       tags:
-        - OC_MI
+        - OC_CI
       summary: Communicates the metadata/configuration to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately.
       The status of this action is associated with a URL returned in the Location header. For a more complex metadata then use the CI API'
-      operationId: OC_MI_configure
+      operationId: OC_CI_configure
       requestBody:
         description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification 
         and CDNI RFCs 8006'
@@ -79,7 +81,7 @@ paths:
           application/cdni;ptype=MI.HostIndex:
             schema:
               description: 'Note that MI objects must be embedded (no reference)'
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+              $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostIndex'
         required: true
       responses:
         200:
@@ -102,6 +104,49 @@ paths:
           description: Forbidden
         404:
           description: Not found
+  /OC/CI/configuration:
+    get:
+      tags:
+        - OC_CI
+      summary: 'Gets the whole configuration'
+      description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the whole valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
+      operationId: OC_CI_getConfiguration
+      responses:
+        200:
+          description: 'prepositioned configuration metadata'
+          content:
+            application/cdni;ptype=MI.HostIndex:
+              schema:
+                description: 'Note that MI objects are all embedded (no reference)'
+                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostIndex'
+                required: true
+        304:
+          description: 'not modified'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}      
+    delete:
+      tags:
+        - OC_CI
+      summary: 'delete the whole configuration'
+      operationId: OC_CI_deleteConfiguration
+      responses:
+        200:
+          description: 'prepositioned configuration metadata is deleted. This does cancel/stop delegation'
+          content: {}
+        304:
+          description: 'not modified'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {} 
   /OC/CI/trigger:
     post:
       tags:
@@ -228,40 +273,7 @@ paths:
           content: {}
         403:
           description: Forbidden
-          content: {}     
-  /OC/CI/metadata/{triggerId}:
-    get: 
-      summary: Get the dCDN/ISP metadata once the trigger status is "complete"
-      description: 'Get the dCDN/ISP metadata once the trigger status is "complete"'
-      tags:
-        - OC_CI
-      operationId: OC_CI_metadata
-      parameters:
-        - in: path
-          name: triggerId
-          description: 'the triggerId parameter corresponds to the "Location" header as part of the response 
-          corresponding to the /OC/MI/provision API (trigger command)'
-          required: true
-          schema:
-            type: string
-            format: url
-      responses:
-        200:
-          description: metadata attached to the dCDN/ISP
-          content:
-            application/cdni;ptype=ci-trigger-metadata:
-              schema:
-                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MId.HostIndex' 
-        304:
-          description: 'not modified'
-          content: {}
-        400:
-          description: Command is invalid
-          content: {}
-        403:
-          description: Forbidden
-          content: {}        
-security: [{bearerToken:[]}]
+          content: {} 
 components:
   securitySchemes:
     bearerToken:

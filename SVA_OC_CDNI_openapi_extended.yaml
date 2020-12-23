@@ -10,8 +10,8 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
-    FCI_capabilitytype_SVA:
-          enum: [FCI.Logging.sva, FCI.Capacity.sva]
+    FCI_capabilitytype_sva:
+      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata]
     FCI_genericbase:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
@@ -22,7 +22,7 @@ components:
             - capability-value
           properties:
             capability-type:
-              $ref: '#/components/schemas/FCI_capabilitytype_SVA'
+              $ref: '#/components/schemas/FCI_capabilitytype_sva'
             capability-value:
               oneOf:
                 - $ref: '#/components/schemas/FCI.Metadata'
@@ -47,10 +47,8 @@ components:
          "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list
          must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
-          items: 
-            allOf:
-              - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-              - $ref: '#/components/schemas/MI_payloadtype'
+          items:
+            $ref: '#/components/schemas/MI_payloadtype'
     FCI.Logging.sva:
       type: object
       description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
@@ -70,11 +68,11 @@ components:
               footprint:
                 $ref: '#/components/schemas/MI.Footprint'    
               transport:
-                $ref: '#/components/schemas/MI_Loggingtransporttype_SVA'
+                $ref: '#/components/schemas/MI_loggingtransporttype_sva'
         record-type: 
           description: 'log record format/type supported'
           allOf:
-            - $ref: '#/components/schemas/MI_Loggingrecordtype_SVA'
+            - $ref: '#/components/schemas/MI_loggingrecordtype_sva'
         fields:
           description: 'List of supported CDNI and SVA Logging fields that are optional for the specified record-type.
           Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported".  
@@ -83,25 +81,25 @@ components:
           type: array 
           items: 
             oneOf:
-              - $ref: '#/components/schemas/MI_Loggingfieldname'
-              - $ref: '#/components/schemas/MI_Loggingfieldname_SVA'
+              - $ref: '#/components/schemas/MI_loggingfieldname'
+              - $ref: '#/components/schemas/MI_loggingfieldname_sva'
             discriminator:
               propertyName: record-type
               mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
         hash-fields:
           description: 'List of fields that are obfuscated'
           type: array 
           items: 
             oneOf:
-              - $ref: '#/components/schemas/MI_Loggingfieldname'
-              - $ref: '#/components/schemas/MI_Loggingfieldname_SVA'
+              - $ref: '#/components/schemas/MI_loggingfieldname'
+              - $ref: '#/components/schemas/MI_loggingfieldname_sva'
             discriminator:
               propertyName: record-type
               mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
     FCI.Capacity.sva:
       description: 'capacity capabilities'
       oneOf:
@@ -154,7 +152,7 @@ components:
         metadata: 
           type: array
           items:
-            $ref: '#/components/schemas/MI_GenericMetadata'
+            $ref: '#/components/schemas/MI.GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
@@ -195,7 +193,7 @@ components:
         metadata:
           type: array
           items:
-            $ref: '#/components/schemas/MI_GenericMetadata'
+            $ref: '#/components/schemas/MI.GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
@@ -244,16 +242,16 @@ components:
         - type: object
           properties:
             footprint-type:
-              $ref: '#/components/schemas/MI_footprinttype_SVA'
+              $ref: '#/components/schemas/MI_footprinttype_sva'
             footprint-value:
               oneOf:
-                - $ref: '#/components/schemas/MI_gpsrectangle_SVA'
+                - $ref: '#/components/schemas/MI_gpsrectangle_sva'
               discriminator:
                 propertyName: footprint-type
-    MI_footprinttype_SVA:
+    MI_footprinttype_sva:
       type: string
       enum: [gps]
-    MI_gpsrectangle_SVA:
+    MI_gpsrectangle_sva:
       description: 'A rectangle surface expressed as an array of two GPS points (left/upper and right/bottom)' 
       type: array
       minItems: 2
@@ -305,41 +303,38 @@ components:
         - $ref: '#/components/schemas/MI.Footprint'                
         - $ref: '#/components/schemas/MI.Logging.sva'
         - $ref: '#/components/schemas/MI.Capacity.sva'          
-    MI_GenericMetadata:
-      oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_GenericMetadata'
-        - type: object
-          description: 'GenericMetadata object extension by SVA'
-          required:
-            - generic-metadata-type
-            - generic-metadata-value
-          properties:
-            generic-metadata-type:
-              $ref: '#/components/schemas/MI_payloadtype'
-            generic-metadata-value:
-              oneOf:
-                - $ref: '#/components/schemas/MI_link'
-                - $ref: '#/components/schemas/MI_payloadvalue'        
-              discriminator: 
-                propertyName: generic-metadata-type
-            mandatory-to-enforce:
-              type: boolean
-              description: 'Flag identifying whether or not the enforcement of the property metadata is required.'
-              default: true
-            safe-to-redistribute:
-              type: boolean
-              description: 'Flag identifying whether or not the property metadata can be safely redistributed without modification.'
-              default: true
-            incomprehensible:
-              type: boolean
-              description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform 
-              this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
+    MI.GenericMetadata:
+      type: object
+      description: 'GenericMetadata object extension by SVA'
+      required:
+        - generic-metadata-type
+        - generic-metadata-value
+      properties:
+        generic-metadata-type:
+          $ref: '#/components/schemas/MI_payloadtype'
+        generic-metadata-value:
+          oneOf:
+            - $ref: '#/components/schemas/MI_link'
+            - $ref: '#/components/schemas/MI_payloadvalue'        
+          discriminator: 
+            propertyName: generic-metadata-type
+        mandatory-to-enforce:
+          type: boolean
+          description: 'Flag identifying whether or not the enforcement of the property metadata is required.'
+          default: true
+        safe-to-redistribute:
+          type: boolean
+          description: 'Flag identifying whether or not the property metadata can be safely redistributed without modification.'
+          default: true
+        incomprehensible:
+          type: boolean
+          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
     MI.Logging.sva:
       type: object
       description: 'logging configuration according to SVA (supersedes CDNI)'
       properties:
         record-type:
-          $ref: '#/components/schemas/MI_Loggingrecordtype_SVA'
+          $ref: '#/components/schemas/MI_loggingrecordtype_sva'
         include-fields:
           description: 'The default for “fields” property is that all optional fields are included. 
           Omission of this property MUST be interpreted as "all". An empty list corrresponds to "None of the fields".'
@@ -348,8 +343,8 @@ components:
             discriminator:
               propertyName: record-type
               mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
         exclude-fields:
           description: 'The default for “fields” property is that none of optional fields are exluded. 
           Omission of this property MUST be interpreted as "none". An empty list corrresponds to "all of the fields are excluded".'
@@ -358,8 +353,8 @@ components:
             discriminator:
               propertyName: record-type
               mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_Loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_Loggingfieldname_SVA'
+                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
+                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
         transport-protocols:
           description: 'list of supported protocols for logs injection. Possibly one protocol for one region'
           type: array
@@ -373,34 +368,34 @@ components:
               transport-type: 
                 description: 'the configuration parameters of the transport protocol depends on the type of protocol'
                 allOf:
-                  - $ref: '#/components/schemas/MI_Loggingtransporttype_SVA'
+                  - $ref: '#/components/schemas/MI_loggingtransporttype_sva'
               transport_parameters:
                 discriminator:
                   propertyName: transport-type
                   mapping: 
-                    cdni: '#/components/schemas/MI_Loggingtransportcdni_SVA'
-                    kafka: '#/components/schemas/MI_Loggingtransportkafka_SVA'
-                    logstash: '#/components/schemas/MI_Loggingtransportlogstash_SVA'
-    MI_Loggingtransportcdni_SVA:
+                    cdni: '#/components/schemas/MI_loggingtransportcdni_sva'
+                    kafka: '#/components/schemas/MI_loggingtransportkafka_sva'
+                    logstash: '#/components/schemas/MI_loggingtransportlogstash_sva'
+    MI_loggingtransportcdni_sva:
       type: string
       enum: [none]
-    MI_Loggingtransportkafka_SVA:
+    MI_loggingtransportkafka_sva:
       type: string
       enum: [none]
-    MI_Loggingtransportlogstash_SVA:
+    MI_loggingtransportlogstash_sva:
       type: string
       enum: [none]
-    MI_Loggingtransporttype_SVA:
+    MI_loggingtransporttype_sva:
       type: string
       enum: [cdni, kafka, logstash]
-    MI_Loggingrecordtype_SVA:
+    MI_loggingrecordtype_sva:
       type: string
       enum: [cdni_http_request_v1, sva_http_request_v1]
-    MI_Loggingfieldname:
+    MI_loggingfieldname:
       type: string
       enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, 
       sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
-    MI_Loggingfieldname_SVA:
+    MI_loggingfieldname_sva:
       type: string
       enum: [time, duration, client-adress, result-codes, bytes, request-method, url, hierarchy-code, type, 
       host-name, source-name, cache-key, aborted, error-codes_CND]
@@ -414,8 +409,8 @@ components:
           description: 'An array with footprints and associated capacity type to listen'
           type: array
           items:
-            $ref: '#/components/schemas/MI_Capacity_SVA'
-    MI_Capacity_SVA:    
+            $ref: '#/components/schemas/MI_capacity_sva'
+    MI_capacity_sva:    
       type: object
       description: 'a footprint entry associated with a capacity configuration.'
       required:
@@ -430,8 +425,8 @@ components:
           description: 'the type of capacity'
           type: array
           items:
-            $ref: '#/components/schemas/MI_capacitytype_SVA'
-    MI_capacitytype_SVA:
+            $ref: '#/components/schemas/MI_capacitytype_sva'
+    MI_capacitytype_sva:
       type: object
       properties:
         source:
@@ -441,117 +436,3 @@ components:
         unit:
           type: string
           enum: [ratio, kbps, kB]
-
-# Metadata exposed by the dCDN/ISP
-    MId.HostIndex:
-      type: object
-      description: 'The HostIndex object as configured by the uCDN'
-      required:
-        - hosts
-      properties:
-        hosts:
-          type: array
-          items:
-            $ref: '#/components/schemas/MId.HostMatch'
-          description: 'Array of HostMatch objects'
-    MId.HostMatch:
-      type: object
-      required:
-        - host
-        - host-metadata
-      properties:
-        host:
-          allOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
-          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
-          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, 
-          the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
-          All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
-          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support 
-          all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
-        host-metadata:
-          type: array
-          items:
-            $ref: '#/components/schemas/MId_GenericMetadata'
-          description: 'Metadata to apply when delivering content that matches this host'
-    MId_GenericMetadata:
-      type: object
-      description: 'A GenericMetadata object attached to the dCDN/ISP'
-      required:
-        - generic-metadata-type
-        - generic-metadata-value
-      properties:
-        generic-metadata-type:
-          $ref: '#/components/schemas/MId_payloadtype'
-        generic-metadata-value:
-          oneOf:
-            - $ref: '#/components/schemas/MId.RedirectTarget'
-          discriminator: 
-            propertyName: generic-metadata-type
-    MId_payloadtype:
-      type: string
-      enum: [MId.HostIndex, MId.HostMatch, MId.RedirectTarget, MId.Logging]
-    MId.Logging:
-      type: object
-      description: 'retrieve the configuration established by the dCDN/ISP regarding logging after having processed some related metadata'
-      properties:
-        pull-url: 
-          description: 'the URL associated with a PULL mechnaism used to retrieve the logs (e.g. CDNI RFC 7937)'
-          oneOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
-    MId.RedirectTarget:
-      type: object
-      description: 'Extension per RFC8004'
-      properties:
-        redirecting-hosts:
-          description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was 
-          published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
-          type: array
-          items:
-             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
-        dns-target:
-          description: 'The DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'
-          allOf:
-            - $ref: '#/components/schemas/MId_dnstarget'
-        http-target:
-          description: 'Target URI for an HTTP redirect.'
-          allOf:
-            - $ref: '#/components/schemas/MId_httptarget'
-    MId_httptarget:
-      type: object
-      description: 'FCI extension per RFC8004: the HttpTarget object gives the necessary information to construct the target Location URI for HTTP redirection.'    
-      required:
-        - host
-      properties:
-        host: 
-          description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as
-         described in Section 3.2 of [RFC3986].'
-          allOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
-        scheme:
-          description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the 
-          provided scheme in for HTTP redirection to the dCDN.'
-          type: string
-          enum: [http, https]
-        path-prefix:
-          description: 'A path prefix for the HTTP redirect Location header. The original path is appended after this prefix.'
-          type: string
-        include-redirecting-host:
-          description: 'A flag indicating whether or not to include the redirecting host as the first path segment after the path-prefix. 
-          If set to true and a "path-prefix" is used, the uCDN redirecting host MUST be added as a separate path segment after the path-prefix 
-          and before the original URL path.  If set to true and there is no path-prefix, the uCDN redirecting host MUST be prepended as
-           the first path segment in the redirect URL.'
-          type: boolean
-          default: false
-    MId_dnstarget:
-      type: object
-      description: 'FCI extension per RFC8004: the DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'    
-      required:
-        - host
-      properties:
-        host:
-          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that it SHOULD NOT include 
-          a port number and, in case a port number is present, the uCDN MUST ignore it.'
-          allOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint' 
