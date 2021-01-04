@@ -904,11 +904,11 @@ components:
         cs-method:
           allOf:
             - $ref: '#/components/schemas/RI_method'
-          description: 'The HTTP method (Section 3.1.1 of [RFC7230]) requested by the User Agent'
+          description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
         cs-version:
           allOf:
             - $ref: '#/components/schemas/RI_ipaddress'
-          description: 'The URI ([RFC7230]) requested by the User Agent'
+          description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
     RI_statuscodes:
       type: integer
       enum: [302, 303, 307]
