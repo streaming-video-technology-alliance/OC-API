@@ -349,7 +349,9 @@ components:
         footprint-type:
            $ref: '#/components/schemas/MI_footprinttype'
         footprint-value:
-          oneOf:
+          type: array
+          items:
+            oneOf:
             - $ref: '#/components/schemas/MI_ipv4cidr'
             - $ref: '#/components/schemas/MI_ipv6cidr'
             - $ref: '#/components/schemas/MI_asn'
