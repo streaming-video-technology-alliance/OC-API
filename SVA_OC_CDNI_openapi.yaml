@@ -571,27 +571,13 @@ components:
       type: string
     MI_payloadtype:
       type: string
-      enum: [MI.HostIndex, MI.HostMatch, MI.HostMetadata, MI.PathMatch, MI.PatternMatch, MI.PathMetadata, MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, 
-          MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, 
-          MI.FallbackTarget ]
+      enum: [MI.SourceMetadata, MI.LocationACL, MI.TimeWindowACL, MI.ProtocolACL, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget ]
     MI_payloadvalue:
       oneOf:
-        - $ref: '#/components/schemas/MI.HostIndex'
-        - $ref: '#/components/schemas/MI.HostMatch'
-        - $ref: '#/components/schemas/MI.HostMetadata'
-        - $ref: '#/components/schemas/MI.PathMatch'
-        - $ref: '#/components/schemas/MI.PatternMatch'
-        - $ref: '#/components/schemas/MI.PathMetadata'
         - $ref: '#/components/schemas/MI.SourceMetadata'
-        - $ref: '#/components/schemas/MI.Source'
         - $ref: '#/components/schemas/MI.LocationACL'
-        - $ref: '#/components/schemas/MI.LocationRule'
-        - $ref: '#/components/schemas/MI.Footprint'
         - $ref: '#/components/schemas/MI.TimeWindowACL'
-        - $ref: '#/components/schemas/MI.TimeWindowRule'
-        - $ref: '#/components/schemas/MI.TimeWindow'
         - $ref: '#/components/schemas/MI.ProtocolACL'
-        - $ref: '#/components/schemas/MI.ProtocolRule'
         - $ref: '#/components/schemas/MI.DeliveryAuthorization'
         - $ref: '#/components/schemas/MI.Cache'
         - $ref: '#/components/schemas/MI.Auth'

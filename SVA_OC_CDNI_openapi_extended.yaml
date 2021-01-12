@@ -293,14 +293,7 @@ components:
     MI_payloadvalue:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue'
-        - $ref: '#/components/schemas/MI.HostIndex'
-        - $ref: '#/components/schemas/MI.HostMatch'
-        - $ref: '#/components/schemas/MI.HostMetadata'
-        - $ref: '#/components/schemas/MI.PathMatch'
-        - $ref: '#/components/schemas/MI.PathMetadata'
-        - $ref: '#/components/schemas/MI.LocationACL'
-        - $ref: '#/components/schemas/MI.LocationRule'
-        - $ref: '#/components/schemas/MI.Footprint'                
+        - $ref: '#/components/schemas/MI.LocationACL'                
         - $ref: '#/components/schemas/MI.Logging.sva'
         - $ref: '#/components/schemas/MI.Capacity.sva'          
     MI.GenericMetadata:
