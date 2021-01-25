@@ -292,10 +292,10 @@ components:
           enum: [MI.Logging.sva, MI.Capacity.sva]
     MI_payloadvalue:
       oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue' 
         - $ref: '#/components/schemas/MI.LocationACL'                
         - $ref: '#/components/schemas/MI.Logging.sva'
-        - $ref: '#/components/schemas/MI.Capacity.sva'          
+        - $ref: '#/components/schemas/MI.Capacity.sva'     
     MI.GenericMetadata:
       type: object
       description: 'GenericMetadata object extension by SVA'
@@ -321,7 +321,34 @@ components:
           default: true
         incomprehensible:
           type: boolean
-          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
+          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'           
+    MI.Stages.sva:
+      type: object
+      properties:
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_stage'
+    MI_stage:
+      type: object
+      properties:
+        stage-type:
+          $ref: '#/components/schemas/MI_stagetype'
+        stage-value:
+          oneOf:
+            - $ref: '#/components/schemas/MI_stagerule_replaceheader'
+    MI_stagerule_replaceheader:
+      type: object
+      properties:
+        header-name:
+          type: string
+          description: 'name of teh HTTP header to act upon'
+        header-value:
+          type: string
+          description: 'the value that replace the existing one. Note that the value may be an emmpty string that indicates the header can be removed'
+    MI_stagetype:
+      type: string
+      enum: [clientRequest, originRequest, originResponse, clientResponse]
     MI.Logging.sva:
       type: object
       description: 'logging configuration according to SVA (supersedes CDNI)'

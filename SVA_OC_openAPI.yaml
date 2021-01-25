@@ -71,12 +71,10 @@ paths:
       tags:
         - OC_CI
       summary: Communicates the metadata/configuration (RFC8006) to the ISP with a simple API
-      description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately.
-      The status of this action is associated with a URL returned in the Location header. For a more complex metadata then use the CI API'
+      description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. The status of this action is associated with a URL returned in the Location header. For a more complex metadata then use the CI API'
       operationId: OC_CI_configure
       requestBody:
-        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification 
-        and CDNI RFCs 8006'
+        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006. It can be the entire dataset or a part of it.'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -89,7 +87,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: ' the status can either be complete or failed'
+                description: ' the status can either be complete or failed. The status gathers the (one or more) pathmatch patterns for which the metadata could not be processed.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
           links:
             getTriggerId:
