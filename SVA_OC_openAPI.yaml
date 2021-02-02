@@ -69,7 +69,7 @@ paths:
   /OC/CI/configuration:
     put:
       tags:
-        - OC_CI_simple
+        - OC_COI_simple
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure
@@ -96,7 +96,7 @@ paths:
           description: Not found
     get:
       tags:
-        - OC_CI_simple
+        - OC_COI_simple
       summary: 'Gets the whole  metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the whole valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
       operationId: OC_CI_getConfiguration
@@ -118,7 +118,7 @@ paths:
           content: {}  
     delete:
       tags:
-        - OC_CI_simple
+        - OC_COI_simple
       summary: 'delete the whole configuration'
       operationId: OC_CI_deleteConfiguration
       responses:
@@ -134,7 +134,7 @@ paths:
   /OC/CI/configuration/{host}:
     put:
       tags:
-        - OC_CI_simple_host
+        - OC_COI_simple_host
       summary: Communicates part of the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host
@@ -168,7 +168,7 @@ paths:
           description: Not found
     get:
       tags:
-        - OC_CI_simple_host
+        - OC_COI_simple_host
       summary: 'Gets part of the metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the  valid (or not) configuration associated with a host name. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
       operationId: OC_CI_getConfiguration_host
@@ -197,7 +197,7 @@ paths:
           content: {}
     delete:
       tags:
-        - OC_CI_simple_host
+        - OC_COI_simple_host
       summary: 'delete part of the configuration related to a host name'
       operationId: OC_CI_deleteConfiguration_host
       parameters:
@@ -220,7 +220,7 @@ paths:
   /OC/CI/configuration/{host}/{path-pattern}:
     put:
       tags:
-        - OC_CI_simple_path-pattern
+        - OC_COI_simple_path-pattern
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure
@@ -261,7 +261,7 @@ paths:
           description: Not found
     get:
       tags:
-        - OC_CI_simple_path-pattern
+        - OC_COI_simple_path-pattern
       summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
       operationId: OC_CI_getConfiguration_path-pattern
@@ -296,7 +296,7 @@ paths:
           content: {}  
     delete:
       tags:
-        - OC_CI_simple_path-pattern
+        - OC_COI_simple_path-pattern
       summary: 'delete part of the configuration associated with a host name AND a path pattern'
       operationId: OC_CI_deleteConfiguration_path-pattern
       parameters:
