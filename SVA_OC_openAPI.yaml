@@ -17,25 +17,53 @@ paths:
         - OC_FCI
       summary: get the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
       operationId: oc_fci_get_advertisement
-      description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained)
-      For enabling/disabling the usage of the callback, the client must call the API with/without the "callback_url" parameter'
-      parameters:
-        - name: callback_url
-          in: query
-          description: 'if supported by the ISP (dCDN), it will allow to call "callback_url" in case of FCI update.'
-          required: false
-          schema:
-            type: string
-            format: URL
+      description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained)'
+      responses:
+        '200':
+          description: 'FCI advertisement'
+          content:
+            application/cdni:
+              schema:
+                type: array
+                items:
+                  $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/FCI_genericbase'
+        '400':
+          description: 'bad request'
+        '403':
+          description: 'Forbiden'
+        '404':
+          description: 'No FCI advertisement'
+  /OC/FCI/subscribe:
+    post:
+      tags:
+        - OC_FCI
+      summary: suscribe to FCI updates notifications
+      operationId: oc_fci_post_subscribe
+      description: ''
+      requestBody:
+        description: ''
+        content:
+          application/cdni:
+            schema:
+              type: object
+              required:
+                - notificationTarget
+              properties:
+                notificationTarget:
+                  type: string
+                notificationType:
+                  type: string
+                  enum: [fci]
+        required: true
       callbacks:
-        putFciAdvertisement:
-          '{$request.query.callback_url}':
+        FciNotification:
+          '{$request.body#/notificationTarget}':
             put:
               summary: 'The ISP OC/dCDN to post a FCI advertisement update.'
               description: 'This callback is used by the ISP OC/dCDN to post a FCI advertisement update.'
               tags:
               - OC_MI
-              operationId: oc_fci_put_advertisement
+              operationId: oc_fci_put_notification
               requestBody:
                 description: Callback payload
                 content: 
@@ -52,25 +80,78 @@ paths:
                 '403':
                   description: 'Forbiden'
       responses:
-        '200':
-          description: 'FCI advertisement'
+        201:
+          description: 'subscription created. The "Location" header gathes the URL of the newly created resource'
+        400:
+          description: 'bad request'
+        403:
+          description: 'Forbiden'
+        404:
+          description: 'No FCI advertisement'     
+  /OC/FCI/subscription/{subscriptionId}:
+    get:
+      tags:
+        - OC_FCI
+      summary: get the FCI notification subscription 
+      operationId: oc_fci_get_notificationSubscription
+      description: ''
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'identifier of the subscription resource. This parameter is returned when creating the subscription'
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'FCI notification subscription'
           content:
             application/cdni:
               schema:
-                type: array
-                items:
-                  $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/FCI_genericbase'
-        '400':
+                type: object
+                required:
+                  - notificationTarget
+                properties:
+                  notificationTarget:
+                   type: string
+                  notificationType:
+                    type: string
+                    enum: [fci]
+        400:
           description: 'bad request'
-        '403':
+        403:
           description: 'Forbiden'
-        '404':
-          description: 'No FCI advertisement'
+        404:
+          description: 'Not found'
+    delete:
+      tags:
+        - OC_FCI
+      summary: 'delete the notification subscription'
+      operationId: OC_fci_delete_notificationSubscription
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'idetifier of the subscription resource. This parameter is returned when creating the subscription'
+          schema:
+            type: string 
+      responses:
+        200:
+          description: 'notification subscibtion deleted'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}    
+        404:
+          description: 'Not found' 
   /OC/CI/configuration:
     put:
       tags:
         - OC_COI_simple
-      summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
+      summary: Communicates the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure
       requestBody:
@@ -135,7 +216,7 @@ paths:
     put:
       tags:
         - OC_COI_simple_host
-      summary: Communicates part of the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
+      summary: Communicates part of the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host
       parameters:
@@ -381,7 +462,7 @@ paths:
               parameters:
                 - name: pathName
                   in: path
-                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/MI/metadata/" followed by a path sufixe associated with 
+                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/CI/content" followed by a path sufixe associated with 
                   the content object to be retrieved according to the MI API'
                   required: true
                   schema:
