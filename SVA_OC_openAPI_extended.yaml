@@ -159,7 +159,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+              $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostIndex'
         required: true
       responses:
         200:
@@ -187,7 +187,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostIndex'
         400:
           description: Command is invalid
           content: {}
@@ -231,7 +231,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+              $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostMetadata'
         required: true
       responses:
         200:
@@ -266,7 +266,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+                $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.HostMetadata'
         400:
           description: Command is invalid
           content: {}
@@ -324,7 +324,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
+              $ref: 'SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/MI.PathMetadata'
         required: true
       responses:
         200:

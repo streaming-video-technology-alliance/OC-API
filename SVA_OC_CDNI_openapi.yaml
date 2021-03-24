@@ -76,8 +76,7 @@ components:
       description: 'FCI extension per RFC8804'
       properties:
         redirecting-hosts:
-          description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was 
-          published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
+          description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
           type: array
           items:
              $ref: '#/components/schemas/MI_endpoint'
@@ -94,23 +93,18 @@ components:
         - host
       properties:
         host: 
-          description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as
-         described in Section 3.2 of [RFC3986].'
+          description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
           allOf:
             - $ref: '#/components/schemas/MI_endpoint'
         scheme:
-          description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the 
-          provided scheme in for HTTP redirection to the dCDN.'
+          description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the provided scheme in for HTTP redirection to the dCDN.'
           type: string
           enum: [http, https]
         path-prefix:
           description: 'A path prefix for the HTTP redirect Location header. The original path is appended after this prefix.'
           type: string
         include-redirecting-host:
-          description: 'A flag indicating whether or not to include the redirecting host as the first path segment after the path-prefix. 
-          If set to true and a "path-prefix" is used, the uCDN redirecting host MUST be added as a separate path segment after the path-prefix 
-          and before the original URL path.  If set to true and there is no path-prefix, the uCDN redirecting host MUST be prepended as
-           the first path segment in the redirect URL.'
+          description: 'A flag indicating whether or not to include the redirecting host as the first path segment after the path-prefix. If set to true and a "path-prefix" is used, the uCDN redirecting host MUST be added as a separate path segment after the path-prefix and before the original URL path.  If set to true and there is no path-prefix, the uCDN redirecting host MUST be prepended as the first path segment in the redirect URL.'
           type: boolean
           default: false
     FCI_dnstarget:
@@ -165,9 +159,7 @@ components:
 # MI (Metatadata) Interface: RFC 8006    
     MI.HostIndex:
       type: object
-      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. 
-      An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find 
-      the HostMatch object that applies to the request'
+      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request'
       required:
         - hosts
       properties:
@@ -177,8 +169,7 @@ components:
             oneOf:
               - $ref: '#/components/schemas/MI.HostMatch'
               - $ref: '#/components/schemas/MI_link'
-          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, 
-          and the first HostMatch object that matches the content request being processed MUST be used'
+          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
     MI.HostMatch:
       type: object
       required:
@@ -188,12 +179,9 @@ components:
         host:
           allOf:
             - $ref: '#/components/schemas/MI_endpoint'
-          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
-          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, 
-          the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
+          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
           All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
-          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support 
-          all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
+          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
           Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
         host-metadata:
           oneOf:
@@ -221,9 +209,7 @@ components:
               - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
-      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, 
-      as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply 
-      if the resource URI matches the pattern within the PatternMatch object.'
+      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply if the resource URI matches the pattern within the PatternMatch object.'
       required:
         - path-pattern
         - path-metadata
@@ -243,10 +229,7 @@ components:
       properties:
         pattern:
           type: string
-          description: 'Description: A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986].  
-      The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string)
-      and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  
-      All other characters are treated as literals'
+          description: 'Description: A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986]. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character). All other characters are treated as literals'
         case-sensitive:
           type: boolean
           description: 'Flag indicating whether or not case-sensitive matching should be used.  
@@ -254,13 +237,8 @@ components:
           default: false
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against 
-      the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then 
-      a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request 
-      is available at Request Routing time.  
-      dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.  
-      If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, 
-      in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time.  
+      dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -270,16 +248,14 @@ components:
             $ref: '#/components/schemas/MI.GenericMetadata'
         paths:
           type: array
-          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
-          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
             oneOf:
             - $ref: '#/components/schemas/MI_link'
             - $ref: '#/components/schemas/MI.PathMatch'
     MI.SourceMetadata:
       type: object
-      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server 
-      to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP) 
+      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP) 
       but might be a set of Surrogates in the uCDN.'
       properties:
         sources:
@@ -290,11 +266,7 @@ components:
               - $ref: '#/components/schemas/MI.Source'
     MI.Source:
       type: object
-      description: 'A Source object describes the source to be used by the dCDN for content acquisition 
-      (e.g., a Surrogate within the uCDN or an alternate origin server), the protocol to be used, and any authentication method to be used 
-      when contacting that source. Endpoints within a Source object MUST be treated as equivalent/equal. A uCDN can specify an array of MI.Source, 
-      ordered by preference, within a SourceMetadata object.  Then, for each Source object ranked by preference, a uCDN can specify an array of endpoints 
-      that are equivalent (e.g., a pool of servers that are not behind a load balancer).'
+      description: 'A Source object describes the source to be used by the dCDN for content acquisition (e.g., a Surrogate within the uCDN or an alternate origin server), the protocol to be used, and any authentication method to be used when contacting that source. Endpoints within a Source object MUST be treated as equivalent/equal. A uCDN can specify an array of MI.Source, ordered by preference, within a SourceMetadata object.  Then, for each Source object ranked by preference, a uCDN can specify an array of endpoints that are equivalent (e.g., a pool of servers that are not behind a load balancer).'
       required:
         - endpoints
       properties:
@@ -311,14 +283,10 @@ components:
     MI.LocationACL:
       type: object
       description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content.
-      A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed 
-      regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location.
+      A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location.
       If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take.  
       If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is an action of "deny".
-      Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, 
-      they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL 
-      and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine 
-      whether or not a request should be allowed.'
+      Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
       properties:
         locations:
           type: array
@@ -345,6 +313,9 @@ components:
     MI.Footprint:
       type: object
       description: 'A Footprint object describes the footprint to which a LocationRule can be applied, e.g., an IPv4 address range or a geographic location.'
+      required:
+        - footprint-type
+        - footprint-value
       properties:
         footprint-type:
            $ref: '#/components/schemas/MI_footprinttype'
@@ -397,15 +368,10 @@ components:
           $ref: '#/components/schemas/MI_time'
     MI.ProtocolACL:
       type: object
-      description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property 
-      results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; 
-      otherwise, a CDN MUST take the action from the first protocol to match against the request protocol.  
+      description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; otherwise, a CDN MUST take the action from the first protocol to match against the request protocol.  
       If two or more request protocols overlap, the first protocol that matches the request protocol determines the action a CDN MUST take.  
       If the protocol-acl property is included but is empty or if none of the listed protocols match the request protocol, then the result is an action of "deny". 
-      Although the LocationACL (see Section 4.2.2), TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata objects, 
-      they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the ProtocolACL and denied 
-      based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine 
-      whether or not a request should be allowed.'
+      Although the LocationACL (see Section 4.2.2), TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the ProtocolACL and denied based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
       properties:
         protocol-acl:
           type: array
@@ -466,23 +432,23 @@ components:
       type: object
       properties:
         auth-type:
-          type: string
-          enum: [MI.UriSigning]
+          $ref: '#/components/schemas/MI_authtype'
         auth_value:
           oneOf:
             - $ref: '#/components/schemas/MI.UriSigning'
           discriminator: 
             propertyName: auth-type 
+    MI_authtype:
+      type: string
+      enum: [MI.UriSigning]
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN.  
-      According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) draft-ietf-cdni-uri-signing-19" '
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) draft-ietf-cdni-uri-signing-19" '
       properties:
         enforce: 
           type: boolean
           default: true
-          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing.  URI Signing requires the dCDN to ensure that the URI
-         is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
+          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing.  URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
         issuers:
           type: array
           items:
@@ -490,11 +456,10 @@ components:
           description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
         package-attribute:
           type: string
-          description: 'The name to use for the URI Signing Package. Deafult name is "URISigningPackage"'
+          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage"'
         jwt-header:
           type: string
-          description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package 
-          does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
+          description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
     MI.Grouping:
       type: object
       description: 'A Grouping object identifies a group of content to which a given asset belongs.'
@@ -526,11 +491,7 @@ components:
       enum: [ipv4cidr, ipv6cidr, asn, countrycode]
     MI_link:
       type: object
-      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
-      if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property 
-      is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect 
-      the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain 
-      a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
+      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a Generic Metadata object.'
       required:
         - href
       properties:
@@ -608,8 +569,7 @@ components:
           default: true
         incomprehensible:
           type: boolean
-          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform 
-          this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
+          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform  this metadata object. Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
           default: false 
 # CI (Control) interface (RFC 8007) 
 # Regsitered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml

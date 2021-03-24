@@ -11,30 +11,37 @@ externalDocs:
 components:
   schemas:
     FCI_capabilitytype_sva:
-      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata]
+      type: string
+      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata, FCI.AuthTypes.sva]
     FCI_genericbase:
-      oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
-        - type: object
-          description: 'adding properties to the FCI_genericbase object'
-          required:
-            - capability-type
-            - capability-value
-          properties:
-            capability-type:
-              $ref: '#/components/schemas/FCI_capabilitytype_sva'
-            capability-value:
-              oneOf:
-                - $ref: '#/components/schemas/FCI.Metadata'
-                - $ref: '#/components/schemas/FCI.Logging.sva'
-                - $ref: '#/components/schemas/FCI.Capacity.sva'
-              discriminator: 
-                propertyName: capability-type
-            footprints:
-              type: array
-              description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
-              items:
-                $ref: '#/components/schemas/MI.Footprint'
+      type: object
+      description: 'adding properties to the FCI_genericbase object'
+      required:
+        - capability-type
+        - capability-value
+      properties:
+        capability-type:
+          oneOf:
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_capabilitytype'
+            - $ref: '#/components/schemas/FCI_capabilitytype_sva'
+        capability-value:
+          oneOf:
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.DeliveryProtocol'
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.AcquisitionProtocol'
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectionMode'
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
+            - $ref: '#/components/schemas/FCI.Metadata'
+            - $ref: '#/components/schemas/FCI.Logging.sva'
+            - $ref: '#/components/schemas/FCI.Capacity.sva'
+            - $ref: '#/components/schemas/FCI.AuthTypes.sva'
+          discriminator: 
+            propertyName: capability-type
+        footprints:
+          type: array
+          description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
+          items:
+            $ref: '#/components/schemas/MI.Footprint'
     FCI.Metadata:
       type: object
       description: 'extension of CDNI FCI.Metadata'
@@ -49,6 +56,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MI_payloadtype'
+    FCI.AuthTypes.sva:
+      type: object
+      required:
+        - auth-types
+      properties:
+        auth-types:
+          type: array
+          items: 
+            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_authtype'
     FCI.Logging.sva:
       type: object
       description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
@@ -240,6 +256,9 @@ components:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
         - type: object
+          required:
+          - footprint-type
+          - footprint-value
           properties:
             footprint-type:
               $ref: '#/components/schemas/MI_footprinttype_sva'
