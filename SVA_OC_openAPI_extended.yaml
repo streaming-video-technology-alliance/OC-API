@@ -71,7 +71,7 @@ paths:
                     schema:
                       type: array
                       items:
-                        $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/FCI_genericbase'
+                        $ref: './SVA_OC_CDNI_openapi_extended.yaml#/components/schemas/FCI_genericbase_sva'
               responses:
                 '200':
                   description: 'FCI updated'
