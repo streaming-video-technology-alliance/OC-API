@@ -10,10 +10,7 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
-    FCI_capabilitytype_sva:
-      type: string
-      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata, FCI.AuthTypes.sva]
-    FCI_genericbase:
+    FCI_genericbase_sva:
       type: object
       description: 'adding properties to the FCI_genericbase object'
       required:
@@ -41,7 +38,12 @@ components:
           type: array
           description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
           items:
-            $ref: '#/components/schemas/MI.Footprint'
+            oneOf:
+                    - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
+                    - $ref: '#/components/schemas/MI.Footprint_sva'
+    FCI_capabilitytype_sva:
+      type: string
+      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata, FCI.AuthTypes.sva]
     FCI.Metadata:
       type: object
       description: 'extension of CDNI FCI.Metadata'
@@ -55,7 +57,9 @@ components:
          must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
           items:
-            $ref: '#/components/schemas/MI_payloadtype'
+            oneOf:
+                    - $ref: '#/components/schemas/MI_payloadtype_sva'
+                    - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
     FCI.AuthTypes.sva:
       type: object
       required:
@@ -82,7 +86,9 @@ components:
               - transport
             properties:
               footprint:
-                $ref: '#/components/schemas/MI.Footprint'    
+                oneOf:
+                        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'    
+                        - $ref: '#/components/schemas/MI.Footprint_sva'
               transport:
                 $ref: '#/components/schemas/MI_loggingtransporttype_sva'
         record-type: 
@@ -247,26 +253,22 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.Footprint'
+              - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
+              - $ref: '#/components/schemas/MI.Footprint_sva'
         action:
           type: string
           enum: [allow, deny]
           default: deny
-    MI.Footprint:
-      oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
-        - type: object
-          required:
-          - footprint-type
-          - footprint-value
-          properties:
-            footprint-type:
-              $ref: '#/components/schemas/MI_footprinttype_sva'
-            footprint-value:
-              oneOf:
-                - $ref: '#/components/schemas/MI_gpsrectangle_sva'
-              discriminator:
-                propertyName: footprint-type
+    MI.Footprint_sva:
+        type: object
+        required:
+        - footprint-type
+        - footprint-value
+        properties:
+          footprint-type:
+            $ref: '#/components/schemas/MI_footprinttype_sva'
+          footprint-value:
+            $ref: '#/components/schemas/MI_gpsrectangle_sva'
     MI_footprinttype_sva:
       type: string
       enum: [gps]
@@ -303,15 +305,14 @@ components:
           type: string
           format: Uri
         type:
-          $ref: '#/components/schemas/MI_payloadtype'
-    MI_payloadtype:
+          oneOf:
+                - $ref: '#/components/schemas/MI_payloadtype_sva'
+                - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
+    MI_payloadtype_sva:
+         type: string
+         enum: [MI.Logging.sva, MI.Capacity.sva]
+    MI_payloadvalue_sva:
       oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-        - type: string
-          enum: [MI.Logging.sva, MI.Capacity.sva]
-    MI_payloadvalue:
-      oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue' 
         - $ref: '#/components/schemas/MI.LocationACL'                
         - $ref: '#/components/schemas/MI.Logging.sva'
         - $ref: '#/components/schemas/MI.Capacity.sva'     
@@ -323,11 +324,14 @@ components:
         - generic-metadata-value
       properties:
         generic-metadata-type:
-          $ref: '#/components/schemas/MI_payloadtype'
+          oneOf:
+                  - $ref: '#/components/schemas/MI_payloadtype_sva'
+                  - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
         generic-metadata-value:
           oneOf:
             - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI_payloadvalue'        
+            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue'
+            - $ref: '#/components/schemas/MI_payloadvalue_sva'        
           discriminator: 
             propertyName: generic-metadata-type
         mandatory-to-enforce:
@@ -403,7 +407,9 @@ components:
               - transport
             properties:
               footprint:
-                $ref: '#/components/schemas/MI.Footprint'   
+                oneOf:
+                        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'   
+                        - $ref: '#/components/schemas/MI.Footprint_sva'   
               transport-type: 
                 description: 'the configuration parameters of the transport protocol depends on the type of protocol'
                 allOf:
@@ -459,7 +465,7 @@ components:
           description: 'the surrogates caches concerned by the capacity inquiry/monitoring'
           type: array
           items:
-            $ref: '#/components/schemas/MI.Footprint'
+            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
         capacity-type:
           description: 'the type of capacity'
           type: array
