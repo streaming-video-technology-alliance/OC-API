@@ -94,8 +94,7 @@ components:
       properties:
         host: 
           description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
+          $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the provided scheme in for HTTP redirection to the dCDN.'
           type: string
@@ -177,8 +176,7 @@ components:
         - host-metadata
       properties:
         host:
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
+          $ref: '#/components/schemas/MI_endpoint'
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
           All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
           IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
@@ -479,8 +477,7 @@ components:
         host:
           description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that in case of DNS delegation, 
           it SHOULD NOT include a port number, and in case a port number is present, the dCDN MUST ignore it.'
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
+          $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the 
           provided scheme in for HTTP redirection to the uCDN.'
@@ -579,16 +576,13 @@ components:
         - cdn-path 
       properties:
         cdn-path:
-          allOf:
-            - $ref: '#/components/schemas/CI_cdn-path'
+          $ref: '#/components/schemas/CI_cdn-path'
           description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
         cancel:
-          allOf:
-            - $ref: '#/components/schemas/CI_cancel'
+          $ref: '#/components/schemas/CI_cancel'
           description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
         trigger:
-          allOf:
-            - $ref: '#/components/schemas/CI_trigger'
+          $ref: '#/components/schemas/CI_trigger'
           description: 'A specification of the trigger type and a set of data to act upon'
     ci-trigger-status:
       type: object
@@ -600,24 +594,20 @@ components:
         - status
       properties:
         trigger:
-          allOf:
-            - $ref: '#/components/schemas/CI_trigger'
+          $ref: '#/components/schemas/CI_trigger'
           description: 'The Trigger Specification POSTed in the body of the CI/T Command.
           Note that this need not be a byte-for-byte copy.  
           For example, in the JSON representation the dCDN may re-serialize the information differently.'
         ctime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
+          $ref: '#/components/schemas/CI_time'
           description: 'Time at which the CI/T Command was received by the dCDN.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         mtime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
+          $ref: '#/components/schemas/CI_time'
           description: 'Time at which the Trigger Status Resource was last modified.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
         etime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
+          $ref: '#/components/schemas/CI_time'
           description: 'Estimate of the time at which the dCDN expects to complete the activity.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         status:
@@ -642,20 +632,16 @@ components:
           type: string
           enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
         metadata.urls:
-          allOf:
-            - $ref: '#/components/schemas/CI_urls'
+          $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         content.urls:
-          allOf:
-            - $ref: '#/components/schemas/CI_urls'
+          $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         metadata.patterns:
-          allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+          $ref: '#/components/schemas/CI_patterns'
           description: 'The metadata the trigger applies to'
         content.patterns:
-          allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+          $ref: '#/components/schemas/CI_patterns'
           description: 'The content the trigger applies to'
         description:
           type: string
@@ -696,12 +682,10 @@ components:
             type: string
             enum: [preposition, invalidate, purge]
           metadata.urls:
-            allOf:
-            - $ref: '#/components/schemas/CI_urls'
+            $ref: '#/components/schemas/CI_urls'
             description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.urls:
-            allOf:
-            - $ref: '#/components/schemas/CI_urls'
+            $ref: '#/components/schemas/CI_urls'
             description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.ccid:
             type: array
@@ -710,12 +694,10 @@ components:
             description: 'The Content Collection IDentifier of content the trigger applies to.  
             The "ccid" is a grouping of content, as defined by [RFC8006]'
           metadata.patterns:
-            allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+            $ref: '#/components/schemas/CI_patterns'
             description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
           content.patterns:
-            allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+            $ref: '#/components/schemas/CI_patterns'
             description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
@@ -815,23 +797,19 @@ components:
         - qname
       properties:
         resolver-ip: 
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
+          $ref: '#/components/schemas/RI_ipaddress'
           description: 'The IP address of the UA DNS resolver'
         qtype:
-          allOf:
-            - $ref: '#/components/schemas/RI_qtype'
+          $ref: '#/components/schemas/RI_qtype'
           description: 'The type of Query made by the UA DNS resolver'
         qclass:
-          allOf:
-            - $ref: '#/components/schemas/RI_qclass'
+          $ref: '#/components/schemas/RI_qclass'
           description: 'The DNS class of the query made by the UA DNS resolver '
         qname:
           type: string
           description: 'The FQDN being quieried'
         c-subnet:
-          allOf:
-            - $ref: '#/components/schemas/RI_iprange'
+          $ref: '#/components/schemas/RI_iprange'
           description: 'The IP address (or prefix) of the UA in Classless Inter-Domain Routing (CIDR) format.'
     RI_httpredirectionrequest:
       type: object
@@ -842,20 +820,16 @@ components:
         - cs-version
       properties:
         c-ip: 
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
+          $ref: '#/components/schemas/RI_ipaddress'
           description: 'The IP address of the User Agent'
         cs-uri:
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
+          $ref: '#/components/schemas/RI_uri'
           description: 'The URI ([RFC7230]) requested by the User Agent'
         cs-method:
-          allOf:
-            - $ref: '#/components/schemas/RI_method'
+          $ref: '#/components/schemas/RI_method'
           description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
         cs-version:
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
+          $ref: '#/components/schemas/RI_ipaddress'
           description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
     RI_statuscodes:
       type: integer
@@ -875,24 +849,19 @@ components:
         - sc-(location)
       properties:
         sc-status: 
-          allOf:
-            - $ref: '#/components/schemas/RI_statuscodes'
+          $ref: '#/components/schemas/RI_statuscodes'
           description: 'The status-code part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA (usually set to 302).'
         sc-version:
-          allOf:
-            - $ref: '#/components/schemas/RI_version'
+          $ref: '#/components/schemas/RI_version'
           description: 'The HTTP-version part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA .'
         sc-reason:
-          allOf:
-            - $ref: '#/components/schemas/RI_reason'
+          $ref: '#/components/schemas/RI_reason'
           description: 'The reason-phrase part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA '
         cs-uri:
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
+          $ref: '#/components/schemas/RI_uri'
           description: 'The URI ([RFC7230]) requested by the User Agent'
         sc-(location):
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
+          $ref: '#/components/schemas/RI_uri'
           description: 'The content of the Location header to return to the UA: the URI ([RFC7230]) pointing to the redirect target (i.e. the OCN)'
     RI_rcode:
       type: integer
@@ -905,8 +874,7 @@ components:
         - name
       properties:
         rcode: 
-          allOf:
-            - $ref: '#/components/schemas/RI_rcode'
+          $ref: '#/components/schemas/RI_rcode'
           description: 'DNS response code [RFC6895]).'
         name:
           type: string
