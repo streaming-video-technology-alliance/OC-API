@@ -8,6 +8,7 @@ generate-server:
 	-sudo rm -rf ./out
 #	docker run -v ${PWD}/out:/out -v ${PWD}:/specs -e  JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttp.nonProxyHosts=localhost|127.0.0.1" openapitools/openapi-generator-cli:v5.1.0 generate -i /specs/${OPENAPI_SPEC} -g python-flask -o /out 
 	docker run -v ${PWD}/out:/out -v ${PWD}:/specs -e  JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttp.nonProxyHosts=localhost|127.0.0.1" openapitools/openapi-generator-cli generate -i /specs/${OPENAPI_SPEC} -g python-flask -o /out 
+
 .PHONY: build-server
 build-server:
 	docker build -f ./out/Dockerfile --build-arg=http_proxy=${http_proxy} --build-arg=https_proxy=${https_proxy} -t openapi-server ./out
@@ -19,4 +20,4 @@ launch-server:
 
 .PHONY: edit
 edit:
-	docker run -d -p 80:8080 -v $(pwd):/tmp -e SWAGGER_FILE=/tmp/${OPENAPI_SPEC} swaggerapi/swagger-editor
+	docker run -d -p 80:8080 -v ${PWD}:/tmp -e SWAGGER_FILE=/tmp/${OPENAPI_SPEC} swaggerapi/swagger-editor
