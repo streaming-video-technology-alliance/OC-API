@@ -4,9 +4,9 @@ OpenAPI descriptions of the SVA Open Caching interface based on CDNI modeling (R
 - README.md: this file
 - SVA_OC_openAPI.yaml : the API acording to SVA (and some interpretations/additions)
 - SVA_OC_CDNI_openapi.yaml : the OpenAPI/json schemas according to CDNI (RFC8006, RFC8007, RFC8008, RFC8804)
-- SVA_OC_CDNI_openapi_extended.yaml : gathers new SVA specific and CDNI extended (inherited from SVA_OC_CDNI_openapi.yaml) OpenAPI/json schemas 
+- SVA_OC_CDNI_SVA_openapi.yaml (under construction): gathers new SVA specific and CDNI extended (inherited from SVA_OC_CDNI_openapi.yaml) OpenAPI/json schemas according to SVA OC "Configuration" and "Capacity insight" subgroups specification 
 
-This is an ongoing work. The idea is that new schemas can be added refrering to the CDNI or CDNI_extended once validated
+This is an ongoing work.
 
 # Format
 The files are JSON objects, yaml formated according to the OpenAPI specification (http://spec.openapis.org/oas/v3.0.3)
