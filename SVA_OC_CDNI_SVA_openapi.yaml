@@ -4,7 +4,7 @@ info:
   description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.1.0
+  version: 0.4.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
@@ -82,7 +82,7 @@ components:
               - transport
             properties:
               footprint:
-                $ref: '#/components/schemas/MI.Footprint'    
+                $ref: '#/components/schemas/MI.Footprint'
               transport:
                 $ref: '#/components/schemas/MI_loggingtransporttype_sva'
         record-type: 
@@ -130,13 +130,14 @@ components:
         - hosts
       properties:
         hosts:
+          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI.HostMatch'
-              - $ref: '#/components/schemas/MI_link'
-          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, 
-          and the first HostMatch object that matches the content request being processed MUST be used'
+            $ref: '#/components/schemas/MI_hostmatch'
+    MI_hostmatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI.HostMatch'
+        - $ref: '#/components/schemas/MI_link'
     MI.HostMatch:
       type: object
       required:
@@ -154,10 +155,12 @@ components:
           all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
           Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
         host-metadata:
-          oneOf:
-            - $ref: '#/components/schemas/MI.HostMetadata'
-            - $ref: '#/components/schemas/MI_link'
+          $ref: '#/components/schemas/MI_HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
+    MI_HostMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI.HostMetadata'
+        - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
       description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) 
@@ -174,9 +177,11 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
           and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI.PathMatch'
-              - $ref: '#/components/schemas/MI_link'
+            $ref: '#/components/schemas/MI_PathMatch'
+    MI_PathMatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI.PathMatch'
+        - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
       description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, 
@@ -187,13 +192,17 @@ components:
         - path-metadata
       properties:
         path-pattern:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PatternMatch'
+          $ref: '#/components/schemas/MI_PatternMatch'          
         path-metadata:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.PathMetadata'
+          $ref: '#/components/schemas/MI_PathMetadata'
+    MI_PatternMatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PatternMatch'
+    MI_PathMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PathMetadata'
     MI.PathMetadata:
       type: object
       description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against 
@@ -215,80 +224,125 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
           and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
-            oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.PathMatch'
-    MI.LocationACL:
+            $ref: '#/components/schemas/MI_PathMatch'
+    MI.DeliveryAuthorization:
       type: object
-      description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content.
-      A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed 
-      regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location.
-      If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take.  
-      If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is an action of "deny".
-      Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, 
-      they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL 
-      and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine 
-      whether or not a request should be allowed.'
+      description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
       properties:
-        locations:
+        delivery-auth-methods:
+          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods
+          in the list is satisfied for that request.'
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.LocationRule'
-    MI.LocationRule:
-      type: object
-      description: 'A LocationRule contains or references an array of Footprint objects and the corresponding action.'
-      required:
-        - footprints
-      properties:
-        footprints:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.Footprint'
-        action:
-          type: string
-          enum: [allow, deny]
-          default: deny
-    MI.Footprint:
+            $ref: '#/components/schemas/MI_Auth'
+    MI_Auth:
       oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
-        - type: object
-          required:
-          - footprint-type
-          - footprint-value
-          properties:
-            footprint-type:
-              $ref: '#/components/schemas/MI_footprinttype_sva'
-            footprint-value:
-              oneOf:
-                - $ref: '#/components/schemas/MI_gpsrectangle_sva'
-              discriminator:
-                propertyName: footprint-type
-    MI_footprinttype_sva:
-      type: string
-      enum: [gps]
-    MI_gpsrectangle_sva:
-      description: 'A rectangle surface expressed as an array of two GPS points (left/upper and right/bottom)' 
-      type: array
-      minItems: 2
-      maxItems: 2
-      items: 
-        $ref: '#/components/schemas/MI_gps_sva'
-    MI_gps_sva:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Auth'
+    MI.Auth:
       type: object
-      description: 'GPS coordinates'
+      description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively'
       properties:
-        latitude:
-          type: number
-          minimum: -90
-          maximum: 90
-        longitude:
-          type: number
-          minimum: -180
-          maximum: 180
+        auth-type:
+          $ref: '#/components/schemas/MI_authtype'
+        auth_value:
+          oneOf:
+            - $ref: '#/components/schemas/MI_UriSigning'
+            - $ref: '#/components/schemas/MI_HeaderAuth'
+          discriminator: 
+            propertyName: auth-type 
+    MI_authtype:
+      type: string
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+    MI_HeaderAuth:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HeaderAuth'
+    MI.HeaderAuth:
+      type: object
+      description: 'Header based authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
+      required:
+        - header-name
+        - header-value
+      properties: 
+        header-name:
+          type: string
+          description: 'Name of the authentication header'
+        header-value:
+          description: 'Value of the authentication header (typically a pre-shared key).'
+          type: string
+      example:
+        value: {
+          "auth-type": "headerauth",
+          "auth-value":
+          {
+           "header-name": "X-Origin-Auth",
+           "header-value": "SECRETKEYJKSDHFSIUHKWRGHFUI4UFH78HW4NF7"
+           }
+          }
+    MI_AWSv4Auth:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AWSv4Auth'
+    MI.AWSv4Auth:
+      type: object
+      description: 'Allows for the specification of a set of headers to be added to requests that are forwarded to an origin to enable Amazon Web Services (AWS) authentication, as documented by AWS (See Specifications & Standards References)'
+      required:
+        - access-key-id
+        - secret-access-key
+        - aws-region
+        - aws-service
+        - host-name
+      properties: 
+        access-key-id:
+          description: 'The preconfigured ID of the pre-shared authorization secret.'
+          type: string
+        secret-access-key:
+          description: 'The pre-shared authorization secret, which is the basis of building the signature. This is a secret key that should not be disclosed; it should be protected by some mechanism while resident in configuration objects.'
+          type: string
+        aws-region:
+          description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
+          type: string
+        aws-service:
+          description: 'The AWS service name that is serving the upstream requests.'
+          type: string
+        host-name:
+          description: 'The host name to use as part of the signature calculation.'
+          type: string
+    MI_UriSigning:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.UriSigning'
+    MI.UriSigning:
+      type: object
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
+      properties:
+        enforce: 
+          type: boolean
+          default: true
+          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing. URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
+        issuers:
+          type: array
+          items:
+            type: string
+          description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
+        package-attribute:
+          type: string
+          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage"'
+        jwt-header:
+          type: string
+          description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
+      example:
+        value: {
+         "enforce": true,
+         "issuers": ["csp", "ucdn1", "ucdn2"],
+         "package-attribute": "usp",
+         "jwt-header":
+           {
+               "alg": "ES256",
+               "kid": "P5UpOv0eMq1wcxLf7WxIg09JdSYGYFDOWkldueaImf0"
+           }
+       }
     MI_link:
       type: object
       description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
@@ -303,17 +357,29 @@ components:
           type: string
           format: Uri
         type:
-          $ref: '#/components/schemas/MI_payloadtype'
-    MI_payloadtype:
-      oneOf:
+          $ref: '#/components/schemas/MI_metadatatype'
+    MI_metadatatype:
+      allOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-        - type: string
-          enum: [MI.Logging.sva, MI.Capacity.sva]
+        - $ref: '#/components/schemas/MI_payloadtype'
+    MI_payloadtype:
+      type: string
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+    MI_metadatavalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI_payloadvalue'
     MI_payloadvalue:
       oneOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadvalue' 
-        - $ref: '#/components/schemas/MI.LocationACL'                
-        - $ref: '#/components/schemas/MI.Logging.sva'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.SourceMetadata'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.LocationACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.TimeWindowACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.ProtocolACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Cache'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Grouping'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.FallbackTarget'                     
+        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
+        - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.Capacity.sva'     
     MI.GenericMetadata:
       type: object
@@ -323,13 +389,9 @@ components:
         - generic-metadata-value
       properties:
         generic-metadata-type:
-          $ref: '#/components/schemas/MI_payloadtype'
+          $ref: '#/components/schemas/MI_metadatatype'
         generic-metadata-value:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI_payloadvalue'        
-          discriminator: 
-            propertyName: generic-metadata-type
+           $ref: '#/components/schemas/MI_metadatavalue'
         mandatory-to-enforce:
           type: boolean
           description: 'Flag identifying whether or not the enforcement of the property metadata is required.'

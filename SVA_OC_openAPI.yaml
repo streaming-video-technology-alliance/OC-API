@@ -9,7 +9,7 @@ externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
 security: 
-  - jwt: []
+  - bearerToken: []
 paths:
   /OC/FCI/advertisement:
     get:
@@ -60,10 +60,10 @@ paths:
           '{$request.body#/notificationTarget}':
             put:
               summary: 'The ISP OC/dCDN to post a FCI advertisement update.'
-              description: 'This callback is used by the ISP OC/dCDN to post a FCI advertisement update.'
+              description: 'This callback is used by the ISP OC/dCDN to put an FCI advertisement update.'
               tags:
-              - OC_MI
-              operationId: oc_fci_put_notification
+              - OC_FCI
+              operationId: oc_fci_push_notification
               requestBody:
                 description: Callback payload
                 content: 
@@ -423,7 +423,7 @@ paths:
         required: true
       callbacks:
         requestMetadata:
-          /OC/MI/metadata/{pathName}:
+          /OC/CI/metadata/{pathName}:
             get:
               summary: ''
               description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements 

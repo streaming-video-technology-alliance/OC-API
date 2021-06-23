@@ -255,8 +255,7 @@ components:
             - $ref: '#/components/schemas/MI.PathMatch'
     MI.SourceMetadata:
       type: object
-      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP) 
-      but might be a set of Surrogates in the uCDN.'
+      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP)  but might be a set of Surrogates in the uCDN.'
       properties:
         sources:
           type: array
@@ -407,29 +406,22 @@ components:
               - $ref: '#/components/schemas/MI.Auth'
     MI.Cache:
       type: object
-      description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated 
-      from the URI of the content request [RFC7234].  In some cases, a CDN or content provider might want certain path segments or query parameters 
-      to be excluded from the cache key generation.  The Cache object provides guidance on what parts of the path and query string to include.'
+      description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated from the URI of the content request [RFC7234].  In some cases, a CDN or content provider might want certain path segments or query parameters to be excluded from the cache key generation.  The Cache object provides guidance on what parts of the path and query string to include.'
       properties:
         exclude-path-pattern:
           description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986].
-        The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) 
-        and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", 
-        and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
+        The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
         Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. 
         Note: Inconsistency between the PatternMatch pattern (Section 4.1.5) and the exclude-path-pattern can result in inefficient caching.'
           type: string
         include-query-strings:
-          description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI 
-          against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive.  
-          If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times 
-          in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, 
-          query parameters SHOULD be evaluated in the order specified in this array.'
+          description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive. If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, query parameters SHOULD be evaluated in the order specified in this array.'
           type: array
           items: 
             type: string
     MI.Auth:
       type: object
+      description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively'
       properties:
         auth-type:
           $ref: '#/components/schemas/MI_authtype'
@@ -443,12 +435,12 @@ components:
       enum: [MI.UriSigning]
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) draft-ietf-cdni-uri-signing-19" '
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
       properties:
         enforce: 
           type: boolean
           default: true
-          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing.  URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
+          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing. URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
         issuers:
           type: array
           items:
@@ -469,10 +461,8 @@ components:
           description: 'Content Collection IDentifier for an application-specific purpose such as logging aggregation.'
     MI.FallbackTarget: 
       type: object
-      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases 
-      where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
-      from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving 
-      the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
+      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
+      from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
       required:
         - host
       properties:
@@ -505,24 +495,19 @@ components:
       enum: [http/1.1, https/1.1, http/2]
     MI_endpoint:
       type: string
-      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses 
-      encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats 
-      specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
-      Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-      Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
+      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
+      Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
     MI_time:
       type: integer
       format: int32
       description: 'A time value expressed in seconds since the UNIX epoch (i.e., zero hours, zero minutes, zero seconds, on January 1, 1970) 
       Coordinated Universal Time (UTC) [POSIX].'
     MI_ipv4cidr:
-      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]
-      followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).
+      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).
       Single IP addresses can be expressed as /32.'
       type: string
     MI_ipv6cidr:
-      description: 'An IPv6address CIDR block encoded in one of the IPv6 address formats specified in [RFC5952] followed by a "/" followed by 
-      an unsigned integer representing the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single IP addresses can be expressed as /128.'
+      description: 'An IPv6address CIDR block encoded in one of the IPv6 address formats specified in [RFC5952] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single IP addresses can be expressed as /128.'
       type: string
     MI_asn:
       description: 'An ASN value encoded as a string consisting of the characters "as" (in lowercase) followed by the ASN [RFC6793].'
