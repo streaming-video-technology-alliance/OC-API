@@ -12,7 +12,7 @@ components:
   schemas:
     FCI_capabilitytype_sva:
       type: string
-      enum: [FCI.Logging.sva, FCI.Capacity.sva, FCI.Metadata, FCI.AuthTypes.sva]
+      enum: [FCI.Capacity.sva, FCI.Metadata, FCI.AuthTypes.sva]
     FCI_genericbase:
       type: object
       description: 'adding properties to the FCI_genericbase object'
@@ -32,16 +32,15 @@ components:
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
             - $ref: '#/components/schemas/FCI.Metadata'
-            - $ref: '#/components/schemas/FCI.Logging.sva'
-            - $ref: '#/components/schemas/FCI.Capacity.sva'
-            - $ref: '#/components/schemas/FCI.AuthTypes.sva'
+            - $ref: '#/components/schemas/FCI.Capacity'
+            - $ref: '#/components/schemas/FCI.AuthTypes'
           discriminator: 
             propertyName: capability-type
         footprints:
           type: array
           description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
           items:
-            $ref: '#/components/schemas/MI.Footprint'
+            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
     FCI.Metadata:
       type: object
       description: 'extension of CDNI FCI.Metadata'
@@ -56,67 +55,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MI_payloadtype'
-    FCI.AuthTypes.sva:
+    FCI.AuthTypes:
       type: object
       required:
         - auth-types
       properties:
-        auth-types:
+        authe-types:
           type: array
           items: 
-            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_authtype'
-    FCI.Logging.sva:
-      type: object
-      description: 'The SVA Logging capability object is used to indicate support for CDNI Logging record-types, 
-      as well as CDNI and SVA Logging fields that are marked as optional for the specified record-types [RFC7937].'
-      required:
-        - record-type
-      properties:
-        transport-types:
-          description: 'list of supported protocols for logs injection'
+            $ref: '#/components/schemas/MI_authtype'
+        autho-types:
           type: array
-          items:
-            type: object
-            description: 'possibly one protocol for one region'
-            required:
-              - transport
-            properties:
-              footprint:
-                $ref: '#/components/schemas/MI.Footprint'
-              transport:
-                $ref: '#/components/schemas/MI_loggingtransporttype_sva'
-        record-type: 
-          description: 'log record format/type supported'
-          allOf:
-            - $ref: '#/components/schemas/MI_loggingrecordtype_sva'
-        fields:
-          description: 'List of supported CDNI and SVA Logging fields that are optional for the specified record-type.
-          Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported".  
-          An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, 
-          the fields in that list MUST be interpreted as "the only optional fields that are supported".'
-          type: array 
           items: 
-            oneOf:
-              - $ref: '#/components/schemas/MI_loggingfieldname'
-              - $ref: '#/components/schemas/MI_loggingfieldname_sva'
-            discriminator:
-              propertyName: record-type
-              mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
-        hash-fields:
-          description: 'List of fields that are obfuscated'
-          type: array 
-          items: 
-            oneOf:
-              - $ref: '#/components/schemas/MI_loggingfieldname'
-              - $ref: '#/components/schemas/MI_loggingfieldname_sva'
-            discriminator:
-              propertyName: record-type
-              mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
-    FCI.Capacity.sva:
+            $ref: '#/components/schemas/MI_authtype'
+    FCI.Capacity:
       description: 'capacity capabilities'
       oneOf:
         - $ref: '#/components/schemas/MI.Capacity.sva'
@@ -218,13 +170,17 @@ components:
         metadata:
           type: array
           items:
-            $ref: '#/components/schemas/MI.GenericMetadata'
+            $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
           and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
+    MI_DeliveryAuthorizatione:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
     MI.DeliveryAuthorization:
       type: object
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
@@ -364,7 +320,7 @@ components:
         - $ref: '#/components/schemas/MI_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -372,18 +328,32 @@ components:
     MI_payloadvalue:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.SourceMetadata'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Source'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.LocationACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.LocationRule'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.TimeWindowACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.TimeWindowRule'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.TimeWindow'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.ProtocolACL'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.ProtocolRule'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Cache'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Grouping'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.FallbackTarget'                     
         - $ref: '#/components/schemas/MI.DeliveryAuthorization'
         - $ref: '#/components/schemas/MI.Auth'
-        - $ref: '#/components/schemas/MI.Capacity.sva'     
+        - $ref: '#/components/schemas/MI.AWSv4Auth'
+        - $ref: '#/components/schemas/MI.HeaderAuth'
+        - $ref: '#/components/schemas/MI.UriSigning'
+        - $ref: '#/components/schemas/MI.AllowCompress'
+        - $ref: '#/components/schemas/MI.CachePolicy'
+    MI_GenericMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.GenericMetadata'    
     MI.GenericMetadata:
       type: object
-      description: 'GenericMetadata object extension by SVA'
+      description: 'GenericMetadata object extended by SVA'
       required:
         - generic-metadata-type
         - generic-metadata-value
@@ -403,7 +373,171 @@ components:
         incomprehensible:
           type: boolean
           description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform this metadata object.  Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'           
-    MI.Stages.sva:
+    MI_AllowCompress:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AllowCompress'
+    MI.AllowCompress:
+      type: object
+      properties:
+        allow-compress:
+          type: boolean
+          default: false
+      example:
+        value: {
+                    "allow-compress": "true"
+                }
+    MI_CachePolicy:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CachePolicy'
+    MI.CachePolicy:
+      type: object
+      properties:
+        internal:  
+          description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds. “5”, as an example for a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, default to use the cache control policy specified in the HTTP response from the uCDN.' 
+          oneOf:
+            - type: string
+            - type: string
+              enum: [as-is, no-cache, no-store]
+        external:  
+          description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”.The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, default to use the cache control policy specified in the HTTP response from the uCDN.'
+          oneOf:
+            - type: string
+            - type: string
+              enum: [as-is, no-cache, no-store]
+        force:  
+          description: 'If set to "True", the metadata interface cache policy defined in the MI.CachePolicy will override any cache control policy set in the response from the uCDN. If set to "False", the MI.CachePolicy is only used if there is no cache control policy provided in the response from the uCDN. Default is False, which will apply the MI.CachePolicy only if no policy is provided in the response from the uCDN.'
+          type: boolean
+      example:
+        value:  {
+                  "internal": "as-is",
+                  "external": "no-cache",
+                  "force": "true"
+                  }
+
+    MI_ComputedCacheKey:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ComputedCacheKey'
+    MI.ComputedCacheKey:
+      type: object
+      required:
+        - expression
+      properties:
+        expression:
+          description: 'An expression using CDNI-MEL to dynamically construct the cache key from elements of the HTTP request and/or response'
+          type: string
+      example:
+        value: {
+    "expression" : "$req.h.X-Cache-Key",
+  }
+    MI_CrossoriginPolicy:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CrossoriginPolicy'
+    
+    MI.CrossoriginPolicy:
+      type: object
+      description: 'Controls the dynamically generated CORS headers'
+      required:
+        - allow-origin
+      properties:
+        allow-origin:
+          description: 'Validation of simple CORS requests' 
+          type: Object
+          required:
+          - allow-list
+          - wildcard-return
+          properties:
+            allow-list:
+              description: 'List of valid URLs (only scheme and hostname) that will be used to match the request origin header.'
+              type: array
+              items: 
+                $ref: '#/components/schemas/MI_PatternMatch'
+            wildcard-return:
+              description: 'If true, the OCN will include a wildcard (*) in the Access-Control-Allow-Origin response header. If false, the OCN will reflect back the request Origin header in the Access-Control-Allow-Origin response header.'
+              type: boolean
+        expose-headers:
+          description: 'A list of values the OCN will include in the Access-Control-Expose-Headers response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-methods:
+          description: 'A list of values the OCN will include in the Access-Control-Allow-Methods response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-headers:
+          description: 'A list of values the OCN will include in the Access-Control-Allow-Headers response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-credentials:
+          description: 'The value the OCN will include in the Access-Control-Allow-Credentials response header to a preflight request.'
+          type: boolean
+        max-age:
+          description: The value the OCN will include in the Access-Control-Max-Age response header to a preflight request.
+          type: integer
+      example:
+        value: {
+              "allow-origin": {
+                "allow-list": {
+                  "pattern": "*://sourcepage.example.com"},
+                "wildcard-return": false
+              },
+              "allow-methods": ["GET","POST"],
+              "allow-credentials": true,
+              "allow-headers": ["X-PINGOTHER","Content-Type"],
+              "expose-headers": ["X-User","Authorization"],
+              "max-age": 3600
+            }
+    MI_NegativeCachePolicy:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.NegativeCachePolicy'
+    MI.NegativeCachePolicy: 
+      type: object
+      description: 'Allows for the configuration of caching policies based on error response codes received from the origin.'
+      required:
+        - cache-policy
+      properties:
+        error-codes:
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in MI.CachePolicy. by default the policy expressed in RFC8006 is applied'
+          type: array
+          items:
+            type: string
+            enum: [404, 503, 504]
+        cache-policy:
+          description: 'MI.CachePolicy to apply to the HTTP response error status codes returned by the uCDN.'
+          $ref: '#/components/schemas/MI_CachePolicy'
+      example:
+        value: {
+        "error-codes": ["404", "503", "504"],
+        "cache-policy": {
+          "internal": "5",
+          "external": "no-cache",
+          "force": "true"
+        }
+      }
+    MI_NonCacheablePolicy:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.NonCacheablePolicy'
+    MI.NonCacheablePolicy:
+      type: object
+      description: 'allows a client request to be set as non cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
+      properties:
+        non-cacheable:
+          description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within a ProcessingStages to allow a client request to be marked to bypass a cache.'
+          type: boolean
+          default: false
+    MI_PrivateFeatureList:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PrivateFeatureList'
+    MI.PrivateFeatureList:
+    MI.Stages:
       type: object
       properties:
         stages:
@@ -430,77 +564,8 @@ components:
     MI_stagetype:
       type: string
       enum: [clientRequest, originRequest, originResponse, clientResponse]
-    MI.Logging.sva:
-      type: object
-      description: 'logging configuration according to SVA (supersedes CDNI)'
-      properties:
-        record-type:
-          $ref: '#/components/schemas/MI_loggingrecordtype_sva'
-        include-fields:
-          description: 'The default for “fields” property is that all optional fields are included. 
-          Omission of this property MUST be interpreted as "all". An empty list corrresponds to "None of the fields".'
-          type: array
-          items:
-            discriminator:
-              propertyName: record-type
-              mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
-        exclude-fields:
-          description: 'The default for “fields” property is that none of optional fields are exluded. 
-          Omission of this property MUST be interpreted as "none". An empty list corrresponds to "all of the fields are excluded".'
-          type: array
-          items:
-            discriminator:
-              propertyName: record-type
-              mapping:
-                cdni_http_request_v1: '#/components/schemas/MI_loggingfieldname'
-                sva_http_request_v1: '#/components/schemas/MI_loggingfieldname_sva'
-        transport-protocols:
-          description: 'list of supported protocols for logs injection. Possibly one protocol for one region'
-          type: array
-          items:
-            type: object
-            required:
-              - transport
-            properties:
-              footprint:
-                $ref: '#/components/schemas/MI.Footprint'   
-              transport-type: 
-                description: 'the configuration parameters of the transport protocol depends on the type of protocol'
-                allOf:
-                  - $ref: '#/components/schemas/MI_loggingtransporttype_sva'
-              transport_parameters:
-                discriminator:
-                  propertyName: transport-type
-                  mapping: 
-                    cdni: '#/components/schemas/MI_loggingtransportcdni_sva'
-                    kafka: '#/components/schemas/MI_loggingtransportkafka_sva'
-                    logstash: '#/components/schemas/MI_loggingtransportlogstash_sva'
-    MI_loggingtransportcdni_sva:
-      type: string
-      enum: [none]
-    MI_loggingtransportkafka_sva:
-      type: string
-      enum: [none]
-    MI_loggingtransportlogstash_sva:
-      type: string
-      enum: [none]
-    MI_loggingtransporttype_sva:
-      type: string
-      enum: [cdni, kafka, logstash]
-    MI_loggingrecordtype_sva:
-      type: string
-      enum: [cdni_http_request_v1, sva_http_request_v1]
-    MI_loggingfieldname:
-      type: string
-      enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, 
-      sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
-    MI_loggingfieldname_sva:
-      type: string
-      enum: [time, duration, client-adress, result-codes, bytes, request-method, url, hierarchy-code, type, 
-      host-name, source-name, cache-key, aborted, error-codes_CND]
-    MI.Capacity.sva:
+    
+    MI.Capacity:
       type: object
       description: 'capacity interface configuration'
       required:
@@ -510,8 +575,8 @@ components:
           description: 'An array with footprints and associated capacity type to listen'
           type: array
           items:
-            $ref: '#/components/schemas/MI_capacity_sva'
-    MI_capacity_sva:    
+            $ref: '#/components/schemas/MI_capacity'
+    MI_capacity:    
       type: object
       description: 'a footprint entry associated with a capacity configuration.'
       required:
