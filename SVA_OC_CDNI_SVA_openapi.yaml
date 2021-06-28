@@ -158,8 +158,8 @@ components:
           description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
           type: array
           items:
-            $ref: '#/components/schemas/MI_hostmatch'
-    MI_hostmatch:
+            $ref: '#/components/schemas/MI_HostMatch'
+    MI_HostMatch:
       oneOf:
         - $ref: '#/components/schemas/MI.HostMatch'
         - $ref: '#/components/schemas/MI_link'
@@ -188,8 +188,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
-      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) 
-      and possibly child PathMatch objects.'
+      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
       required:
         - metadata
       properties:
@@ -278,6 +277,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/MI_UriSigning'
             - $ref: '#/components/schemas/MI_HeaderAuth'
+            - $ref: '#/components/schemas/MI_HeaderAuth'
           discriminator: 
             propertyName: auth-type 
     MI_authtype:
@@ -286,6 +286,7 @@ components:
     MI_HeaderAuth:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HeaderAuth'
         - $ref: '#/components/schemas/MI.HeaderAuth'
     MI.HeaderAuth:
       type: object
@@ -393,7 +394,7 @@ components:
         - $ref: '#/components/schemas/MI_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress]
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy, MI.ComputedCacheKey,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI, .ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -598,7 +599,7 @@ components:
         - cache-policy
       properties:
         error-codes:
-          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in MI.CachePolicy. by default the policy expressed in RFC8006 is applied'
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in cache-policy. by default the policy expressed in RFC8006 is applied'
           type: array
           items:
             type: string
@@ -724,12 +725,13 @@ components:
         - $ref: '#/components/schemas/MI.StageRules'
     MI.StageRules:
       type: object
-      description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transforms that should be applied conditionally on a rich expression match. A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided'
+      description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transforms that should be applied conditionally on a rich expression match.'
       properties:
         match:
-          description: 'The stage-metadata rules are always applied if no match expression is provided. This would be the case when stage-metadata'
+          description: 'A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided.'
           $ref: '#/components/schemas/MI_ExpressionMatch'
         stage-metadata:
+          description: 'The stage-metadata rules are always applied if no match expression is provided. This would be the case when stage-metadata'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageMetadata'

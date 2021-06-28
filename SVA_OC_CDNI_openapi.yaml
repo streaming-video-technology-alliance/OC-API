@@ -261,6 +261,10 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
+    MI_SourceMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceMetadata'  
     MI.SourceMetadata:
       type: object
       description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP)  but might be a set of Surrogates in the uCDN.'
@@ -302,7 +306,7 @@ components:
         locations:
           type: array
           items:
-            $ref: '#/components/schemas/MI.LocationRule'
+            $ref: '#/components/schemas/MI_LocationRule'
     MI_LocationRule:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
