@@ -4,7 +4,7 @@ info:
   description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.4.0
+  version: 2.0.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
@@ -420,6 +420,29 @@ components:
         - $ref: '#/components/schemas/MI.UriSigning'
         - $ref: '#/components/schemas/MI.AllowCompress'
         - $ref: '#/components/schemas/MI.CachePolicy'
+        - $ref: '#/components/schemas/MI.ComputedCacheKey'
+        - $ref: '#/components/schemas/MI.CrossoriginPolicy'
+        - $ref: '#/components/schemas/MI.NegativeCachePolicy'
+        - $ref: '#/components/schemas/MI.CacheBypassPolicy'
+        - $ref: '#/components/schemas/MI.OcnSelection'
+        - $ref: '#/components/schemas/MI.PrivateFeatureList'
+        - $ref: '#/components/schemas/MI.ProcessingStages'
+        - $ref: '#/components/schemas/MI.StageRules'
+        - $ref: '#/components/schemas/MI.ExpressionMatch'
+        - $ref: '#/components/schemas/MI.StageMetadata'
+        - $ref: '#/components/schemas/MI.RequestTransform'
+        - $ref: '#/components/schemas/MI.ResponseTransform'
+        - $ref: '#/components/schemas/MI.SyntheticResponse'
+        - $ref: '#/components/schemas/MI.HeaderTransform'        
+        - $ref: '#/components/schemas/MI.HTTPHeader'        
+        - $ref: '#/components/schemas/MI.RequestedCapacityLimits'        
+        - $ref: '#/components/schemas/MI.RequestRouting'        
+        - $ref: '#/components/schemas/MI.ServiceIDs'        
+        - $ref: '#/components/schemas/MI.SourceMetadataExtended'        
+        - $ref: '#/components/schemas/MI.SourceExtended'        
+        - $ref: '#/components/schemas/MI.LoadBalanceMetadata'        
+        - $ref: '#/components/schemas/MI.StaleContentCachePolicy'        
+        - $ref: '#/components/schemas/MI.TrafficType'        
     MI_GenericMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -592,15 +615,15 @@ components:
           "force": "true"
         }
       }
-    MI_NonCacheablePolicy:
+    MI_CacheBypassPolicy:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.NonCacheablePolicy'
-    MI.NonCacheablePolicy:
+        - $ref: '#/components/schemas/MI.CacheBypassPolicy'
+    MI.CacheBypassPolicy:
       type: object
       description: 'allows a client request to be set as non cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
       properties:
-        non-cacheable:
+        bypass-cache:
           description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within a ProcessingStages to allow a client request to be marked to bypass a cache.'
           type: boolean
           default: false

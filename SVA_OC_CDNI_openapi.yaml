@@ -5,7 +5,7 @@ info:
   This API itself is not elaborated. What matters in this file is the CDNI model (schema)'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.1.0
+  version: 1.0.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
