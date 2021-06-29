@@ -948,7 +948,7 @@ components:
           type: string
           enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
         limit-value:
-          description: 'The requested new value for the limit.'
+          description: 'The requested new value for the limit: egress (bps), requests (requests per seconds), storage-size (total nbr of bytes), storage-objects (count of objects), sessions (count of sessions), or cache-size (total nbr of bytes)'
           type: integer
         footprints:
           description: 'dCDN footprints within the advertised FCI.CapacityLimits footprints for which this request applies.'
@@ -1136,11 +1136,12 @@ components:
       type: object
       description: ' defines a set of descriptors that characterize either the type or usage of the traffic, enabling CDNs and OCNs to apply any internal configuration rules without exposing an unnecessary amount of internal details.'
       required:
-        - traffic-types
+        - traffic-type
       properties:
         traffic-type:
           description: 'A literal that defines the traffic type. uCDN will use the literal that is most representative of the traffic being delegated. The following literals are specified: vod, live, object-download'
           type: string
+          enum: [vod, live, object-download]
         hints:
           description: 'Other traffic characteristics that uCDN can indicate to the dCDN as suggestions for service optimization. Accepts free-form unconstrained values.'
           type: array 
