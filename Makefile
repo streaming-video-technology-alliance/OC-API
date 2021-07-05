@@ -1,4 +1,4 @@
-OPENAPI_SPEC := SVA_OC_openAPI_extended.yaml
+OPENAPI_SPEC := testbed.yaml
 HTTP_PROXY_HOST = $(shell echo ${http_proxy} | sed 's/http:\/\/\(.*\):\([0-9]*\)\//\1/g' )
 HTTP_PROXY_PORT = $(shell echo ${http_proxy} | sed 's/http:\/\/\(.*\):\([0-9]*\)\//\2/g' )
 
