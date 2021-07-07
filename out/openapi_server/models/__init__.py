@@ -1,0 +1,45 @@
+# coding: utf-8
+
+# flake8: noqa
+from __future__ import absolute_import
+# import models into model package
+from openapi_server.models.advertisement import Advertisement
+from openapi_server.models.fci_acquisition_protocol import FCIAcquisitionProtocol
+from openapi_server.models.fci_capabilitytype import FCICapabilitytype
+from openapi_server.models.fci_delivery_protocol import FCIDeliveryProtocol
+from openapi_server.models.fci_dnstarget import FCIDnstarget
+from openapi_server.models.fci_genericbase import FCIGenericbase
+from openapi_server.models.fci_httptarget import FCIHttptarget
+from openapi_server.models.fci_logging import FCILogging
+from openapi_server.models.fci_loggingfieldname import FCILoggingfieldname
+from openapi_server.models.fci_metadata import FCIMetadata
+from openapi_server.models.fci_redirect_target import FCIRedirectTarget
+from openapi_server.models.fci_redirection_mode import FCIRedirectionMode
+from openapi_server.models.fci_redirectionmodevalue import FCIRedirectionmodevalue
+from openapi_server.models.mi_auth import MIAuth
+from openapi_server.models.mi_authtype import MIAuthtype
+from openapi_server.models.mi_cache import MICache
+from openapi_server.models.mi_delivery_authorization import MIDeliveryAuthorization
+from openapi_server.models.mi_fallback_target import MIFallbackTarget
+from openapi_server.models.mi_footprint import MIFootprint
+from openapi_server.models.mi_footprinttype import MIFootprinttype
+from openapi_server.models.mi_generic_metadata import MIGenericMetadata
+from openapi_server.models.mi_grouping import MIGrouping
+from openapi_server.models.mi_host_index import MIHostIndex
+from openapi_server.models.mi_host_match import MIHostMatch
+from openapi_server.models.mi_host_metadata import MIHostMetadata
+from openapi_server.models.mi_location_acl import MILocationACL
+from openapi_server.models.mi_location_rule import MILocationRule
+from openapi_server.models.mi_path_match import MIPathMatch
+from openapi_server.models.mi_path_metadata import MIPathMetadata
+from openapi_server.models.mi_pattern_match import MIPatternMatch
+from openapi_server.models.mi_payloadtype import MIPayloadtype
+from openapi_server.models.mi_protocol import MIProtocol
+from openapi_server.models.mi_protocol_acl import MIProtocolACL
+from openapi_server.models.mi_protocol_rule import MIProtocolRule
+from openapi_server.models.mi_source import MISource
+from openapi_server.models.mi_source_metadata import MISourceMetadata
+from openapi_server.models.mi_time_window import MITimeWindow
+from openapi_server.models.mi_time_window_acl import MITimeWindowACL
+from openapi_server.models.mi_time_window_rule import MITimeWindowRule
+from openapi_server.models.mi_uri_signing import MIUriSigning

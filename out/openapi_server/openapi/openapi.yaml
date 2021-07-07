@@ -1,0 +1,823 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  description: This is the Open Caching API model as exposed by an ISP( dCDN) according
+    to the Streaming Video Alliance (SVA).
+  title: Open Caching API - SVA OC API
+  version: 0.3.0
+externalDocs:
+  description: Find out more
+  url: https://www.streamingvideoalliance.org/
+servers:
+- url: http://localhost:8080
+tags:
+- description: Deals with FCI (RFC8008/RFC8804)
+  name: OC_FCI
+- description: Deals with COI
+  name: OC_COI_simple
+paths:
+  /oc/ci/configuration:
+    put:
+      description: To be used when the metadata to communicate is pseudo static and
+        simple. The ISP (dCDN) processes the request and answers immediately. For
+        a more complex metadata then use the CI API.
+      operationId: oc_ci_configure
+      requestBody:
+        content:
+          application/cdni;ptype=MI.HostIndex:
+            schema:
+              $ref: '#/components/schemas/MIHostIndex'
+        description: the metadata(configuration) to be considered/processed by the
+          ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804.
+          It is the entire dataset (HostIndex)
+        required: true
+      responses:
+        "200":
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: ' the status can either be complete or failed. The status
+                  report gathers the URL of the metadata configuration. Note that
+                  the status report is not kept by the dCDN. It is not necessary to
+                  delete it as with the CI API (conforming to RFC8007)'
+          description: Command is ok
+        "400":
+          description: Command is invalid
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+      summary: Communicates the metadata/configuration (RFC8006 + RFC8804) to the
+        ISP with a simple API
+      tags:
+      - OC_COI_simple
+      x-openapi-router-controller: openapi_server.controllers.occoi_simple_controller
+  /oc/fci/advertisement:
+    get:
+      description: This operation is used to pull the FCI advertisement related to
+        the requester (identified thanks to the security token obtained)
+      operationId: oc_fci_get_advertisement
+      responses:
+        "200":
+          content:
+            application/cdni:
+              schema:
+                $ref: '#/components/schemas/Advertisement'
+          description: FCI advertisement
+        "400":
+          description: bad request
+        "403":
+          description: Forbiden
+        "404":
+          description: No FCI advertisement
+      summary: get the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
+      tags:
+      - OC_FCI
+      x-openapi-router-controller: openapi_server.controllers.ocfci_controller
+components:
+  schemas:
+    Advertisement:
+      properties:
+        capabilities:
+          items:
+            $ref: '#/components/schemas/FCIGenericbase'
+          title: capabilities
+          type: array
+      required:
+      - capabilities
+      title: Advertisement
+      type: object
+    FCIGenericbase:
+      properties:
+        capability-type:
+          $ref: '#/components/schemas/FCICapabilitytype'
+        capability-value:
+          title: capability-value
+          type: object
+        footprints:
+          items:
+            $ref: '#/components/schemas/MIFootprint'
+          title: footprints
+          type: array
+      title: FCIGenericbase
+      type: object
+    FCICapabilitytype:
+      enum:
+      - FCI.DeliveryProtocol
+      - FCI.AcquisitionProtocol
+      - FCI.RedirectionMode
+      - FCI.Logging
+      - FCI.Metadata
+      - FCI.RedirectTarget
+      title: FCICapabilitytype
+      type: string
+    FCIDeliveryProtocol:
+      description: The Delivery Protocol capability object is used to indicate support
+        for one or more of the protocols listed in the "CDNI Metadata Protocol Types"
+        registry (defined in [RFC8006]).
+      properties:
+        delivery-protocols:
+          items:
+            $ref: '#/components/schemas/MIProtocol'
+          type: array
+      required:
+      - delivery-protocols
+      type: object
+    FCIAcquisitionProtocol:
+      description: The Acquisition Protocol capability object is used to indicate
+        support for one or more of the protocols listed in the "CDNI Metadata Protocol
+        Types" registry (defined in [RFC8006]).
+      properties:
+        acquisition-protocols:
+          items:
+            $ref: '#/components/schemas/MIProtocol'
+          type: array
+      required:
+      - acquisition-protocols
+      type: object
+    MIProtocol:
+      enum:
+      - http/1.1
+      - https/1.1
+      - http/2
+      title: MIProtocol
+      type: string
+    FCIRedirectionMode:
+      description: List of supported CDNI redirection modes
+      properties:
+        redirection-modes:
+          items:
+            $ref: '#/components/schemas/FCIRedirectionmodevalue'
+          type: array
+      required:
+      - redirection-modes
+      type: object
+    FCIRedirectTarget:
+      description: FCI extension per RFC8804
+      properties:
+        redirecting-hosts:
+          description: One or more uCDN hosts to which this redirect target is attached.  A
+            redirecting host SHOULD be a host that was published in a HostMatch object
+            by the uCDN as defined in Section 4.1.2 of [RFC8006]
+          items:
+            $ref: '#/components/schemas/MIEndpoint'
+          type: array
+        dns-target:
+          $ref: '#/components/schemas/FCIDnstarget'
+        http-target:
+          $ref: '#/components/schemas/FCIHttptarget'
+      type: object
+    FCIHttptarget:
+      description: 'FCI extension per RFC8004: the HttpTarget object gives the necessary
+        information to construct the target Location URI for HTTP redirection.'
+      properties:
+        host:
+          description: A hostname (with optional port) or an IP address (with optional
+            port). All implementations MUST support IPv4 addresses encoded as specified
+            by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses
+            MUST be encoded in one of the IPv6 address formats specified in [RFC5952],
+            although receivers MUST support all IPv6 address formats specified in
+            [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax
+            defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs)
+            must first be transformed to the A-label form [RFC5890] as per [RFC589
+          title: MIEndpoint
+          type: string
+        scheme:
+          description: A URI scheme to be used in the redirect response location construction.  When
+            present, the uCDN MUST use the provided scheme in for HTTP redirection
+            to the dCDN.
+          enum:
+          - http
+          - https
+          title: scheme
+          type: string
+        path-prefix:
+          description: A path prefix for the HTTP redirect Location header. The original
+            path is appended after this prefix.
+          title: path-prefix
+          type: string
+        include-redirecting-host:
+          default: false
+          description: A flag indicating whether or not to include the redirecting
+            host as the first path segment after the path-prefix. If set to true and
+            a "path-prefix" is used, the uCDN redirecting host MUST be added as a
+            separate path segment after the path-prefix and before the original URL
+            path.  If set to true and there is no path-prefix, the uCDN redirecting
+            host MUST be prepended as the first path segment in the redirect URL.
+          title: include-redirecting-host
+          type: boolean
+      required:
+      - host
+      title: FCIHttptarget
+      type: object
+    FCIDnstarget:
+      description: 'FCI extension per RFC8004: the DnsTarget object gives the target
+        address for the DNS response to delegate from the uCDN to the dCDN.'
+      properties:
+        host:
+          description: A hostname (with optional port) or an IP address (with optional
+            port). All implementations MUST support IPv4 addresses encoded as specified
+            by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses
+            MUST be encoded in one of the IPv6 address formats specified in [RFC5952],
+            although receivers MUST support all IPv6 address formats specified in
+            [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax
+            defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs)
+            must first be transformed to the A-label form [RFC5890] as per [RFC589
+          title: MIEndpoint
+          type: string
+      required:
+      - host
+      title: FCIDnstarget
+      type: object
+    FCILogging:
+      description: The CDNI Logging capability object is used to indicate support
+        for CDNI Logging record-types, as well as CDNI Logging fields that are marked
+        as optional for the specified record-types [RFC7937].
+      properties:
+        record-type:
+          enum:
+          - cdni_http_request_v1
+          type: string
+        fields:
+          description: List of supported CDNI Logging fields that are optional for
+            the specified record-type. Default is that all optional fields are supported.  Omission
+            of this field MUST be interpreted as "all optional fields are supported".
+            An empty list MUST be interpreted as "no optional fields are supported".  Otherwise,
+            if a list of fields is provided, the fields in that list MUST be interpreted
+            as "the only optional fields that are supported".
+          items:
+            $ref: '#/components/schemas/FCILoggingfieldname'
+          type: array
+      required:
+      - record-type
+      type: object
+    FCIMetadata:
+      description: The CDNI Metadata capability object is used to indicate support
+        for CDNI GenericMetadata types [RFC8006].
+      properties:
+        metadata:
+          description: List of supported CDNI GenericMetadata types. List of strings
+            corresponding to entries from the "CDNI Payload Types" registry [RFC7736]
+            that correspond to CDNI GenericMetadata objects. An empty list MUST be
+            interpreted as "no GenericMetadata types are supported", i.e., "only structural
+            metadata and simple types are supported"; otherwise, the list must be
+            interpreted as containing "the only GenericMetadata types that are supported"
+            (in addition to structural metadata and simple types) [RFC8006].
+          items:
+            $ref: '#/components/schemas/MIPayloadtype'
+          type: array
+      required:
+      - metadata
+      type: object
+    FCILoggingfieldname:
+      enum:
+      - date
+      - time
+      - time-taken
+      - c-groupid
+      - s-ip
+      - s-hostname
+      - s-port
+      - cs-uri
+      - u-uri
+      - protocol
+      - sc-status
+      - sc-total-bytes
+      - sc-entity-bytes
+      - cs(insert_HTTP_header_name_here)
+      - sc(insert_HTTP_header_name_here)
+      - s-ccid
+      - s-sid
+      - s-cached
+      title: FCILoggingfieldname
+      type: string
+    FCIRedirectionmodevalue:
+      enum:
+      - DNS-I
+      - DNS-R
+      - HTTP-I
+      - HTTP-R
+      title: FCIRedirectionmodevalue
+      type: string
+    MIHostIndex:
+      description: The HostIndex object is the entry point into the CDNI Metadata
+        hierarchy.  It contains an array of HostMatch objects. An incoming content
+        request is checked against the hostname (or IP address) specified by each
+        of the listed HostMatch objects to find the HostMatch object that applies
+        to the request
+      properties:
+        hosts:
+          description: Array of HostMatch objects.  Hosts (HostMatch objects) MUST
+            be evaluated in the order they appear, and the first HostMatch object
+            that matches the content request being processed MUST be used
+          items:
+            $ref: '#/components/schemas/MIHostMatch'
+          type: array
+      required:
+      - hosts
+      type: object
+    MIHostMatch:
+      properties:
+        host:
+          description: A hostname (with optional port) or an IP address (with optional
+            port). All implementations MUST support IPv4 addresses encoded as specified
+            by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses
+            MUST be encoded in one of the IPv6 address formats specified in [RFC5952],
+            although receivers MUST support all IPv6 address formats specified in
+            [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax
+            defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs)
+            must first be transformed to the A-label form [RFC5890] as per [RFC589
+          title: MIEndpoint
+          type: string
+        host-metadata:
+          $ref: '#/components/schemas/MIHostMetadata'
+      required:
+      - host
+      - host-metadata
+      title: MIHostMatch
+      type: object
+    MIHostMetadata:
+      description: A HostMetadata object contains the CDNI Metadata properties for
+        content served for a particular host (defined in the HostMatch object) and
+        possibly child PathMatch objects.
+      properties:
+        metadata:
+          items:
+            $ref: '#/components/schemas/MIGenericMetadata'
+          title: metadata
+          type: array
+        paths:
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch
+            objects) MUST be evaluated in the order they appear, and the first (and
+            only the first) PathMatch object that matches the content request being
+            processed MUST be used'
+          items:
+            $ref: '#/components/schemas/MIPathMatch'
+          title: paths
+          type: array
+      required:
+      - metadata
+      title: MIHostMetadata
+      type: object
+    MIPathMatch:
+      description: A PathMatch object contains a PatternMatch object with a path to
+        match against a resource URI path, as well as how to handle URI query parameters.  The
+        PathMatch object also contains a PathMetadata object with GenericMetadata
+        to apply if the resource URI matches the pattern within the PatternMatch object.
+      properties:
+        path-pattern:
+          $ref: '#/components/schemas/MIPatternMatch'
+        path-metadata:
+          $ref: '#/components/schemas/MIPathMetadata'
+      required:
+      - path-metadata
+      - path-pattern
+      title: MIPathMatch
+      type: object
+    MIPatternMatch:
+      properties:
+        pattern:
+          description: 'Description: A pattern for matching against the URI path,
+            i.e., against the path-absolute [RFC3986]. The pattern can contain the
+            wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986]
+            or "/" characters (including the empty string) and "?" matches exactly
+            one pchar character.  The three literals "$", "*", and "?"  MUST be escaped
+            as "$$", "$*", and "$?" (where "$" is the designated escape character).
+            All other characters are treated as literals'
+          title: pattern
+          type: string
+        case-sensitive:
+          default: false
+          description: 'Flag indicating whether or not case-sensitive matching should
+            be used. Note: Case insensitivity applies to ALPHA characters in the URI
+            path prior to percent-decoding [RFC3986].'
+          title: case-sensitive
+          type: boolean
+      required:
+      - pattern
+      title: MIPatternMatch
+      type: object
+    MIPathMetadata:
+      description: A PathMetadata object contains the CDNI Metadata properties for
+        content requests that match against the associated URI path (defined in a
+        PathMatch object). Note that if DNS-based redirection is employed, then a
+        dCDN will be unable to evaluate any metadata at the PathMetadata level or
+        below because only the hostname of the content request is available at Request
+        Routing time. dCDNs SHOULD still process all PathMetadata for the host before
+        responding to the redirection request to detect if any unsupported metadata
+        is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce,
+        the dCDN SHOULD NOT accept the content redirection request, in order to avoid
+        receiving content requests that it will not be able to satisfy/serve.
+      properties:
+        metadata:
+          items:
+            $ref: '#/components/schemas/MIGenericMetadata'
+          title: metadata
+          type: array
+      required:
+      - metadata
+      title: MIPathMetadata
+      type: object
+    MIFootprint:
+      description: A Footprint object describes the footprint to which a LocationRule
+        can be applied, e.g., an IPv4 address range or a geographic location.
+      properties:
+        footprint-type:
+          $ref: '#/components/schemas/MIFootprinttype'
+        footprint-value:
+          items:
+            type: object
+          title: footprint-value
+          type: array
+      required:
+      - footprint-type
+      title: MIFootprint
+      type: object
+    MIFootprinttype:
+      enum:
+      - ipv4cidr
+      - ipv6cidr
+      - asn
+      - countrycode
+      title: MIFootprinttype
+      type: string
+    MIIpv4cidr:
+      description: An IPv4address Classless Inter-Domain Routing (CIDR) block encoded
+        as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986] followed
+        by a "/" followed by an unsigned integer representing the leading bits of
+        the routing prefix (i.e., IPv4 CIDR notation). Single IP addresses can be
+        expressed as /32.
+      type: string
+    MIIpv6cidr:
+      description: An IPv6address CIDR block encoded in one of the IPv6 address formats
+        specified in [RFC5952] followed by a "/" followed by an unsigned integer representing
+        the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single
+        IP addresses can be expressed as /128.
+      type: string
+    MIAsn:
+      description: An ASN value encoded as a string consisting of the characters "as"
+        (in lowercase) followed by the ASN [RFC6793].
+      type: string
+    MICountrycode:
+      description: ' An ISO 3166-1 alpha-2 code [ISO3166-1] in lowercase.'
+      type: string
+    MIEndpoint:
+      description: A hostname (with optional port) or an IP address (with optional
+        port). All implementations MUST support IPv4 addresses encoded as specified
+        by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST
+        be encoded in one of the IPv6 address formats specified in [RFC5952], although
+        receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames
+        MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and
+        [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed
+        to the A-label form [RFC5890] as per [RFC589
+      title: MIEndpoint
+      type: string
+    MILocationACL:
+      description: LocationACL metadata defines which locations a User Agent needs
+        to be in, in order to be able to receive the associated content. A LocationACL
+        that does not include a "locations" property results in an action of "allow
+        all", meaning that delivery can be performed regardless of the User Agent
+        location; otherwise, a CDN MUST take the action from the first footprint to
+        match against the User Agent location. If two or more footprints overlap,
+        the first footprint that matches against the User Agent location determines
+        the action a CDN MUST take. If the "locations" property is included but is
+        empty or if none of the listed footprints match the User Agent location, then
+        the result is an action of "deny". Although the LocationACL, TimeWindowACL
+        (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata
+        objects, they can provide conflicting information to a dCDN, e.g., a content
+        request that is simultaneously allowed based on the LocationACL and denied
+        based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs
+        (where "allow" is true and "deny" is false) to determine whether or not a
+        request should be allowed.
+      properties:
+        locations:
+          items:
+            $ref: '#/components/schemas/MILocationRule'
+          type: array
+      type: object
+    MILocationRule:
+      description: A LocationRule contains or references an array of Footprint objects
+        and the corresponding action.
+      properties:
+        footprints:
+          items:
+            $ref: '#/components/schemas/MIFootprint'
+          title: footprints
+          type: array
+        action:
+          default: deny
+          enum:
+          - allow
+          - deny
+          title: action
+          type: string
+      required:
+      - footprints
+      title: MILocationRule
+      type: object
+    MISourceMetadata:
+      properties:
+        sources:
+          items:
+            $ref: '#/components/schemas/MISource'
+          type: array
+      type: object
+    MISource:
+      properties:
+        acquisition-auth:
+          $ref: '#/components/schemas/MIAuth'
+        endpoints:
+          items:
+            $ref: '#/components/schemas/MIEndpoint'
+          title: endpoints
+          type: array
+        protocol:
+          $ref: '#/components/schemas/MIProtocol'
+      required:
+      - endpoints
+      title: MISource
+      type: object
+    MITimeWindowACL:
+      description: A TimeWindowACL that does not include a "times" property results
+        in an action of "allow all", meaning that delivery can be performed regardless
+        of the time of the User Agent request; otherwise, a CDN MUST take the action
+        from the first window to match against the current time. If two or more windows
+        overlap, the first window that matches against the current time determines
+        the action a CDN MUST take. If the "times" property is included but is empty
+        or if none of the listed windows match the current time, then the result is
+        an action of "deny".
+      properties:
+        times:
+          items:
+            $ref: '#/components/schemas/MITimeWindowRule'
+          type: array
+      type: object
+    MITimeWindowRule:
+      description: ' A TimeWindowRule contains or references an array of TimeWindow
+        objects and the corresponding action.'
+      properties:
+        windows:
+          items:
+            $ref: '#/components/schemas/MITimeWindow'
+          title: windows
+          type: array
+        action:
+          default: deny
+          enum:
+          - allow
+          - deny
+          title: action
+          type: string
+      title: MITimeWindowRule
+      type: object
+    MITime:
+      description: A time value expressed in seconds since the UNIX epoch (i.e., zero
+        hours, zero minutes, zero seconds, on January 1, 1970) Coordinated Universal
+        Time (UTC) [POSIX].
+      format: int32
+      title: MITime
+      type: integer
+    MITimeWindow:
+      properties:
+        start:
+          description: A time value expressed in seconds since the UNIX epoch (i.e.,
+            zero hours, zero minutes, zero seconds, on January 1, 1970) Coordinated
+            Universal Time (UTC) [POSIX].
+          format: int32
+          title: MITime
+          type: integer
+        end:
+          description: A time value expressed in seconds since the UNIX epoch (i.e.,
+            zero hours, zero minutes, zero seconds, on January 1, 1970) Coordinated
+            Universal Time (UTC) [POSIX].
+          format: int32
+          title: MITime
+          type: integer
+      required:
+      - end
+      - start
+      title: MITimeWindow
+      type: object
+    MIProtocolACL:
+      description: ProtocolACL metadata defines delivery protocol restrictions. A
+        ProtocolACL that does not include a protocol-acl property results in an action
+        of "allow all", meaning that delivery can be performed regardless of the protocol
+        in the User Agent request; otherwise, a CDN MUST take the action from the
+        first protocol to match against the request protocol. If two or more request
+        protocols overlap, the first protocol that matches the request protocol determines
+        the action a CDN MUST take. If the protocol-acl property is included but is
+        empty or if none of the listed protocols match the request protocol, then
+        the result is an action of "deny". Although the LocationACL (see Section 4.2.2),
+        TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata
+        objects, they can provide conflicting information to a dCDN, e.g., a content
+        request that is simultaneously allowed based on the ProtocolACL and denied
+        based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs
+        (where "allow" is true and "deny" is false) to determine whether or not a
+        request should be allowed.
+      properties:
+        protocol-acl:
+          items:
+            $ref: '#/components/schemas/MIProtocolRule'
+          type: array
+      type: object
+    MIProtocolRule:
+      description: A ProtocolRule contains or references an array of Protocol objects
+        and the corresponding action.
+      properties:
+        protocols:
+          items:
+            $ref: '#/components/schemas/MIProtocol'
+          title: protocols
+          type: array
+        action:
+          default: deny
+          enum:
+          - allow
+          - deny
+          title: action
+          type: string
+      required:
+      - protocols
+      title: MIProtocolRule
+      type: object
+    MIDeliveryAuthorization:
+      description: Delivery authorization defines authorization methods for the delivery
+        of content to User Agents.
+      properties:
+        delivery-auth-methods:
+          description: Options for authorizing content requests. Delivery for a content
+            request is authorized if any one of the authorization methods in the list
+            is satisfied for that request.
+          items:
+            $ref: '#/components/schemas/MIAuth'
+          type: array
+      type: object
+    MICache:
+      description: ' A Cache object describes the cache control parameters to be applied
+        to the content by intermediate caches. Cache keys are generated from the URI
+        of the content request [RFC7234].  In some cases, a CDN or content provider
+        might want certain path segments or query parameters to be excluded from the
+        cache key generation.  The Cache object provides guidance on what parts of
+        the path and query string to include.'
+      properties:
+        exclude-path-pattern:
+          description: 'A pattern for matching against the URI path, i.e., against
+            the path-absolute [RFC3986]. The pattern can contain the wildcards "*"
+            and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters
+            (including the empty string) and "?" matches exactly one pchar character.  The
+            three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?"
+            (where "$" is the designated escape character).  All other characters
+            are treated as literals. Cache key generation MUST only include the portion
+            of the path-absolute that matches the wildcard portions of the pattern.
+            Note: Inconsistency between the PatternMatch pattern (Section 4.1.5) and
+            the exclude-path-pattern can result in inefficient caching.'
+          type: string
+        include-query-strings:
+          items:
+            type: string
+          type: array
+      type: object
+    MIAuth:
+      properties:
+        auth_type:
+          $ref: '#/components/schemas/MIAuthtype'
+        auth_value:
+          $ref: '#/components/schemas/MIUriSigning'
+      title: MIAuth
+      type: object
+    MIAuthtype:
+      enum:
+      - MI.UriSigning
+      title: MIAuthtype
+      type: string
+    MIUriSigning:
+      description: 'The UriSigning Metadata object contains information to enable
+        URI signing and verification by a dCDN. According to section 4.4 of "URI Signing
+        for CDN Interconnection (CDNI) draft-ietf-cdni-uri-signing-19" '
+      properties:
+        enforce:
+          default: true
+          description: URI Signing enforcement flag.  Specifically, this flag indicates
+            if the access to content is subject to URI Signing.  URI Signing requires
+            the dCDN to ensure that the URI is signed and verified before delivering
+            content.  Otherwise, the dCDN does not perform verification, regardless
+            of whether or not the URI is signed.
+          title: enforce
+          type: boolean
+        issuers:
+          description: A list of valid Issuers against which the Issuer claim in the
+            signed JWT may be verified.
+          items:
+            type: string
+          title: issuers
+          type: array
+        package-attribute:
+          description: The name to use for the URI Signing Package. Default name is
+            "URISigningPackage"
+          title: package-attribute
+          type: string
+        jwt-header:
+          description: The header part of JWT that is used for generating or verifying
+            a signed JWT when the JWT token in the URI Signing Package does not contain
+            a header part.  By default, the header is assumed to be included in the
+            JWT token.
+          title: jwt-header
+          type: string
+      title: MIUriSigning
+      type: object
+    MIGrouping:
+      description: A Grouping object identifies a group of content to which a given
+        asset belongs.
+      properties:
+        ccid:
+          description: Content Collection IDentifier for an application-specific purpose
+            such as logging aggregation.
+          type: string
+      type: object
+    MIFallbackTarget:
+      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides
+        a fallback target server to the dCDN to be used in cases where the dCDN cannot
+        properly handle the request.  To avoid redirect loops, the fallback target
+        server address at the uCDN MUST be different from the original uCDN address
+        from which the client was redirected to the dCDN.  The uCDN MUST avoid further
+        redirection when receiving the client request at the fallback target.  The
+        Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
+      properties:
+        host:
+          description: A hostname (with optional port) or an IP address (with optional
+            port). All implementations MUST support IPv4 addresses encoded as specified
+            by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses
+            MUST be encoded in one of the IPv6 address formats specified in [RFC5952],
+            although receivers MUST support all IPv6 address formats specified in
+            [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax
+            defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs)
+            must first be transformed to the A-label form [RFC5890] as per [RFC589
+          title: MIEndpoint
+          type: string
+        scheme:
+          description: A URI scheme to be used in the redirect response location construction.  When
+            present, the dCDN MUST use the provided scheme in for HTTP redirection
+            to the uCDN.
+          enum:
+          - http
+          - https
+          type: string
+      required:
+      - host
+      type: object
+    MIPayloadtype:
+      enum:
+      - MI.SourceMetadata
+      - MI.LocationACL
+      - MI.TimeWindowACL
+      - MI.ProtocolACL
+      - MI.DeliveryAuthorization
+      - MI.Cache
+      - MI.Auth
+      - MI.Grouping
+      - MI.FallbackTarget
+      title: MIPayloadtype
+      type: string
+    MIGenericMetadata:
+      description: A GenericMetadata object is a wrapper for managing individual CDNI
+        Metadata properties in an opaque manner
+      discriminator:
+        propertyName: generic-metadata-type
+      properties:
+        generic-metadata-type:
+          $ref: '#/components/schemas/MIPayloadtype'
+        generic-metadata-value:
+          title: generic-metadata-value
+          type: object
+        mandatory-to-enforce:
+          default: true
+          description: Flag identifying whether or not the enforcement of the property
+            metadata is required.
+          title: mandatory-to-enforce
+          type: boolean
+        safe-to-redistribute:
+          default: true
+          description: Flag identifying whether or not the property metadata can be
+            safely redistributed without modification.
+          title: safe-to-redistribute
+          type: boolean
+        incomprehensible:
+          default: false
+          description: 'Flag identifying whether or not any CDN in the chain of delegation
+            has failed to understand and/or failed to properly transform  this metadata
+            object. Note: This flag only applies to metadata objects whose safe-to-redistribute
+            property has a value of False.'
+          title: incomprehensible
+          type: boolean
+      required:
+      - generic-metadata-type
+      - generic-metadata-value
+      title: MIGenericMetadata
+      type: object
+  securitySchemes:
+    jwt:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+      x-bearerInfoFunc: openapi_server.controllers.security_controller_.info_from_jwt

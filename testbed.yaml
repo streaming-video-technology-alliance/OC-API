@@ -87,14 +87,16 @@ components:
       type: object
       properties:
         capability-type: 
-          type: string  
-          enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
+          $ref : '#/components/schemas/FCICapabilitytype'
         capability-value:
           type: object
         footprints: 
            type: array         
            items:
              $ref: '#/components/schemas/MIFootprint'
+    FCICapabilitytype:
+          type: string  
+          enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
     FCIDeliveryProtocol:
         type: object
         description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the 
@@ -300,12 +302,14 @@ components:
         - footprint-type
       properties:
         footprint-type:
-          type: string
-          enum: [ipv4cidr, ipv6cidr, asn, countrycode]
+          $ref: '#/components/schemas/MIFootprinttype'
         footprint-value:
           type: array
           items:
             type: object
+    MIFootprinttype:
+      type: string
+      enum: [ipv4cidr, ipv6cidr, asn, countrycode]
     MIIpv4cidr:
       description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]
       followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).

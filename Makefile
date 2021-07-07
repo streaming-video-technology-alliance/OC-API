@@ -5,7 +5,7 @@ HTTP_PROXY_PORT = $(shell echo ${http_proxy} | sed 's/http:\/\/\(.*\):\([0-9]*\)
 
 .PHONY: generate-server
 generate-server:
-	-sudo rm -rf ./out
+#	-sudo rm -rf ./out
 #	docker run -v ${PWD}/out:/out -v ${PWD}:/specs -e  JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttp.nonProxyHosts=localhost|127.0.0.1" openapitools/openapi-generator-cli:v5.1.0 generate -i /specs/${OPENAPI_SPEC} -g python-flask -o /out 
 	docker run -v ${PWD}/out:/out -v ${PWD}:/specs -e  JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttp.nonProxyHosts=localhost|127.0.0.1" openapitools/openapi-generator-cli generate -i /specs/${OPENAPI_SPEC} -g python-flask -o /out 
 
