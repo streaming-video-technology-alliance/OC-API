@@ -15,13 +15,13 @@ box "DCDN" #AntiqueWhite
 end box
 
 FU -> UR: GET\nhttp://192.168.1.106(UCDN ip)/ps01/disney/test/hd_avc_master_all.m3u8
-UR -> FU: ""HTTP1.1\nMoved Permanently\nLocation:\nhttp://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8""
-FU -> RR: ""DNS Request for fqdn disney.ak2.inter-cdnrd.orange-business.com""
+UR -> FU: HTTP1.1\nMoved Permanently\nLocation:\nhttp://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8
+FU -> RR: DNS Request for fqdn disney.ak2.inter-cdnrd.orange-business.com
 activate RR
-RR -> FU: ""DNS response with cache IP""
+RR -> FU: DNS response with cache IP
 deactivate RR
-FU -> CC: ""GET\nhttp://(cache ip)/ps01/disney/test/hd_avc_master_all.m3u8""
-CC -> OS:""GET\nhttp://vod-akc-na-east-1.media.dssott.com(Origin fqdn)/ps01/disney/test/hd_avc_master_all.m3u8""
-OS -> CC: ""Return content""
-CC -> FU: ""Return content""
+FU -> CC: GET\nhttp://(cache ip)/ps01/disney/test/hd_avc_master_all.m3u8
+CC -> OS: GET\nhttp://vod-akc-na-east-1.media.dssott.com(Origin fqdn)/ps01/disney/test/hd_avc_master_all.m3u8
+OS -> CC: Return content
+CC -> FU: Return content
 @enduml
