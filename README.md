@@ -49,7 +49,7 @@ Then access to http://localhost in browser.
 
 #Testbed use case workflow example
 ## Workflow OC-APIs Test Bed Service Configuration 1
-![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://www.github.com/)
+![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf1.txt?token=AMOK4S6ZL22DIAFTH2WDER3A53FZM)
   
 ## Workflow OC-APIs Test Bed Service Configuration 2
 ``` plantuml
