@@ -14,8 +14,8 @@ box "DCDN" #AntiqueWhite
   participant "Origin Server" as OS
 end box
 
-FU -> UR: ""GET \n http://192.168.1.106(UCDN ip)/ps01/disney/test/hd_avc_master_all.m3u8""
-UR -> FU: ""HTTP1.1 \n Moved Permanently \n Location: \n http://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8""
+FU -> UR: ""GET\nhttp://192.168.1.106(UCDN ip)/ps01/disney/test/hd_avc_master_all.m3u8""
+UR -> FU: ""HTTP1.1\nMoved Permanently\nLocation:\nhttp://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8""
 FU -> RR: ""DNS Request for fqdn disney.ak2.inter-cdnrd.orange-business.com""
 activate RR
 RR -> FU: ""DNS response with cache IP""
