@@ -4,12 +4,12 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.3.0
+  version: 1.0.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
 security: 
-  - jwt: []
+  - bearerToken: []
 paths:
   /OC/FCI/advertisement:
     get:
@@ -60,10 +60,10 @@ paths:
           '{$request.body#/notificationTarget}':
             put:
               summary: 'The ISP OC/dCDN to post a FCI advertisement update.'
-              description: 'This callback is used by the ISP OC/dCDN to post a FCI advertisement update.'
+              description: 'This callback is used by the ISP OC/dCDN to put an FCI advertisement update.'
               tags:
-              - OC_MI
-              operationId: oc_fci_put_notification
+              - OC_FCI
+              operationId: oc_fci_push_notification
               requestBody:
                 description: Callback payload
                 content: 
@@ -153,7 +153,7 @@ paths:
         - OC_COI_simple
       summary: Communicates the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
-      operationId: oc_ci_configure
+      operationId: OC_CI_configure
       requestBody:
         description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the entire dataset (HostIndex)'
         content:
@@ -180,7 +180,7 @@ paths:
         - OC_COI_simple
       summary: 'Gets the whole  metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the whole valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
-      operationId: oc_ci_getConfiguration
+      operationId: OC_CI_getConfiguration
       responses:
         200:
           description: 'prepositioned configuration metadata'
@@ -201,7 +201,7 @@ paths:
       tags:
         - OC_COI_simple
       summary: 'delete the whole configuration'
-      operationId: oc_ci_deleteConfiguration
+      operationId: OC_CI_deleteConfiguration
       responses:
         200:
           description: 'Prepositioned configuration metadata is deleted/purged. This does cancel/stop the corresponding delegation'
@@ -218,7 +218,7 @@ paths:
         - OC_COI_simple_host
       summary: Communicates part of the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
-      operationId: oc_ci_configure_host
+      operationId: OC_CI_configure_host
       parameters:
         - name: host
           in: path
@@ -252,7 +252,7 @@ paths:
         - OC_COI_simple_host
       summary: 'Gets part of the metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the  valid (or not) configuration associated with a host name. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
-      operationId: oc_ci_getConfiguration_host
+      operationId: OC_CI_getConfiguration_host
       parameters:
         - name: host
           in: path
@@ -280,7 +280,7 @@ paths:
       tags:
         - OC_COI_simple_host
       summary: 'delete part of the configuration related to a host name'
-      operationId: oc_ci_deleteConfiguration_host
+      operationId: OC_CI_deleteConfiguration_host
       parameters:
         - name: host
           in: path
@@ -304,7 +304,7 @@ paths:
         - OC_COI_simple_path-pattern
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
-      operationId: oc_ci_configure_host_pattern
+      operationId: OC_CI_configure
       parameters:
         - name: host
           in: path
@@ -345,7 +345,7 @@ paths:
         - OC_COI_simple_path-pattern
       summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern'
       description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
-      operationId: oc_ci_getConfiguration_path-pattern
+      operationId: OC_CI_getConfiguration_path-pattern
       parameters:
         - name: host
           in: path
@@ -379,7 +379,7 @@ paths:
       tags:
         - OC_COI_simple_path-pattern
       summary: 'delete part of the configuration associated with a host name AND a path pattern'
-      operationId: oc_ci_deleteConfiguration_path-pattern
+      operationId: OC_CI_deleteConfiguration_path-pattern
       parameters:
         - name: host
           in: path
@@ -410,7 +410,7 @@ paths:
       summary: Communicates the metadata, configuration and/or content to the ISP with the CI/trigger API (RFC 8007)
       description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool 
       and RFC 8006 (+ RFC8804) for the metadata structure'
-      operationId: oc_ci_provision
+      operationId: OC_CI_provision
       requestBody:
         description: the metadataset or a link to the set to be considered/processed by the ISP
         content:
@@ -423,7 +423,7 @@ paths:
         required: true
       callbacks:
         requestMetadata:
-          /OC/MI/metadata/{pathName}:
+          /OC/CI/metadata/{pathName}:
             get:
               summary: ''
               description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements 
@@ -488,7 +488,7 @@ paths:
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
           links:
             getTriggerId:
-              operationId: oc_ci_status
+              operationId: OC_CI_status
               parameters:
                 triggerId: '$response.header.Location'
                 description: 'the value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}"'
@@ -504,7 +504,7 @@ paths:
       description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006'
       tags:
         - OC_CI_trigger
-      operationId: oc_ci_status
+      operationId: OC_CI_status
       parameters:
         - in: path
           name: triggerId
@@ -536,7 +536,7 @@ paths:
         - OC_RI
       summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975)
       description: 'simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP'
-      operationId: oc_ri_routingrequest
+      operationId: OC_RI_routingrequest
       requestBody:
         description: 'The request according to RFC 7975'
         content:

@@ -5,7 +5,7 @@ info:
   This API itself is not elaborated. What matters in this file is the CDNI model (schema)'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 0.1.0
+  version: 1.0.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
@@ -94,7 +94,8 @@ components:
       properties:
         host: 
           description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the provided scheme in for HTTP redirection to the dCDN.'
           type: string
@@ -165,10 +166,12 @@ components:
         hosts:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI.HostMatch'
-              - $ref: '#/components/schemas/MI_link'
+            $ref: '#/components/schemas/MI_HostMatch'
           description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
+    MI_HostMatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI.HostMatch'
+        - $ref: '#/components/schemas/MI_link'
     MI.HostMatch:
       type: object
       required:
@@ -176,16 +179,19 @@ components:
         - host-metadata
       properties:
         host:
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
           All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
           IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
           Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
         host-metadata:
-          oneOf:
-            - $ref: '#/components/schemas/MI.HostMetadata'
-            - $ref: '#/components/schemas/MI_link'
+          $ref: '#/components/schemas/MI_HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
+    MI_HostMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI.HostMetadata'
+        - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
       description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) 
@@ -202,9 +208,11 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
           and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI.PathMatch'
-              - $ref: '#/components/schemas/MI_link'
+            $ref: '#/components/schemas/MI_PathMatch'
+    MI_PathMatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI.PathMatch'
+        - $ref: '#/components/schemas/MI_link'    
     MI.PathMatch:
       type: object
       description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply if the resource URI matches the pattern within the PatternMatch object.'
@@ -213,13 +221,17 @@ components:
         - path-metadata
       properties:
         path-pattern:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.PatternMatch'
+          $ref: '#/components/schemas/MI_PatternMatch'
         path-metadata:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.PathMetadata'
+          $ref: '#/components/schemas/MI_PathMetadata'
+    MI_PatternMatch:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PatternMatch'
+    MI_PathMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PathMetadata'
     MI.PatternMatch:
       type: object
       required:
@@ -243,25 +255,28 @@ components:
         metadata:
           type: array
           items:
-            $ref: '#/components/schemas/MI.GenericMetadata'
+            $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
           items:
-            oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.PathMatch'
+            $ref: '#/components/schemas/MI_PathMatch'
+    MI_SourceMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceMetadata'  
     MI.SourceMetadata:
       type: object
-      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP) 
-      but might be a set of Surrogates in the uCDN.'
+      description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP)  but might be a set of Surrogates in the uCDN.'
       properties:
         sources:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.Source'
+            $ref: '#/components/schemas/MI_Source'
+    MI_Source:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Source'    
     MI.Source:
       type: object
       description: 'A Source object describes the source to be used by the dCDN for content acquisition (e.g., a Surrogate within the uCDN or an alternate origin server), the protocol to be used, and any authentication method to be used when contacting that source. Endpoints within a Source object MUST be treated as equivalent/equal. A uCDN can specify an array of MI.Source, ordered by preference, within a SourceMetadata object.  Then, for each Source object ranked by preference, a uCDN can specify an array of endpoints that are equivalent (e.g., a pool of servers that are not behind a load balancer).'
@@ -269,15 +284,17 @@ components:
         - endpoints
       properties:
         acquisition-auth: 
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI.Auth'
+          $ref: '#/components/schemas/MI_Auth'
         endpoints:
           type: array
           items:
             $ref: '#/components/schemas/MI_endpoint'
         protocol:
           $ref: '#/components/schemas/MI_protocol'
+    MI_LocationACL:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationACL'  
     MI.LocationACL:
       type: object
       description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content.
@@ -289,9 +306,11 @@ components:
         locations:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.LocationRule'
+            $ref: '#/components/schemas/MI_LocationRule'
+    MI_LocationRule:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationRule'
     MI.LocationRule:
       type: object
       description: 'A LocationRule contains or references an array of Footprint objects and the corresponding action.'
@@ -301,13 +320,15 @@ components:
         footprints:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.Footprint'
+            $ref: '#/components/schemas/MI_Footprint'
         action:
           type: string
           enum: [allow, deny]
           default: deny
+    MI_Footprint:
+        oneOf:
+          - $ref: '#/components/schemas/MI_link'
+          - $ref: '#/components/schemas/MI_Footprint'  
     MI.Footprint:
       type: object
       description: 'A Footprint object describes the footprint to which a LocationRule can be applied, e.g., an IPv4 address range or a geographic location.'
@@ -327,6 +348,10 @@ components:
             - $ref: '#/components/schemas/MI_countrycode'
           discriminator:
               propertyName: footprint-type
+    MI_TimeWindowACL:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowACL'
     MI.TimeWindowACL:
       description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed
    regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time.
@@ -337,9 +362,11 @@ components:
         times:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.TimeWindowRule'
+            $ref: '#/components/schemas/MI_TimeWindowRule'
+    MI_TimeWindowRule:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowRule'
     MI.TimeWindowRule:
       type: object
       description: ' A TimeWindowRule contains or references an array of TimeWindow objects and the corresponding action.'
@@ -347,13 +374,15 @@ components:
         windows:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.TimeWindow'
+            $ref: '#/components/schemas/MI_TimeWindow'
         action:
           type: string
           enum: [allow, deny]
           default: deny
+    MI_TimeWindow:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindow'
     MI.TimeWindow:
       type: object
       required:
@@ -364,6 +393,10 @@ components:
           $ref: '#/components/schemas/MI_time'
         end:
           $ref: '#/components/schemas/MI_time'
+    MI_ProtocolACL:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ProtocolACL'
     MI.ProtocolACL:
       type: object
       description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; otherwise, a CDN MUST take the action from the first protocol to match against the request protocol.  
@@ -374,9 +407,11 @@ components:
         protocol-acl:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.ProtocolRule'
+            $ref: '#/components/schemas/MI_ProtocolRule'
+    MI_ProtocolRule:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ProtocolRule'
     MI.ProtocolRule:
       type: object
       description: 'A ProtocolRule contains or references an array of Protocol objects and the corresponding action.'
@@ -391,6 +426,29 @@ components:
           type: string
           enum: [allow, deny]
           default: deny
+    MI_Cache:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Cache'    
+    MI.Cache:
+      type: object
+      description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated from the URI of the content request [RFC7234].  In some cases, a CDN or content provider might want certain path segments or query parameters to be excluded from the cache key generation.  The Cache object provides guidance on what parts of the path and query string to include.'
+      properties:
+        exclude-path-pattern:
+          description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986].
+        The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
+        Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. 
+        Note: Inconsistency between the PatternMatch pattern (Section 4.1.5) and the exclude-path-pattern can result in inefficient caching.'
+          type: string
+        include-query-strings:
+          description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive. If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, query parameters SHOULD be evaluated in the order specified in this array.'
+          type: array
+          items: 
+            type: string
+    MI_DeliveryAuthorizatione:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
     MI.DeliveryAuthorization:
       type: object
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
@@ -402,32 +460,14 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/MI_link'
-              - $ref: '#/components/schemas/MI.Auth'
-    MI.Cache:
-      type: object
-      description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated 
-      from the URI of the content request [RFC7234].  In some cases, a CDN or content provider might want certain path segments or query parameters 
-      to be excluded from the cache key generation.  The Cache object provides guidance on what parts of the path and query string to include.'
-      properties:
-        exclude-path-pattern:
-          description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986].
-        The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) 
-        and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", 
-        and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
-        Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. 
-        Note: Inconsistency between the PatternMatch pattern (Section 4.1.5) and the exclude-path-pattern can result in inefficient caching.'
-          type: string
-        include-query-strings:
-          description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI 
-          against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive.  
-          If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times 
-          in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, 
-          query parameters SHOULD be evaluated in the order specified in this array.'
-          type: array
-          items: 
-            type: string
+              - $ref: '#/components/schemas/MI_Auth'
+    MI_Auth:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Auth'
     MI.Auth:
       type: object
+      description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively'
       properties:
         auth-type:
           $ref: '#/components/schemas/MI_authtype'
@@ -439,14 +479,18 @@ components:
     MI_authtype:
       type: string
       enum: [MI.UriSigning]
+    MI_UriSigning:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.UriSigning'  
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) draft-ietf-cdni-uri-signing-19" '
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
       properties:
         enforce: 
           type: boolean
           default: true
-          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing.  URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
+          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing. URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
         issuers:
           type: array
           items:
@@ -458,6 +502,10 @@ components:
         jwt-header:
           type: string
           description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
+    MI_Grouping:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Grouping'      
     MI.Grouping:
       type: object
       description: 'A Grouping object identifies a group of content to which a given asset belongs.'
@@ -465,19 +513,22 @@ components:
         ccid: 
           type: string
           description: 'Content Collection IDentifier for an application-specific purpose such as logging aggregation.'
+    MI_FallbackTarget:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.FallbackTarget'  
     MI.FallbackTarget: 
       type: object
-      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases 
-      where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
-      from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving 
-      the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
+      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
+      from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
       required:
         - host
       properties:
         host:
           description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that in case of DNS delegation, 
           it SHOULD NOT include a port number, and in case a port number is present, the dCDN MUST ignore it.'
-          $ref: '#/components/schemas/MI_endpoint'
+          allOf:
+            - $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the 
           provided scheme in for HTTP redirection to the uCDN.'
@@ -502,24 +553,19 @@ components:
       enum: [http/1.1, https/1.1, http/2]
     MI_endpoint:
       type: string
-      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses 
-      encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats 
-      specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
-      Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-      Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
+      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
+      Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
     MI_time:
       type: integer
       format: int32
       description: 'A time value expressed in seconds since the UNIX epoch (i.e., zero hours, zero minutes, zero seconds, on January 1, 1970) 
       Coordinated Universal Time (UTC) [POSIX].'
     MI_ipv4cidr:
-      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]
-      followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).
+      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).
       Single IP addresses can be expressed as /32.'
       type: string
     MI_ipv6cidr:
-      description: 'An IPv6address CIDR block encoded in one of the IPv6 address formats specified in [RFC5952] followed by a "/" followed by 
-      an unsigned integer representing the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single IP addresses can be expressed as /128.'
+      description: 'An IPv6address CIDR block encoded in one of the IPv6 address formats specified in [RFC5952] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single IP addresses can be expressed as /128.'
       type: string
     MI_asn:
       description: 'An ASN value encoded as a string consisting of the characters "as" (in lowercase) followed by the ASN [RFC6793].'
@@ -529,18 +575,34 @@ components:
       type: string
     MI_payloadtype:
       type: string
-      enum: [MI.SourceMetadata, MI.LocationACL, MI.TimeWindowACL, MI.ProtocolACL, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget ]
+      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget ]
+    MI_metadatatype:
+      $ref: '#/components/schemas/MI_payloadtype'
+    MI_metadatavalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI_payloadvalue'
     MI_payloadvalue:
       oneOf:
         - $ref: '#/components/schemas/MI.SourceMetadata'
+        - $ref: '#/components/schemas/MI.Source'
         - $ref: '#/components/schemas/MI.LocationACL'
+        - $ref: '#/components/schemas/MI.LocationRule'
+        - $ref: '#/components/schemas/MI.Footprint'
         - $ref: '#/components/schemas/MI.TimeWindowACL'
+        - $ref: '#/components/schemas/MI.TimeWindowRule'
+        - $ref: '#/components/schemas/MI.TimeWindow'
         - $ref: '#/components/schemas/MI.ProtocolACL'
+        - $ref: '#/components/schemas/MI.ProtocolRule'
         - $ref: '#/components/schemas/MI.DeliveryAuthorization'
         - $ref: '#/components/schemas/MI.Cache'
         - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.Grouping'
         - $ref: '#/components/schemas/MI.FallbackTarget'        
+    MI_GenericMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.GenericMetadata'
     MI.GenericMetadata:
       type: object
       description: 'A GenericMetadata object is a wrapper for managing individual CDNI Metadata properties in an opaque manner'
@@ -549,13 +611,9 @@ components:
         - generic-metadata-value
       properties:
         generic-metadata-type:
-          $ref: '#/components/schemas/MI_payloadtype'
+          $ref: '#/components/schemas/MI_metadatatype'
         generic-metadata-value:
-          oneOf:
-            - $ref: '#/components/schemas/MI_link'
-            - $ref: '#/components/schemas/MI_payloadvalue'
-          discriminator: 
-            propertyName: generic-metadata-type
+           $ref: '#/components/schemas/MI_metadatavalue'
         mandatory-to-enforce:
           type: boolean
           description: 'Flag identifying whether or not the enforcement of the property metadata is required.'
@@ -576,13 +634,16 @@ components:
         - cdn-path 
       properties:
         cdn-path:
-          $ref: '#/components/schemas/CI_cdn-path'
+          allOf:
+            - $ref: '#/components/schemas/CI_cdn-path'
           description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
         cancel:
-          $ref: '#/components/schemas/CI_cancel'
+          allOf:
+            - $ref: '#/components/schemas/CI_cancel'
           description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
         trigger:
-          $ref: '#/components/schemas/CI_trigger'
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
           description: 'A specification of the trigger type and a set of data to act upon'
     ci-trigger-status:
       type: object
@@ -594,20 +655,24 @@ components:
         - status
       properties:
         trigger:
-          $ref: '#/components/schemas/CI_trigger'
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
           description: 'The Trigger Specification POSTed in the body of the CI/T Command.
           Note that this need not be a byte-for-byte copy.  
           For example, in the JSON representation the dCDN may re-serialize the information differently.'
         ctime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Time at which the CI/T Command was received by the dCDN.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         mtime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Time at which the Trigger Status Resource was last modified.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
         etime:
-          $ref: '#/components/schemas/CI_time'
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
           description: 'Estimate of the time at which the dCDN expects to complete the activity.
           Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         status:
@@ -632,16 +697,20 @@ components:
           type: string
           enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
         metadata.urls:
-          $ref: '#/components/schemas/CI_urls'
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         content.urls:
-          $ref: '#/components/schemas/CI_urls'
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
           description: 'copied from the CI_trigger related request/command concerned by the error'
         metadata.patterns:
-          $ref: '#/components/schemas/CI_patterns'
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
           description: 'The metadata the trigger applies to'
         content.patterns:
-          $ref: '#/components/schemas/CI_patterns'
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
           description: 'The content the trigger applies to'
         description:
           type: string
@@ -682,10 +751,12 @@ components:
             type: string
             enum: [preposition, invalidate, purge]
           metadata.urls:
-            $ref: '#/components/schemas/CI_urls'
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
             description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.urls:
-            $ref: '#/components/schemas/CI_urls'
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
             description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.ccid:
             type: array
@@ -694,10 +765,12 @@ components:
             description: 'The Content Collection IDentifier of content the trigger applies to.  
             The "ccid" is a grouping of content, as defined by [RFC8006]'
           metadata.patterns:
-            $ref: '#/components/schemas/CI_patterns'
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
             description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
           content.patterns:
-            $ref: '#/components/schemas/CI_patterns'
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
             description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
@@ -797,19 +870,23 @@ components:
         - qname
       properties:
         resolver-ip: 
-          $ref: '#/components/schemas/RI_ipaddress'
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
           description: 'The IP address of the UA DNS resolver'
         qtype:
-          $ref: '#/components/schemas/RI_qtype'
+          allOf:
+            - $ref: '#/components/schemas/RI_qtype'
           description: 'The type of Query made by the UA DNS resolver'
         qclass:
-          $ref: '#/components/schemas/RI_qclass'
+          allOf:
+            - $ref: '#/components/schemas/RI_qclass'
           description: 'The DNS class of the query made by the UA DNS resolver '
         qname:
           type: string
           description: 'The FQDN being quieried'
         c-subnet:
-          $ref: '#/components/schemas/RI_iprange'
+          allOf:
+            - $ref: '#/components/schemas/RI_iprange'
           description: 'The IP address (or prefix) of the UA in Classless Inter-Domain Routing (CIDR) format.'
     RI_httpredirectionrequest:
       type: object
@@ -820,16 +897,20 @@ components:
         - cs-version
       properties:
         c-ip: 
-          $ref: '#/components/schemas/RI_ipaddress'
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
           description: 'The IP address of the User Agent'
         cs-uri:
-          $ref: '#/components/schemas/RI_uri'
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
           description: 'The URI ([RFC7230]) requested by the User Agent'
         cs-method:
-          $ref: '#/components/schemas/RI_method'
+          allOf:
+            - $ref: '#/components/schemas/RI_method'
           description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
         cs-version:
-          $ref: '#/components/schemas/RI_ipaddress'
+          allOf:
+            - $ref: '#/components/schemas/RI_ipaddress'
           description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
     RI_statuscodes:
       type: integer
@@ -849,19 +930,24 @@ components:
         - sc-(location)
       properties:
         sc-status: 
-          $ref: '#/components/schemas/RI_statuscodes'
+          allOf:
+            - $ref: '#/components/schemas/RI_statuscodes'
           description: 'The status-code part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA (usually set to 302).'
         sc-version:
-          $ref: '#/components/schemas/RI_version'
+          allOf:
+            - $ref: '#/components/schemas/RI_version'
           description: 'The HTTP-version part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA .'
         sc-reason:
-          $ref: '#/components/schemas/RI_reason'
+          allOf:
+            - $ref: '#/components/schemas/RI_reason'
           description: 'The reason-phrase part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA '
         cs-uri:
-          $ref: '#/components/schemas/RI_uri'
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
           description: 'The URI ([RFC7230]) requested by the User Agent'
         sc-(location):
-          $ref: '#/components/schemas/RI_uri'
+          allOf:
+            - $ref: '#/components/schemas/RI_uri'
           description: 'The content of the Location header to return to the UA: the URI ([RFC7230]) pointing to the redirect target (i.e. the OCN)'
     RI_rcode:
       type: integer
@@ -874,7 +960,8 @@ components:
         - name
       properties:
         rcode: 
-          $ref: '#/components/schemas/RI_rcode'
+          allOf:
+            - $ref: '#/components/schemas/RI_rcode'
           description: 'DNS response code [RFC6895]).'
         name:
           type: string
