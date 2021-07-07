@@ -1,0 +1,73 @@
+@startuml
+skinparam ParticipantPadding 60
+skinparam BoxPadding 100
+
+box "UCDN" #LightBlue
+  participant "OC_COI API" as OCCOI_client
+end box
+
+box "DCDN" #AntiqueWhite
+  participant "OC_COI_simple" as OCCOI_api
+  participant "CDN Orange Manager(AMC)" as AMC
+end box
+
+== Put Configuration ==
+
+OCCOI_client -> OCCOI_api: ""PUT /oc/ci/configuration""
+activate  OCCOI_api #FFBBBB
+rnote right of OCCOI_client
+{
+  "hosts": [
+    {
+      "host": "192.168.1.106",
+      "host-metadata": {
+        "metadata": [
+          {
+            "generic-metadata-type": "MI.FallbackTarget",
+            "generic-metadata-value": {
+              "host": "vod-akc-na-east-1.media.dssott.com"
+            }
+          }
+        ],
+        "paths": [
+          {
+            "path-metadata": {
+              "metadata": [
+                {
+                  "generic-metadata-type": "MI.SourceMetadata",
+                  "generic-metadata-value": {
+                    "sources": [
+                      {
+                        "endpoints": [
+                          "http://vod-akc-na-east-1.media.dssott.com"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "path-pattern": {
+              "case-sensitive": true,
+              "pattern": "/ps01/disney/test/*"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+end rnote
+
+OCCOI_api -> AMC: create Prefix disney.ak2.inter-cdnrd.orange-business.com on AMC, may be origin server if necessary....
+AMC -> OCCOI_api: Return result of configuration (200 if OK)
+
+OCCOI_api -> OCCOI_client: ""200 OK""
+deactivate OCCOI_api
+rnote left of OCCOI_api
+TO BE FILLED
+MUST CONTAIN CDN prefixe created on dCDN side (disney.ak2.inter-cdnrd.orange-business.com)
+This way, UCDN will know where to redirect client for this service
+end rnote
+
+@enduml

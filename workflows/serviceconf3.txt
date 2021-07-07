@@ -1,0 +1,95 @@
+@startuml
+skinparam ParticipantPadding 100
+skinparam BoxPadding 100
+
+box "UCDN" #LightBlue
+  participant "OC_FCI client" as OCFCI_client
+end box
+
+box "DCDN" #AntiqueWhite
+  participant "OC_FCI API" as OCFCI_api
+end box
+
+== Get Advertisement ==
+
+OCFCI_client -> OCFCI_api: ""GET /oc/fci/advertisement""
+activate  OCFCI_api #FFBBBB
+
+
+OCFCI_api -> OCFCI_client: ""200 OK""
+deactivate OCFCI_api
+rnote left of OCFCI_api
+{
+  "capabilities": [
+    {
+      "capability-type": "FCI.DeliveryProtocol",
+      "footprints": [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": [
+            "192.168.1.1/32"
+          ]
+        }
+      ],
+      "capability-value": {
+        "delivery-protocols": [
+          "http1.1","http1.2","http/2"
+        ]
+      }
+    },
+    {
+      "capability-type": "FCI.RedirectionMode",
+      "footprints": [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": [
+            "192.168.1.1/32"
+          ]
+        }
+      ],
+      "capability-value": "HTTP-I"
+    },
+    {
+      "capability-type": "FCI.Metadata",
+      "capability-value": {
+        "metadata": [
+          "MI.SourceMetadata",
+          "MI.LocationACL",
+          "MI.ProtocolACL",
+          "MI.FallbackTarget"
+        ]
+      },
+      "footprints": [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": [
+            "192.168.1.0/24"
+          ]
+        }
+      ]
+    },
+    {
+      "capability-type": "FCI.RedirecTarget",
+      "capability-value": {
+        "redirecting-hosts": [
+          "192.168.1.106"
+        ],
+        "http-target": {
+          "host": "disney.ak2.inter-cdnrd.orange-business.com",
+          "include-redirecting-host": false
+        }
+      },
+      "footprints": [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": [
+            "192.168.1.0/24"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+end rnote
+@enduml
