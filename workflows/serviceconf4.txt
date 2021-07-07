@@ -1,8 +1,5 @@
 @startuml
 
-skinparam ParticipantPadding 60
-skinparam BoxPadding 60
-
 box "User" #Yellow
   participant "Final User (HTTP client)" as FU
 end box
