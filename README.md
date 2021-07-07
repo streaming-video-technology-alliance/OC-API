@@ -38,7 +38,7 @@ Once server is launch, you are able to test the first request of below ewample w
 curl -X 'GET' \
   'http://localhost:8080/oc/fci/advertisement' \
   -H 'accept: application/cdni'
-``
+```
 
 To see testbed.yaml in swagger editor:
 ```bash
