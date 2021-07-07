@@ -76,12 +76,12 @@ components:
     Advertisement: 
       type: object
       required:
-        - fciGenericBases
+        - capabilities
       properties:
-        fciGenericBases: 
+        capabilities:
            type: array
            items:
-             type: object
+             $ref: '#/components/schemas/FCIGenericbase'
 # FCI (Footprint & capacity) Interface: RFC 8008 extended with RFC 8804 (FCI.RedirectTarget)
     FCIGenericbase:
       type: object
