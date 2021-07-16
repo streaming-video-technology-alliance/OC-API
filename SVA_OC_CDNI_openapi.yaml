@@ -550,7 +550,7 @@ components:
           $ref: '#/components/schemas/MI_payloadtype'
     MI_protocol:
       type: string
-      enum: [http/1.1, https/1.1, http/2]
+      enum: [http/1.1, https/1.1, http/2, http/3]
     MI_endpoint:
       type: string
       description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
@@ -657,7 +657,7 @@ components:
         trigger:
           allOf:
             - $ref: '#/components/schemas/CI_trigger'
-          description: 'The Trigger Specification POSTed in the body of the CI/T Command.
+          description: 'The Trigger Specification posted in the body of the CI/T Command.
           Note that this need not be a byte-for-byte copy.  
           For example, in the JSON representation the dCDN may re-serialize the information differently.'
         ctime:

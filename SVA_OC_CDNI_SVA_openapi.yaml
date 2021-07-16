@@ -101,7 +101,7 @@ components:
           type: array
           items: 
             type: string
-            enum: [DNS, HTTP, MANIFEST_REWRITE]
+            enum: [DNS, HTTP-R, MANIFEST_REWRITE]
     FCI.PrivateFeatures:
       type: object
       description: 'To signal/announce the list of supported private features. See the section GenericMetadata: PrivateFeatureList.'

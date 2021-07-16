@@ -163,14 +163,26 @@ paths:
         required: true
       responses:
         200:
-          description: Command is ok
+          description: The configuration file has been modified as already existing.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: ' the status can either be complete or failed. The status report gathers the URL of the metadata configuration. Note that the status report is not kept by the dCDN. It is not necessary to delete it as with the CI API (conforming to RFC8007)'
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+        201:
+          description: The configuration file has been created.
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
-          description: Command is invalid
+          description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration file. The URL corresponds to the configuration file modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is "Failed"'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden
         404:
@@ -179,11 +191,11 @@ paths:
       tags:
         - OC_COI_simple
       summary: 'Gets the whole  metadata configuration (RFC 8006)'
-      description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the whole valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
+      description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve the whole valid configuration file. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration
       responses:
         200:
-          description: 'prepositioned configuration metadata'
+          description: 'Active configuration metadata'
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
@@ -235,23 +247,35 @@ paths:
         required: true
       responses:
         200:
-          description: Command is ok
+          description: The configuration metadata part associated with the Host entry has been modified succesfully.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: ' the status can either be complete or failed. The status report gathers the URL of the metadata configuration. Note that the status report is not kept by the dCDN. It is not necessary to delete it as with the CI API (conforming to RFC8007)'
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+        201:
+          description: The configuration metadata file has been succesfully updated, creating a new Host entry.
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
-          description: Command is invalid
+          description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.HostMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is "Failed"'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden
         404:
-          description: Not found
+          description: 'Not found. There was no configuration file' 
     get:
       tags:
         - OC_COI_simple_host
       summary: 'Gets part of the metadata configuration (RFC 8006)'
-      description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the  valid (or not) configuration associated with a host name. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
+      description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve the valid configuration associated with a host name. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration_host
       parameters:
         - name: host
@@ -298,6 +322,9 @@ paths:
         403:
           description: Forbidden
           content: {} 
+        404:
+          description: Not found
+          content: {}
   /OC/CI/configuration/{host}/{path-pattern}:
     put:
       tags:
@@ -314,7 +341,7 @@ paths:
             type: string
         - name: path-pattern
           in: path
-          description: 'Paremeter allowing to create/update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
+          description: 'Paremeter allowing to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
           required: true
           schema:
             type: string
@@ -328,23 +355,35 @@ paths:
         required: true
       responses:
         200:
-          description: Command is ok
+          description: The configuration file has been modified succesfully.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status can either be complete or failed. The status report gathers the URL of the metadata configuration. Note that the status report is not kept by the dCDN. It is not necessary to delete it as with the CI API (conforming to RFC8007)'
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+        201:
+          description: The configuration metadata file has been succesfully updated, creating a new path metadata entry.
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
-          description: Command is invalid
+          description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.PathMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is "Failed"'
+                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
-          description: Forbidden
+          description: 'Forbidden'
         404:
-          description: Not found
+          description: 'Not found'
     get:
       tags:
         - OC_COI_simple_path-pattern
       summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern'
-      description: 'This API is exposed by the dCDN and can be used by the uCDN to retrieve the valid (or not) configuration. It does not contain any metadata object references. Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true"'
+      description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve a valid configuration subset. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration_path-pattern
       parameters:
         - name: host
@@ -403,6 +442,9 @@ paths:
         403:
           description: Forbidden
           content: {} 
+        404:
+          description: Not found
+          content: {}  
   /OC/CI/trigger:
     post:
       tags:
