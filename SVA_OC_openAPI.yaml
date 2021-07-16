@@ -24,9 +24,7 @@ paths:
           content:
             application/cdni:
               schema:
-                type: array
-                items:
-                  $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/FCI_capabilities'
         '400':
           description: 'bad request'
         '403':

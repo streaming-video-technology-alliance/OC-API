@@ -10,6 +10,14 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
+    FCI_capabilities:
+      type: object
+      description: 'The list of capabilities supported by the dCDN'
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
       enum: [FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
