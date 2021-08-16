@@ -1,8 +1,5 @@
 @startuml
 
-skinparam ParticipantPadding 60
-skinparam BoxPadding 60
-
 box "User" #Yellow
   participant "Final User (HTTP client)" as FU
 end box
@@ -17,14 +14,20 @@ box "DCDN" #AntiqueWhite
   participant "Origin Server" as OS
 end box
 
-FU -> UR: ""GET http://192.168.1.106(UCDN ip)/ps01/disney/test/hd_avc_master_all.m3u8""
-UR -> FU: ""HTTP1.1 Moved Permanently Location: http://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8""
-FU -> RR: ""DNS Request for fqdn disney.ak2.inter-cdnrd.orange-business.com""
+FU -> UR: GET\nhttp://192.168.1.106(UCDN ip)/ps01/disney/test/hd_avc_master_all.m3u8
+activate UR
+UR -> FU: HTTP1.1\nMoved Permanently\nLocation:\nhttp://disney.ak2.inter-cdnrd.orange-business.com/ps01/disney/test/hd_avc_master_all.m3u8
+deactivate UR
+FU -> RR: DNS Request for fqdn disney.ak2.inter-cdnrd.orange-business.com
 activate RR
-RR -> FU: ""DNS response with cache IP""
+RR -> FU: DNS response with cache IP
 deactivate RR
-FU -> CC: ""GET http://(cache ip)/ps01/disney/test/hd_avc_master_all.m3u8""
-CC -> OS:""GET http://vod-akc-na-east-1.media.dssott.com(Origin fqdn)/ps01/disney/test/hd_avc_master_all.m3u8""
-OS -> CC: ""Return content""
-CC -> FU: ""Return content""
+FU -> CC: GET\nhttp://(cache ip)/ps01/disney/test/hd_avc_master_all.m3u8
+activate CC
+CC -> OS: GET\nhttp://vod-akc-na-east-1.media.dssott.com(Origin fqdn)/ps01/disney/test/hd_avc_master_all.m3u8
+activate OS
+OS -> CC: Return content
+deactivate OS
+CC -> FU: Return content
+deactivate CC
 @enduml

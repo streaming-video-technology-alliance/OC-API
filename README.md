@@ -38,7 +38,7 @@ Once server is launch, you are able to test the first request of below ewample w
 curl -X 'GET' \
   'http://localhost:8080/oc/fci/advertisement' \
   -H 'accept: application/cdni'
-``
+```
 
 To see testbed.yaml in swagger editor:
 ```bash
@@ -47,30 +47,17 @@ make edit
 
 Then access to http://localhost in browser.
 
-#Testbed use case workflow example
+# Testbed use case workflow example
 ## Workflow OC-APIs Test Bed Service Configuration 1
-![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://www.github.com/)
+![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf1.txt?token=AMOK4S6ZL22DIAFTH2WDER3A53FZM)
   
 ## Workflow OC-APIs Test Bed Service Configuration 2
-``` plantuml
-```
-  
+![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf2.txt?token=AMOK4S2JIWBZZ7NNBW4ONJDA53GLO)
+
 ## Workflow OC-APIs Test Bed Service Configuration 3
-``` plantuml
-```
+![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf3.txt?token=AMOK4S4NBZKVIJ4XMIUNVNLA53GQE)
   
 ## Workflow OC-APIs Test Bed End User service access With DNS Redirect
-``` plantuml
-```
-
-
-
-
-
-
-
-
-
-
-
+![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf4.txt?token=AMOK4SYVN5LZRYFMHKEDKATA53GRU)
+  
 
