@@ -3,8 +3,8 @@
 # flake8: noqa
 from __future__ import absolute_import
 # import models into model package
-from openapi_server.models.advertisement import Advertisement
 from openapi_server.models.fci_acquisition_protocol import FCIAcquisitionProtocol
+from openapi_server.models.fci_capabilities import FCICapabilities
 from openapi_server.models.fci_capabilitytype import FCICapabilitytype
 from openapi_server.models.fci_delivery_protocol import FCIDeliveryProtocol
 from openapi_server.models.fci_dnstarget import FCIDnstarget

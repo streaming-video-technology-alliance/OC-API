@@ -37,11 +37,17 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: ' the status can either be complete or failed. The status
-                  report gathers the URL of the metadata configuration. Note that
-                  the status report is not kept by the dCDN. It is not necessary to
-                  delete it as with the CI API (conforming to RFC8007)'
-          description: Command is ok
+                description: The status is complete. The status report gathers the
+                  URL of the activated metadata configuration file.
+          description: The configuration file has been modified as already existing.
+        "201":
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: The status is complete. The status report gathers the
+                  URL of the activated metadata configuration file.
+          description: The status is complete. The status report gathers the URL of
+            the activated metadata configuration file.
         "400":
           description: Command is invalid
         "403":
@@ -63,7 +69,7 @@ paths:
           content:
             application/cdni:
               schema:
-                $ref: '#/components/schemas/Advertisement'
+                $ref: '#/components/schemas/FCICapabilities'
           description: FCI advertisement
         "400":
           description: bad request
@@ -77,7 +83,7 @@ paths:
       x-openapi-router-controller: openapi_server.controllers.ocfci_controller
 components:
   schemas:
-    Advertisement:
+    FCICapabilities:
       properties:
         capabilities:
           items:
@@ -86,7 +92,7 @@ components:
           type: array
       required:
       - capabilities
-      title: Advertisement
+      title: FCICapabilities
       type: object
     FCIGenericbase:
       properties:
@@ -141,6 +147,7 @@ components:
       - http/1.1
       - https/1.1
       - http/2
+      - http/3
       title: MIProtocol
       type: string
     FCIRedirectionMode:

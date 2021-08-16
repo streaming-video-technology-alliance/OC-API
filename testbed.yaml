@@ -31,7 +31,7 @@ paths:
           content:
             application/cdni:
               schema:
-                $ref: '#/components/schemas/Advertisement'
+                $ref: '#/components/schemas/FCICapabilities'
         '400':
           description: 'bad request'
         '403':
@@ -54,11 +54,17 @@ paths:
         required: true
       responses:
         200:
-          description: Command is ok
+          description: The configuration file has been modified as already existing.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: ' the status can either be complete or failed. The status report gathers the URL of the metadata configuration. Note that the status report is not kept by the dCDN. It is not necessary to delete it as with the CI API (conforming to RFC8007)'
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+        201:
+          description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
         400:
           description: Command is invalid
         403:
@@ -73,7 +79,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Advertisement: 
+    FCICapabilities: 
       type: object
       required:
         - capabilities
@@ -121,7 +127,7 @@ components:
                $ref: '#/components/schemas/MIProtocol'
     MIProtocol:
       type: string
-      enum: [http/1.1, https/1.1, http/2]
+      enum: [http/1.1, https/1.1, http/2,http/3]
     FCIRedirectionMode:   
         type: object
         description: 'List of supported CDNI redirection modes'

@@ -8,9 +8,9 @@ openapi_server/__init__.py
 openapi_server/__main__.py
 openapi_server/encoder.py
 openapi_server/models/__init__.py
-openapi_server/models/advertisement.py
 openapi_server/models/base_model_.py
 openapi_server/models/fci_acquisition_protocol.py
+openapi_server/models/fci_capabilities.py
 openapi_server/models/fci_capabilitytype.py
 openapi_server/models/fci_delivery_protocol.py
 openapi_server/models/fci_dnstarget.py

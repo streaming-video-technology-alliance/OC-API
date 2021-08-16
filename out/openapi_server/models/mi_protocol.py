@@ -21,6 +21,7 @@ class MIProtocol(Model):
     HTTP_1_1 = "http/1.1"
     HTTPS_1_1 = "https/1.1"
     HTTP_2 = "http/2"
+    HTTP_3 = "http/3"
     def __init__(self):  # noqa: E501
         """MIProtocol - a model defined in OpenAPI
 
