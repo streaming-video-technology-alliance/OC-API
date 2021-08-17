@@ -635,8 +635,8 @@ components:
       type: object
       description: 'Allows the uCDN to indicate to the dCDN a preference in terms of OCN selection.'
       properties:
-        ocn-acquisition:
-          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties ocn-type and  ocn-acquisition must be present.'
+        ocn-delivery:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties ocn-type and  ocn-delivery must be present.'
           type: object
           properties:
             ocn-medium:
@@ -648,7 +648,7 @@ components:
               type: string
               enum: [MABR]
         ocn-type:
-          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties ocn-type and ocn-acquisition must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties ocn-type and ocn-delivery must be present.'
           type: string
         ocn-selection:
           description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through best effort procedure . Last “besteffort” means that the dCDN tries its best to fulfil the requested ocn-selection policy.'
