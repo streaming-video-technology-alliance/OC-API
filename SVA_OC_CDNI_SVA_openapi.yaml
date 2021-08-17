@@ -12,7 +12,7 @@ components:
   schemas:
     FCI_capabilities:
       type: object
-      description: 'The list of capabilities supported by the dCDN'
+      description: 'The list of capabilities supported by the dCDN.'
       properties:
         capabilities:
           type: array
@@ -23,7 +23,7 @@ components:
       enum: [FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
     FCI_genericbase:
       type: object
-      description: 'adding properties to the FCI_genericbase object'
+      description: 'Adding properties to the FCI_genericbase object.'
       required:
         - capability-type
         - capability-value
@@ -50,12 +50,12 @@ components:
             propertyName: capability-type
         footprints:
           type: array
-          description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
+          description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006]).'
           items:
             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
     FCI.Metadata:
       type: object
-      description: 'extension of CDNI FCI.Metadata'
+      description: 'Extension of CDNI FCI.Metadata.'
       required:
         - metadata
       properties:
@@ -85,7 +85,7 @@ components:
       description: 'To signal the set of features that are supported in relation with the ProcessingStages configuration object (see GenericMetadata: ProcessingStages). Those optional features depend on the CDNI-MEL language support.'
       properties: 
         features:
-          description: 'List of supported optional processing stages features. Note that these features all have some dependencies on support of the CDNi MEL expression language. by default those features are not supported'
+          description: 'List of supported optional processing stages features. Note that these features all have some dependencies on support of the CDNi MEL expression language. by default those features are not supported.'
           type: array 
           items:
             type: string
@@ -95,7 +95,7 @@ components:
       description: 'To signal the supported features related to the SourceMetadataExtended configuration object. If the FCI.SourceMetadtaExtended object is not exposed/advertised or if the “load-balance” array is empty, then the dCDN does not support the usage of the load-balance property attached to the SourceMetadataExtended configuration object (see  GenericMetadata: SourceMetadataExtended).'
       properties:
         load-balance:
-          description: 'List of supported load balancing algorithms in relation to the SourceMetadataExtended configuration object (see  GenericMetadata: SourceMetadataExtended )'
+          description: 'List of supported load balancing algorithms in relation to the SourceMetadataExtended configuration object (see  GenericMetadata: SourceMetadataExtended).'
           type: array
           items:
             type: string
@@ -115,7 +115,7 @@ components:
       description: 'To signal/announce the list of supported private features. See the section GenericMetadata: PrivateFeatureList.'
       properties:
         features:
-          description: 'The list of supported private feature'
+          description: 'The list of supported private feature.'
           type: array
           items:
             type: object
@@ -127,14 +127,14 @@ components:
                 description: 'The owner/organisation that has specified that feature.'
                 type: string
               feature-type:
-                description: 'Uused to indicate the type/name of the private feature configuration object.'
+                description: 'Used to indicate the type/name of the private feature configuration object.'
                 type: string
     FCI.OcnSelection:
       type: object
-      description: 'to signal/announce the supported OCN types  and/or  their transport arrangement and/or medium supported by OCNs'
+      description: 'To signal/announce the supported OCN types  and/or  their transport arrangement and/or medium supported by OCNs.'
       properties:
         ocn-acquisition-list:
-          description: ' list of supported medium and/or transport arrangements'
+          description: 'List of supported medium and/or transport arrangements.'
           type: object
           properties:
             ocn-medium:
@@ -148,7 +148,7 @@ components:
                 type: string
                 enum: [MABR]
         ocn-type-list:
-          description: 'list of supported OCN types. Example could be: “HOME” or “EDGE”'
+          description: 'List of supported OCN types. Example could be: “HOME” or “EDGE”.'
           type: array
           items: 
             type: string
@@ -158,12 +158,12 @@ components:
       type: object
       description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. 
       An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find 
-      the HostMatch object that applies to the request'
+      the HostMatch object that applies to the request.'
       required:
         - hosts
       properties:
         hosts:
-          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
+          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used.'
           type: array
           items:
             $ref: '#/components/schemas/MI_HostMatch'
@@ -181,15 +181,14 @@ components:
           allOf:
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
-          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, 
-          the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
+          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
           All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
-          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support 
-          all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
+          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. 
+          Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
+          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
-          description: 'CDNI Metadata to apply when delivering content that matches this host'
+          description: 'CDNI Metadata to apply when delivering content that matches this host.'
     MI_HostMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI.HostMetadata'
@@ -206,8 +205,7 @@ components:
             $ref: '#/components/schemas/MI.GenericMetadata'
         paths:
           type: array
-          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
-          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
     MI_PathMatch:
@@ -216,8 +214,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
-      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, 
-      as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply 
+      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply 
       if the resource URI matches the pattern within the PatternMatch object.'
       required:
         - path-pattern
@@ -237,13 +234,9 @@ components:
         - $ref: '#/components/schemas/MI.PathMetadata'
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against 
-      the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then 
-      a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request 
-      is available at Request Routing time.  
+      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time.  
       dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.  
-      If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, 
-      in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -254,7 +247,7 @@ components:
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
-          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
     MI_DeliveryAuthorizatione:
@@ -266,8 +259,7 @@ components:
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
       properties:
         delivery-auth-methods:
-          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods
-          in the list is satisfied for that request.'
+          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods in the list is satisfied for that request.'
           type: array
           items:
             $ref: '#/components/schemas/MI_Auth'
@@ -277,7 +269,7 @@ components:
         - $ref: '#/components/schemas/MI.Auth'
     MI.Auth:
       type: object
-      description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively'
+      description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively.'
       properties:
         auth-type:
           $ref: '#/components/schemas/MI_authtype'
@@ -305,7 +297,7 @@ components:
       properties: 
         header-name:
           type: string
-          description: 'Name of the authentication header'
+          description: 'Name of the authentication header.'
         header-value:
           description: 'Value of the authentication header (typically a pre-shared key).'
           type: string
@@ -324,7 +316,7 @@ components:
         - $ref: '#/components/schemas/MI.AWSv4Auth'
     MI.AWSv4Auth:
       type: object
-      description: 'Allows for the specification of a set of headers to be added to requests that are forwarded to an origin to enable Amazon Web Services (AWS) authentication, as documented by AWS (See Specifications & Standards References)'
+      description: 'Allows for the specification of a set of headers to be added to requests that are forwarded to an origin to enable Amazon Web Services (AWS) authentication, as documented by AWS (See Specifications & Standards References).'
       required:
         - access-key-id
         - secret-access-key
@@ -353,7 +345,7 @@ components:
         - $ref: '#/components/schemas/MI.UriSigning'
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing.'
       properties:
         enforce: 
           type: boolean
@@ -366,7 +358,7 @@ components:
           description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
         package-attribute:
           type: string
-          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage"'
+          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage".'
         jwt-header:
           type: string
           description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
@@ -386,8 +378,7 @@ components:
       description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
       if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property 
       is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect 
-      the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain 
-      a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
+      the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
       required:
         - href
       properties:
@@ -458,7 +449,7 @@ components:
         - $ref: '#/components/schemas/MI.GenericMetadata'    
     MI.GenericMetadata:
       type: object
-      description: 'GenericMetadata object extended by SVA'
+      description: 'GenericMetadata object extended by SVA.'
       required:
         - generic-metadata-type
         - generic-metadata-value
@@ -530,7 +521,7 @@ components:
         - expression
       properties:
         expression:
-          description: 'An expression using CDNI-MEL to dynamically construct the cache key from elements of the HTTP request and/or response'
+          description: 'An expression using CDNI-MEL to dynamically construct the cache key from elements of the HTTP request and/or response.'
           type: string
       example:
         value: {
@@ -543,12 +534,12 @@ components:
     
     MI.CrossoriginPolicy:
       type: object
-      description: 'Controls the dynamically generated CORS headers'
+      description: 'Controls the dynamically generated CORS headers.'
       required:
         - allow-origin
       properties:
         allow-origin:
-          description: 'Validation of simple CORS requests' 
+          description: 'Validation of simple CORS requests.' 
           type: object
           required:
             - allow-list
@@ -607,7 +598,7 @@ components:
         - cache-policy
       properties:
         error-codes:
-          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in cache-policy. by default the policy expressed in RFC8006 is applied'
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in cache-policy. by default the policy expressed in RFC8006 is applied.'
           type: array
           items:
             type: string
@@ -630,7 +621,7 @@ components:
         - $ref: '#/components/schemas/MI.CacheBypassPolicy'
     MI.CacheBypassPolicy:
       type: object
-      description: 'allows a client request to be set as non cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
+      description: 'Allows a client request to be set as non cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
       properties:
         bypass-cache:
           description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within a ProcessingStages to allow a client request to be marked to bypass a cache.'
@@ -642,25 +633,25 @@ components:
         - $ref: '#/components/schemas/MI.OcnSelection'
     MI.OcnSelection:
       type: object
-      description: 'allows the uCDN to indicate to the dCDN a preference in terms of OCN selection.'
+      description: 'Allows the uCDN to indicate to the dCDN a preference in terms of OCN selection.'
       properties:
         ocn-acquisition:
           description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties ocn-type and  ocn-acquisition must be present.'
           type: object
           properties:
             ocn-medium:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties ocn-medium and ocn-transport must be present'
+              description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties ocn-medium and ocn-transport must be present.'
               type: string
               enum: [SATELLITE]
             ocn-transport:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties ocn-medium and ocn-transport must be present'
+              description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties ocn-medium and ocn-transport must be present.'
               type: string
               enum: [MABR]
         ocn-type:
           description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties ocn-type and ocn-acquisition must be present.'
           type: string
         ocn-selection:
-          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through best effort procedure . Last “besteffort” means that the dCDN tries its best to fulfil the requested ocn-selection policy'
+          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through best effort procedure . Last “besteffort” means that the dCDN tries its best to fulfil the requested ocn-selection policy.'
           type: string
           enum: [attempt-or-failed, attempt-or-besteffort, besteffort]
           default: besteffort
@@ -670,7 +661,7 @@ components:
         - $ref: '#/components/schemas/MI.PrivateFeatureList'
     MI.PrivateFeatureList:
       type: object
-      description: 'a base generic object for controlling private features'
+      description: 'A base generic object for controlling private features.'
       required:
         - features
       properties:
@@ -685,13 +676,13 @@ components:
         - $ref: '#/components/schemas/MI.PrivateFeature'
     MI.PrivateFeature:
       type: object
-      description: 'a base generic object for controlling private features'
+      description: 'A base generic object for controlling private features'
       required:
         - feature-oid
         - feature-type
       properties:
         feature-oid:
-          description: 'the owner/organisation that has specified that feature.'
+          description: 'The owner/organisation that has specified that feature.'
           type: string
         feature-type:
           description: This property is used to indicate the type/name of the private feature configuration object.
@@ -723,7 +714,7 @@ components:
           items:
              $ref: '#/components/schemas/MI_StageRules'
         client-response:
-          description: A'llows for the specification of conditional metadata to be applied at client response processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
+          description: 'Allows for the specification of conditional metadata to be applied at client response processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageRules'
@@ -739,7 +730,7 @@ components:
           description: 'A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided.'
           $ref: '#/components/schemas/MI_ExpressionMatch'
         stage-metadata:
-          description: 'The stage-metadata rules are always applied if no match expression is provided. This would be the case when stage-metadata'
+          description: 'The stage-metadata rules are always applied if no match expression is provided. This would be the case when stage-metadata.'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageMetadata'
@@ -749,7 +740,7 @@ components:
         - $ref: '#/components/schemas/MI.ExpressionMatch'
     MI.ExpressionMatch:
       type: object
-      description: 'A rich expression using CDNI-MEL to evaluate aspects of the HTTP request and/or response. See documentation on the Metadata Expression Language for details on the expression of matching variables and syntax'
+      description: 'A rich expression using CDNI-MEL to evaluate aspects of the HTTP request and/or response. See documentation on the Metadata Expression Language for details on the expression of matching variables and syntax.'
       required:
         - expression
       properties:
@@ -761,10 +752,10 @@ components:
         - $ref: '#/components/schemas/MI.StageMetadata'
     MI.StageMetadata:
       type: object
-      description: 'contains GenericMetadata and HTTP request/response transformations that should be applied for a StageRules. All of the properties (capabilities) are optional and can be advertised via feature-flags in the FCI interface.'
+      description: 'Contains GenericMetadata and HTTP request/response transformations that should be applied for a StageRules. All of the properties (capabilities) are optional and can be advertised via feature-flags in the FCI interface.'
       properties:
         generic-metadata:
-          description: Specifies the set of GenericMetadata to be applied (in order) for a StageRules match. Note that not all GenericMetadata object types may be applicable at all processing stages. A typical use case would be the application of a CachePolicy or TimeWindowACL conditionally on matching HTTP headers. The generic-metadata property would not be needed when StageMetadata is used to only specify request or response transformations, such as modifications of HTTP headers.
+          description: 'Specifies the set of GenericMetadata to be applied (in order) for a StageRules match. Note that not all GenericMetadata object types may be applicable at all processing stages. A typical use case would be the application of a CachePolicy or TimeWindowACL conditionally on matching HTTP headers. The generic-metadata property would not be needed when StageMetadata is used to only specify request or response transformations, such as modifications of HTTP headers.'
           type: array 
           items:
             $ref: '#/components/schemas/MI_GenericMetadata'
@@ -809,7 +800,7 @@ components:
             - type: string
             - type: integer
         status-is-expression:
-          description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code'
+          description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code.'
           type: boolean
           default: false
         synthetic:
@@ -862,7 +853,7 @@ components:
         - $ref: '#/components/schemas/MI.HeaderTransform'
     MI.HeaderTransform:
       type: object
-      description: 'specifies how HTTP headers should be added, replaced, or deleted from HTTP requests and responses.'
+      description: 'Specifies how HTTP headers should be added, replaced, or deleted from HTTP requests and responses.'
       properties:
         add:
           description: 'List of HTTP headers (name/value pairs) that should be added to the HTTP request or response. Note that any existing headers in the request or response with the same names of those added are not affected (resulting in multiple headers with the same name).'
@@ -904,7 +895,7 @@ components:
           type: string
           description: 'Either a literal (static string) or an expression using CDNI-MEL to dynamically construct a header value from elements of the HTTP request and/or response.'
         value-is-expression:
-          description: 'Flag to signal whether the value is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated'
+          description: 'Flag to signal whether the value is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'
           type: boolean
           default: false
       example:
@@ -919,7 +910,7 @@ components:
         - $ref: '#/components/schemas/MI.RequestedCapacityLimits'
     MI.RequestedCapacityLimits:
       type: object
-      description: 'Allows the uCDN to communicate to the dCDN a desired change in the advertised traffic delegation limits for a given host and footprint'
+      description: 'Allows the uCDN to communicate to the dCDN a desired change in the advertised traffic delegation limits for a given host and footprint.'
       required:
         - requested-limits
       properties: 
@@ -952,11 +943,11 @@ components:
         - footprints
       properties:
         limit-type:
-          description: 'The limit type for which the change is requested. One of egress, requests, storage-size, storage-objects, sessions, or cache-size'
+          description: 'The limit type for which the change is requested. One of egress, requests, storage-size, storage-objects, sessions, or cache-size.'
           type: string
           enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
         limit-value:
-          description: 'The requested new value for the limit: egress (bps), requests (requests per seconds), storage-size (total nbr of bytes), storage-objects (count of objects), sessions (count of sessions), or cache-size (total nbr of bytes)'
+          description: 'The requested new value for the limit: egress (bps), requests (requests per seconds), storage-size (total nbr of bytes), storage-objects (count of objects), sessions (count of sessions), or cache-size (total nbr of bytes).'
           type: integer
         footprints:
           description: 'dCDN footprints within the advertised FCI.CapacityLimits footprints for which this request applies.'
@@ -969,7 +960,7 @@ components:
         - $ref: '#/components/schemas/MI.RequestRouting'
     MI.RequestRouting:
       type: object
-      description: 'allows the uCDN to force the dCDN request routing mode(s) to be applied when working in iterative redirection mode . The list of redirection modes supported by the dCDN is advertised through the  FCI.RedirectionMode object. The list of request routing modes supported by the dCDN is advertised through the  FCI.RequestRoutingMode object.'
+      description: 'Allows the uCDN to force the dCDN request routing mode(s) to be applied when working in iterative redirection mode . The list of redirection modes supported by the dCDN is advertised through the  FCI.RedirectionMode object. The list of request routing modes supported by the dCDN is advertised through the  FCI.RequestRoutingMode object.'
       properties:
         request-routing-modes:
           description: 'This property is used to instruct the dCDN to perform request routing according to  one or more preferred modes among those supported and advertised by the dCDN through the FCI.RequestRouting object. One must understand  that forcing (instead of letting the dCDN request router select ) one particular request routing mode may trigger some inefficiency in the request routing process.By default all request routing modes supported by the dCDN can be used by the dCDN as part of its request routing process.'
@@ -983,7 +974,7 @@ components:
         - $ref: '#/components/schemas/MI.ServiceIDs'
     MI.ServiceIDs:
       type: object
-      description: 'allows for the specification of two tiers of CDN-specific identifiers and names. The interpretation of these identifiers is implementation specific.'
+      description: 'Allows for the specification of two tiers of CDN-specific identifiers and names. The interpretation of these identifiers is implementation specific.'
       properties:
         service-id:
           description: 'A provider-specific identifier for the service (typically a customer account identifier). Either a literal (static string) or an expression using CDNI-MEL to dynamically construct the ID from elements of the HTTP request and/or response.'
@@ -1048,7 +1039,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.SourceExtended'
     MI.SourceExtended:
-      description: 'An alternative to the CDNi standard Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties'
+      description: 'An alternative to the CDNi standard Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
       allOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Source'
         - type: object
@@ -1122,7 +1113,7 @@ components:
           type: boolean
           default: false
         stale-if-error:
-          description: 'This property is used to instruct the dCDN to serve a stale version of a resource if an error was received when trying to refresh the resource with the uCDN.  When set, the dCDN will return a previously cached version of a resource instead of caching the error response. The default is to cache the error response received from the uCDN'
+          description: 'This property is used to instruct the dCDN to serve a stale version of a resource if an error was received when trying to refresh the resource with the uCDN.  When set, the dCDN will return a previously cached version of a resource instead of caching the error response. The default is to cache the error response received from the uCDN.'
           type: array 
           items:
             type: string
@@ -1142,12 +1133,12 @@ components:
         - $ref: '#/components/schemas/MI.TrafficType'
     MI.TrafficType:
       type: object
-      description: ' defines a set of descriptors that characterize either the type or usage of the traffic, enabling CDNs and OCNs to apply any internal configuration rules without exposing an unnecessary amount of internal details.'
+      description: 'Defines a set of descriptors that characterize either the type or usage of the traffic, enabling CDNs and OCNs to apply any internal configuration rules without exposing an unnecessary amount of internal details.'
       required:
         - traffic-type
       properties:
         traffic-type:
-          description: 'A literal that defines the traffic type. uCDN will use the literal that is most representative of the traffic being delegated. The following literals are specified: vod, live, object-download'
+          description: 'A literal that defines the traffic type. uCDN will use the literal that is most representative of the traffic being delegated. The following literals are specified: vod, live, object-download.'
           type: string
           enum: [vod, live, object-download]
         hints:

@@ -159,7 +159,7 @@ components:
 # MI (Metatadata) Interface: RFC 8006    
     MI.HostIndex:
       type: object
-      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request'
+      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
       required:
         - hosts
       properties:
@@ -167,7 +167,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MI_HostMatch'
-          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used'
+          description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used.'
     MI_HostMatch:
       oneOf:
         - $ref: '#/components/schemas/MI.HostMatch'
@@ -184,7 +184,7 @@ components:
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
           All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
           IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891]'
+          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
@@ -194,8 +194,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
-      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) 
-      and possibly child PathMatch objects.'
+      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
       required:
         - metadata
       properties:
@@ -205,8 +204,7 @@ components:
             $ref: '#/components/schemas/MI.GenericMetadata'
         paths:
           type: array
-          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
-          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used'
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
     MI_PathMatch:
@@ -353,10 +351,9 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.TimeWindowACL'
     MI.TimeWindowACL:
-      description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed
-   regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time.
-   If two or more windows overlap, the first window that matches against the current time determines the action a CDN MUST take.
-   If the "times" property is included but is empty or if none of the listed windows match the current time, then the result is an action of "deny".'
+      description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time.
+      If two or more windows overlap, the first window that matches against the current time determines the action a CDN MUST take.
+      If the "times" property is included but is empty or if none of the listed windows match the current time, then the result is an action of "deny".'
       type: object
       properties:
         times:
@@ -454,8 +451,7 @@ components:
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
       properties:
         delivery-auth-methods:
-          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods
-          in the list is satisfied for that request.'
+          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods in the list is satisfied for that request.'
           type: array
           items:
             oneOf:
@@ -498,7 +494,7 @@ components:
           description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
         package-attribute:
           type: string
-          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage"'
+          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage".'
         jwt-header:
           type: string
           description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
@@ -688,10 +684,7 @@ components:
       type: object
       required:
         - error
-      description: 'Metadata and content references copied from the Trigger Specification.  Only those URLs and patterns to which the error applies 
-      are included in each property, but those URLs and patterns MUST be exactly as they appear in the request; the dCDN MUST NOT generalize the URLs. 
-      For example, if the uCDN requests pre-positioning of URLs "https://content.example.com/a" and "https://content.example.com/b", the dCDN must not 
-      generalize its error report to the pattern "https://content.example.com/*".)'
+      description: 'Metadata and content references copied from the Trigger Specification.  Only those URLs and patterns to which the error applies are included in each property, but those URLs and patterns MUST be exactly as they appear in the request; the dCDN MUST NOT generalize the URLs. For example, if the uCDN requests pre-positioning of URLs "https://content.example.com/a" and "https://content.example.com/b", the dCDN must not generalize its error report to the pattern "https://content.example.com/*".)'
       properties:
         error:
           type: string
@@ -699,11 +692,11 @@ components:
         metadata.urls:
           allOf:
             - $ref: '#/components/schemas/CI_urls'
-          description: 'copied from the CI_trigger related request/command concerned by the error'
+          description: 'Copied from the CI_trigger related request/command concerned by the error'
         content.urls:
           allOf:
             - $ref: '#/components/schemas/CI_urls'
-          description: 'copied from the CI_trigger related request/command concerned by the error'
+          description: 'Copied from the CI_trigger related request/command concerned by the error'
         metadata.patterns:
           allOf:
             - $ref: '#/components/schemas/CI_patterns'

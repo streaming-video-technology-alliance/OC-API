@@ -15,7 +15,7 @@ paths:
     get:
       tags:
         - OC_FCI
-      summary: get the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
+      summary: Gets the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
       operationId: oc_fci_get_advertisement
       description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained)'
       responses:
@@ -26,16 +26,16 @@ paths:
               schema:
                 $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/FCI_capabilities'
         '400':
-          description: 'bad request'
+          description: 'Bad request.'
         '403':
-          description: 'Forbiden'
+          description: 'Forbiden.'
         '404':
-          description: 'No FCI advertisement'
+          description: 'No FCI advertisement.'
   /OC/FCI/subscribe:
     post:
       tags:
         - OC_FCI
-      summary: suscribe to FCI updates notifications
+      summary: Suscribes to FCI updates notifications.
       operationId: oc_fci_post_subscribe
       description: ''
       requestBody:
@@ -63,7 +63,7 @@ paths:
               - OC_FCI
               operationId: oc_fci_push_notification
               requestBody:
-                description: Callback payload
+                description: Callback payload.
                 content: 
                   'application/cdni':
                     schema:
@@ -72,32 +72,32 @@ paths:
                         $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
               responses:
                 '200':
-                  description: 'FCI updated'
+                  description: 'FCI updated.'
                 '400':
-                  description: 'bad request'
+                  description: 'Bad request.'
                 '403':
-                  description: 'Forbiden'
+                  description: 'Forbiden.'
       responses:
         201:
-          description: 'subscription created. The "Location" header gathes the URL of the newly created resource'
+          description: 'Subscription created. The "Location" header gathes the URL of the newly created resource.'
         400:
-          description: 'bad request'
+          description: 'Bad request.'
         403:
-          description: 'Forbiden'
+          description: 'Forbiden.'
         404:
-          description: 'No FCI advertisement'     
+          description: 'No FCI advertisement.'     
   /OC/FCI/subscription/{subscriptionId}:
     get:
       tags:
         - OC_FCI
-      summary: get the FCI notification subscription 
+      summary: Gets the FCI notification subscription. 
       operationId: oc_fci_get_notificationSubscription
       description: ''
       parameters:
         - name: subscriptionId
           in: path
           required: true
-          description: 'identifier of the subscription resource. This parameter is returned when creating the subscription'
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
           schema:
             type: string
       responses:
@@ -124,36 +124,36 @@ paths:
     delete:
       tags:
         - OC_FCI
-      summary: 'delete the notification subscription'
+      summary: 'Deletes the notification subscription.'
       operationId: OC_fci_delete_notificationSubscription
       parameters:
         - name: subscriptionId
           in: path
           required: true
-          description: 'idetifier of the subscription resource. This parameter is returned when creating the subscription'
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
           schema:
             type: string 
       responses:
         200:
-          description: 'notification subscibtion deleted'
+          description: 'Notification subscibtion deleted.'
           content: {}
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {}    
         404:
-          description: 'Not found' 
+          description: 'Not found.' 
   /OC/CI/configuration:
     put:
       tags:
         - OC_COI_simple
-      summary: Communicates the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
-      description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
+      summary: Communicates the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API.
+      description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For more complex metadata use the CI API.'
       operationId: OC_CI_configure
       requestBody:
-        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the entire dataset (HostIndex)'
+        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the entire dataset (HostIndex).'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -161,7 +161,7 @@ paths:
         required: true
       responses:
         200:
-          description: The configuration file has been modified as already existing.
+          description: The configuration file has been modified.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
@@ -179,12 +179,12 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status is "Failed"'
+                description: 'The status is "Failed".'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
-          description: Forbidden
+          description: Forbidden.
         404:
-          description: Not found
+          description: Not found.
     get:
       tags:
         - OC_COI_simple
@@ -193,51 +193,51 @@ paths:
       operationId: OC_CI_getConfiguration
       responses:
         200:
-          description: 'Active configuration metadata'
+          description: 'Active configuration metadata.'
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {}     
         404:
-          description: Not found
+          description: Not found.
           content: {}  
     delete:
       tags:
         - OC_COI_simple
-      summary: 'delete the whole configuration'
+      summary: 'Deletes the whole configuration.'
       operationId: OC_CI_deleteConfiguration
       responses:
         200:
-          description: 'Prepositioned configuration metadata is deleted/purged. This does cancel/stop the corresponding delegation'
+          description: 'Prepositioned configuration metadata is deleted/purged. This does cancel/stop the corresponding delegation.'
           content: {}
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {} 
   /OC/CI/configuration/{host}:
     put:
       tags:
         - OC_COI_simple_host
-      summary: Communicates part of the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API
+      summary: Communicates part of the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API.
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host
       parameters:
         - name: host
           in: path
           required: true
-          description: 'paremeter allowing to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
+          description: 'Parameter allowing to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
           schema:
             type: string
       requestBody:
-        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the metadata associated with a host name. the MI.HostMetadata object must be provided'
+        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the metadata associated with a host name. the MI.HostMetadata object must be provided.'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -245,14 +245,14 @@ paths:
         required: true
       responses:
         200:
-          description: The configuration metadata part associated with the Host entry has been modified succesfully.
+          description: The configuration metadata part associated with the Host entry has been modified successfully.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         201:
-          description: The configuration metadata file has been succesfully updated, creating a new Host entry.
+          description: The configuration metadata file has been successfully updated, creating a new Host entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
@@ -263,12 +263,12 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status is "Failed"'
+                description: 'The status is "Failed".'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
-          description: Forbidden
+          description: Forbidden.
         404:
-          description: 'Not found. There was no configuration file' 
+          description: 'Not found. There was no configuration file.' 
     get:
       tags:
         - OC_COI_simple_host
@@ -279,49 +279,49 @@ paths:
         - name: host
           in: path
           required: true
-          description: 'paremeter allowing to get the configuration related to a host. "www.disney.com" allows to get the configuration associated with that host name.'
+          description: 'Parameter allowing to get the configuration related to a host. "www.disney.com" allows to get the configuration associated with that host name.'
           schema:
             type: string
       responses:
         200:
-          description: 'prepositioned configuration metadata. The MI.HostMetadata object is returned'
+          description: 'Prepositioned configuration metadata. The MI.HostMetadata object is returned.'
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {}  
         404:
-          description: Not found
+          description: Not found.
           content: {}
     delete:
       tags:
         - OC_COI_simple_host
-      summary: 'delete part of the configuration related to a host name'
+      summary: 'Deletes part of the configuration related to a host name.'
       operationId: OC_CI_deleteConfiguration_host
       parameters:
         - name: host
           in: path
-          description: 'paremeter allowing to removed the configuration related to a host. "www.disney.com" allows to delete the configuration associated with that host name.'
+          description: 'Parameter allowing to delete the configuration related to a host. "www.disney.com" allows to delete the configuration associated with that host name.'
           required: true
           schema:
             type: string
       responses:
         200:
-          description: 'Part of the prepositioned configuration metadata, according to the host parameter, is deleted/purged. This does cancel/stop the corresponding delegation'
+          description: 'Part of the prepositioned configuration metadata, according to the host parameter, is deleted/purged. This does cancel/stop the corresponding delegation.'
           content: {}
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {} 
         404:
-          description: Not found
+          description: Not found.
           content: {}
   /OC/CI/configuration/{host}/{path-pattern}:
     put:
@@ -333,19 +333,19 @@ paths:
       parameters:
         - name: host
           in: path
-          description: 'Parameter indocating the host ("www.disney.com")'
+          description: 'Parameter indicating the host ("www.disney.com")'
           required: true
           schema:
             type: string
         - name: path-pattern
           in: path
-          description: 'Paremeter allowing to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
+          description: 'Parameter allowing to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
           required: true
           schema:
             type: string
             format: URL
       requestBody:
-        description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is a part of it according to the host and path-pattern parameters. The MI.PathMetadata object is provided'
+        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is a part of it according to the host and path-pattern parameters. The MI.PathMetadata object is provided.'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -353,14 +353,14 @@ paths:
         required: true
       responses:
         200:
-          description: The configuration file has been modified succesfully.
+          description: The configuration file has been modified successfully.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         201:
-          description: The configuration metadata file has been succesfully updated, creating a new path metadata entry.
+          description: The configuration metadata file has been successfully updated, creating a new path metadata entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
@@ -374,9 +374,9 @@ paths:
                 description: 'The status is "Failed"'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
-          description: 'Forbidden'
+          description: 'Forbidden.'
         404:
-          description: 'Not found'
+          description: 'Not found.'
     get:
       tags:
         - OC_COI_simple_path-pattern
@@ -392,7 +392,7 @@ paths:
             type: string
         - name: path-pattern
           in: path
-          description: 'Paremeter allowing to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned'
+          description: 'Parameter allowing to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned.'
           required: true
           schema:
             type: string
@@ -404,61 +404,58 @@ paths:
               schema:
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {}     
         404:
-          description: Not found
+          description: Not found.
           content: {}  
     delete:
       tags:
         - OC_COI_simple_path-pattern
-      summary: 'delete part of the configuration associated with a host name AND a path pattern'
+      summary: 'Deletes part of the configuration associated with a host name AND a path pattern'
       operationId: OC_CI_deleteConfiguration_path-pattern
       parameters:
         - name: host
           in: path
-          description: 'paremeter allowing to indicate the host.'
+          description: 'Parameter allowing to indicate the host.'
           required: true
           schema:
             type: string
         - name: path-pattern
           in: path
-          description: 'paremeter allowing to delete the configuration related to a host AND a path pattern.'
+          description: 'Parameter allowing to delete the configuration related to a host AND a path pattern.'
           required: true
           schema:
             type: string
       responses:
         200:
-          description: 'Part of the prepositioned configuration metadata, according to the host and the path-pattern parameters, is deleted/purged. This does cancel/stop the corresponding delegation'
+          description: 'Part of the prepositioned configuration metadata, according to the host and the path-pattern parameters, is deleted/purged. This does cancel/stop the corresponding delegation.'
           content: {}
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {} 
         404:
-          description: Not found
+          description: Not found.
           content: {}  
   /OC/CI/trigger:
     post:
       tags:
         - OC_CI_trigger
-      summary: Communicates the metadata, configuration and/or content to the ISP with the CI/trigger API (RFC 8007)
-      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool 
-      and RFC 8006 (+ RFC8804) for the metadata structure'
+      summary: Communicates the metadata, configuration and/or content to the ISP with the CI/trigger API (RFC 8007).
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006 (+ RFC8804) for the metadata structure.'
       operationId: OC_CI_provision
       requestBody:
-        description: the metadataset or a link to the set to be considered/processed by the ISP
+        description: The metadataset or a link to the set to be considered/processed by the ISP.
         content:
           application/cdni;ptype=ci-trigger-command:
             schema:
-              description: 'for triggering the creation of a trigger command for metadata or content pre-positioning. 
-              The URL(s) present in the ci-trigger-commnd metadata.urls property should conformed to the callbacks format
-               (see below)'
+              description: 'For triggering the creation of a trigger command for metadata or content pre-positioning. The URL(s) present in the ci-trigger-commnd metadata.urls property should conform to the callbacks format (see below).'
               $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-command'
         required: true
       callbacks:
@@ -466,23 +463,21 @@ paths:
           /OC/CI/metadata/{pathName}:
             get:
               summary: ''
-              description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements 
-              referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006/RFC8007'
+              description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006/RFC8007.'
               tags:
               - OC_MI
               operationId: oc_mi_get_metadata
               parameters:
                 - name: pathName
                   in: path
-                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/MI/metadata/" followed by a path sufixe associated with 
-                  the metadata object to be retrieved according to the MI API'
+                  description: 'The calbback url has a FQDN part followed by the mandatory "OC/MI/metadata/" followed by a path suffix associated with the metadata object to be retrieved according to the MI API.'
                   required: true
                   schema:
                     type: string
                     format: uri
               responses:
                 200:
-                  description: 'Returns the requested metadata object'
+                  description: 'Returns the requested metadata object.'
                   content:
                     application/cdni:
                       schema:
@@ -494,34 +489,32 @@ paths:
           /OC/CI/content/{pathName}:
             get:
               summary: ''
-              description: 'This callback is used by the ISP OC/dCDN to retrieve the content elements 
-              referenced in the ci-trigger-command'
+              description: 'This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command.'
               tags:
               - OC_MI
               operationId: oc_ci_get_content
               parameters:
                 - name: pathName
                   in: path
-                  description: 'the calbback url has a fqdn part followed by the mandatory "OC/CI/content" followed by a path sufixe associated with 
-                  the content object to be retrieved according to the MI API'
+                  description: 'The calbback url has a fqdn part followed by the mandatory "OC/CI/content" followed by a path sufixe associated with the content object to be retrieved according to the MI API.'
                   required: true
                   schema:
                     type: string
                     format: uri
               responses:
                 200:
-                  description: 'returns the requested content (either a file or a playlist gathering the list of files to pre-position)'
+                  description: 'Returns the requested content (either a file or a playlist gathering the list of files to pre-position).'
                   content:
                     text/plain:
                       schema:
                         type: string
                         format: binary
                 404:
-                  description: Not found
+                  description: Not found.
                   content: {}
       responses:
         201:
-          description: Created
+          description: Created.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
@@ -531,54 +524,53 @@ paths:
               operationId: OC_CI_status
               parameters:
                 triggerId: '$response.header.Location'
-                description: 'the value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}"'
+                description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {}
   /OC/CI/status/{triggerId}:
     get: 
-      summary: 'Check the CI trigger status'
-      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006'
+      summary: 'Check the CI trigger status.'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006.'
       tags:
         - OC_CI_trigger
       operationId: OC_CI_status
       parameters:
         - in: path
           name: triggerId
-          description: 'the triggerId parameter corresponds to the "Location" header as part of the response 
-          corresponding to the /OC/MI/provision API (trigger command)'
+          description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the /OC/MI/provision API (trigger command).'
           required: true
           schema:
             type: string
             format: url
       responses:
         200:
-          description: 'preposioning metatdata/configuration or content status'
+          description: 'Preposioning metatdata/configuration or content status.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         304:
-          description: 'not modified'
+          description: 'not modified.'
           content: {}
         400:
-          description: Command is invalid
+          description: Command is invalid.
           content: {}
         403:
-          description: Forbidden
+          description: Forbidden.
           content: {} 
   /OC/RI/routing_request:
     post:
       tags:
         - OC_RI
-      summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975)
-      description: 'simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP'
+      summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975).
+      description: 'Simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP.'
       operationId: OC_RI_routingrequest
       requestBody:
-        description: 'The request according to RFC 7975'
+        description: 'The request according to RFC 7975.'
         content:
           application/cdni;ptype=redirection-request:
             schema:
@@ -587,18 +579,18 @@ paths:
         required: true
       responses:
         200:
-          description: The RI request is ok
+          description: The RI request is ok.
           content:
             application/cdni;ptype=redirection-response:
               schema:
-                description: 'the reponse that contains information about the redirection target or an error to be used for building teh response to the user agent'
+                description: 'The reponse that contains information about the redirection target or an error to be used for building the response to the user agent.'
                 $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/RI.Response'
         400:
-          description: Command is invalid
+          description: Command is invalid.
         403:
-          description: Forbidden
+          description: Forbidden.
         404:
-          description: Not found
+          description: Not found.
 components:
   securitySchemes:
     bearerToken:
