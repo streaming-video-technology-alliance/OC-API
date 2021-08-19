@@ -277,7 +277,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/MI_UriSigning'
             - $ref: '#/components/schemas/MI_HeaderAuth'
-            - $ref: '#/components/schemas/MI_HeaderAuth'
+            - $ref: '#/components/schemas/MI_AWSv4Auth'
           discriminator: 
             propertyName: auth-type 
     MI_authtype:
@@ -287,10 +287,9 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.HeaderAuth'
-        - $ref: '#/components/schemas/MI.HeaderAuth'
     MI.HeaderAuth:
       type: object
-      description: 'Header based authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
+      description: '"Header based" authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
       required:
         - header-name
         - header-value
@@ -491,19 +490,19 @@ components:
       type: object
       properties:
         internal:  
-          description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds. “5”, as an example for a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, default to use the cache control policy specified in the HTTP response from the uCDN.' 
+          description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds, for example “5” is a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.' 
           oneOf:
             - type: string
             - type: string
               enum: [as-is, no-cache, no-store]
         external:  
-          description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”.The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, default to use the cache control policy specified in the HTTP response from the uCDN.'
+          description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.'
           oneOf:
             - type: string
             - type: string
               enum: [as-is, no-cache, no-store]
         force:  
-          description: 'If set to "True", the metadata interface cache policy defined in the MI.CachePolicy will override any cache control policy set in the response from the uCDN. If set to "False", the MI.CachePolicy is only used if there is no cache control policy provided in the response from the uCDN. Default is False, which will apply the MI.CachePolicy only if no policy is provided in the response from the uCDN.'
+          description: 'If set to "True", the metadata interface cache policy defined in the MI.CachePolicy will override any cache control policy set in the response from the uCDN. If set to "False", the MI.CachePolicy is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy only if no policy is provided in the response from the uCDN.'
           type: boolean
       example:
         value:  {
@@ -621,10 +620,10 @@ components:
         - $ref: '#/components/schemas/MI.CacheBypassPolicy'
     MI.CacheBypassPolicy:
       type: object
-      description: 'Allows a client request to be set as non cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
+      description: 'Allows a client request to be set as non-cacheable.  It is expected that this feature will be used to allow clients to test the fill path to the uCDN.'
       properties:
         bypass-cache:
-          description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within a ProcessingStages to allow a client request to be marked to bypass a cache.'
+          description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within ProcessingStages to allow a client request to be marked to bypass a cache.'
           type: boolean
           default: false
     MI_OcnSelection:
@@ -636,22 +635,22 @@ components:
       description: 'Allows the uCDN to indicate to the dCDN a preference in terms of OCN selection.'
       properties:
         ocn-delivery:
-          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties ocn-type and  ocn-delivery must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
           type: object
           properties:
             ocn-medium:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties ocn-medium and ocn-transport must be present.'
+              description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties, ocn-medium and ocn-transport, must be present.'
               type: string
               enum: [SATELLITE]
             ocn-transport:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties ocn-medium and ocn-transport must be present.'
+              description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
               type: string
               enum: [MABR]
         ocn-type:
-          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties ocn-type and ocn-delivery must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
           type: string
         ocn-selection:
-          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through best effort procedure . Last “besteffort” means that the dCDN tries its best to fulfil the requested ocn-selection policy.'
+          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through a best effort procedure . Last, “besteffort” means that the dCDN tries its best to fulfill the requested ocn-selection policy.'
           type: string
           enum: [attempt-or-failed, attempt-or-besteffort, besteffort]
           default: besteffort
@@ -699,22 +698,22 @@ components:
       description: 'Describes the matching rules, metadata, and transformations to be applied at specific stages in the request processing pipeline.'
       properties:
         client-request:
-          description: 'Allows for the specification of conditional metadata to be applied at client request processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
+          description: 'Allows for the specification of conditional metadata to be applied at client request processing stages. The StageRules in the array are evaluated in order.'
           type: array
           items: 
             $ref: '#/components/schemas/MI_StageRules'
         origin-request:
-          description: 'Allows for the specification of conditional metadata to be applied at origin request processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
+          description: 'Allows for the specification of conditional metadata to be applied at origin request processing stages. The StageRules in the array are evaluated in order.'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageRules'
         origin-response:
-          description: 'Allows for the specification of conditional metadata to be applied at origin response processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
+          description: 'Allows for the specification of conditional metadata to be applied at origin response processing stages. The StageRules in the array are evaluated in order.'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageRules'
         client-response:
-          description: 'Allows for the specification of conditional metadata to be applied at client response processing stages, as defined in Section 3.1 . The StageRules in the array are evaluated in order.'
+          description: 'Allows for the specification of conditional metadata to be applied at client response processing stages. The StageRules in the array are evaluated in order.'
           type: array
           items:
              $ref: '#/components/schemas/MI_StageRules'
@@ -724,13 +723,13 @@ components:
         - $ref: '#/components/schemas/MI.StageRules'
     MI.StageRules:
       type: object
-      description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transforms that should be applied conditionally on a rich expression match.'
+      description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transformations that should be applied conditionally on a rich expression match.'
       properties:
         match:
           description: 'A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided.'
           $ref: '#/components/schemas/MI_ExpressionMatch'
         stage-metadata:
-          description: 'The stage-metadata rules are always applied if no match expression is provided. This would be the case when stage-metadata.'
+          description: 'The set of StageMetadata to be applied at the processing stage if the match expression evaluates to true or is not present. '
           type: array
           items:
              $ref: '#/components/schemas/MI_StageMetadata'
@@ -777,7 +776,7 @@ components:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         uri:
-          description: 'Replacement value for the HTTP request. Either a literal (static string) or an expression using CDNI-MEL to dynamically construct a URI value from elements of the HTTP request and/or response.'
+          description: 'Replacement value for the HTTP request; either a literal (static string) or an expression using CDNI-MEL to dynamically construct a URI value from elements of the HTTP request and/or response.'
           type: string 
         uri-is-expression:
           description: 'Flag to signal whether the URI is a static string literal or a CDNI-MEL expression that needs to be dynamically evaluated.'
@@ -795,7 +794,7 @@ components:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         response-status:
-          description: 'Replacement value for the HTTP response status code. Either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in no override of origin-provided response status. '
+          description: 'Replacement value for the HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in no override of origin-provided response status. '
           oneOf:
             - type: string
             - type: integer
@@ -817,12 +816,12 @@ components:
         - response-status
       properties:
         headers:
-          description: 'An array of HTTP header objects that specify the full set of headers to be applied to the synthetic response. THe property is not mandatory, although it would be unusual to not specify minimal standard response headers, such as Content-Type.'
+          description: 'An array of HTTP header objects that specify the full set of headers to be applied to the synthetic response. The property is not mandatory, although it would be unusual to not specify minimal standard response headers, such as Content-Type.'
           type: array 
           items:
             $ref: '#/components/schemas/MI_HTTPHeader'
         response-status:
-          description: 'HTTP response status code. Either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the upstream HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in a 500 status for the synthetic response.'
+          description: 'HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the upstream HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in a 500 status for the synthetic response.'
           oneOf:
             - type: string
             - type: integer 
@@ -831,7 +830,7 @@ components:
           type: boolean
           default: false
         body:
-          description: 'Body for the synthetic HTTP response. The response body can either be static or dynamically constructed from a rich expression. Either a literal (static string) or an expression using CDNI-MEL to dynamically construct a response body from elements of the HTTP request and/or response. If this property is absent, an empty HTTP response with a zero-value Content-Length header is generated.'
+          description: 'Body for the synthetic HTTP response. The response body can either be static or dynamically constructed from a rich expression; either a literal (static string) or an expression using CDNI-MEL to dynamically construct a response body from elements of the HTTP request and/or response. If this property is absent, an empty HTTP response with a zero-value Content-Length header is generated.'
           type: string
         body-is-expression:
           description: 'Flag to signal whether the synthetic response body is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'

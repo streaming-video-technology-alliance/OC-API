@@ -233,7 +233,7 @@ paths:
         - name: host
           in: path
           required: true
-          description: 'Parameter allowing to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
+          description: 'Parameter to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
           schema:
             type: string
       requestBody:
@@ -279,7 +279,7 @@ paths:
         - name: host
           in: path
           required: true
-          description: 'Parameter allowing to get the configuration related to a host. "www.disney.com" allows to get the configuration associated with that host name.'
+          description: 'Parameter to get the configuration related to a host. "www.disney.com" allows to get the configuration associated with that host name.'
           schema:
             type: string
       responses:
@@ -306,7 +306,7 @@ paths:
       parameters:
         - name: host
           in: path
-          description: 'Parameter allowing to delete the configuration related to a host. "www.disney.com" allows to delete the configuration associated with that host name.'
+          description: 'Parameter to delete the configuration related to a host. "www.disney.com" allows to delete the configuration associated with that host name.'
           required: true
           schema:
             type: string
@@ -339,7 +339,7 @@ paths:
             type: string
         - name: path-pattern
           in: path
-          description: 'Parameter allowing to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
+          description: 'Parameter to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
           required: true
           schema:
             type: string
@@ -386,13 +386,13 @@ paths:
       parameters:
         - name: host
           in: path
-          description: 'Parameter allowing to get the configuration related to a host.'
+          description: 'Parameter to get the configuration related to a host.'
           required: true
           schema:
             type: string
         - name: path-pattern
           in: path
-          description: 'Parameter allowing to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned.'
+          description: 'Parameter to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned.'
           required: true
           schema:
             type: string
@@ -420,13 +420,13 @@ paths:
       parameters:
         - name: host
           in: path
-          description: 'Parameter allowing to indicate the host.'
+          description: 'Parameter to indicate the host.'
           required: true
           schema:
             type: string
         - name: path-pattern
           in: path
-          description: 'Parameter allowing to delete the configuration related to a host AND a path pattern.'
+          description: 'Parameter to delete the configuration related to a host AND a path pattern.'
           required: true
           schema:
             type: string

@@ -435,7 +435,7 @@ components:
           description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986].
         The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
         Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. 
-        Note: Inconsistency between the PatternMatch pattern (Section 4.1.5) and the exclude-path-pattern can result in inefficient caching.'
+        Note: Inconsistency between the PatternMatch pattern and the exclude-path-pattern can result in inefficient caching.'
           type: string
         include-query-strings:
           description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive. If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, query parameters SHOULD be evaluated in the order specified in this array.'
