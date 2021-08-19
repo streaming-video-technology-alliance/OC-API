@@ -59,16 +59,16 @@ Then access to http://localhost in browser.
 ![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf3.txt)
   
 ## Workflow OC-APIs Test Bed End User service access With DNS Redirect
-![alternative text](./worksflows/service1.png)
+![alternative text](./workflows/service1.png)
   
 ## Workflow OC-APIs Test Bed Service Configuration 2
-![alternative text](./worksflows/service2.png)
+![alternative text](./workflows/service2.png)
 
 ## Workflow OC-APIs Test Bed Service Configuration 3
-![alternative text](./worksflows/service3.png)
+![alternative text](./workflows/service3.png)
   
 ## Workflow OC-APIs Test Bed End User service access With DNS Redirect
-![alternative text](./worksflows/service4.png)
+![alternative text](./workflows/service4.png)
 
 
 >>>>>>> Stashed changes
