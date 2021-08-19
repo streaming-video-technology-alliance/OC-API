@@ -942,7 +942,7 @@ components:
         - footprints
       properties:
         limit-type:
-          description: 'The limit type for which the change is requested. One of egress, requests, storage-size, storage-objects, sessions, or cache-size.'
+          description: 'The limit type for which the change is requested: egress, requests, storage-size, storage-objects, sessions, or cache-size.'
           type: string
           enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
         limit-value:
@@ -959,10 +959,10 @@ components:
         - $ref: '#/components/schemas/MI.RequestRouting'
     MI.RequestRouting:
       type: object
-      description: 'Allows the uCDN to force the dCDN request routing mode(s) to be applied when working in iterative redirection mode . The list of redirection modes supported by the dCDN is advertised through the  FCI.RedirectionMode object. The list of request routing modes supported by the dCDN is advertised through the  FCI.RequestRoutingMode object.'
+      description: 'Allows the uCDN to force the dCDN request routing mode(s) to be applied when working in iterative redirection mode. The list of redirection modes supported by the dCDN is advertised through the  FCI.RedirectionMode object. The list of request routing modes supported by the dCDN is advertised through the FCI.RequestRoutingMode object.'
       properties:
         request-routing-modes:
-          description: 'This property is used to instruct the dCDN to perform request routing according to  one or more preferred modes among those supported and advertised by the dCDN through the FCI.RequestRouting object. One must understand  that forcing (instead of letting the dCDN request router select ) one particular request routing mode may trigger some inefficiency in the request routing process.By default all request routing modes supported by the dCDN can be used by the dCDN as part of its request routing process.'
+          description: 'This property is used to instruct the dCDN to perform request routing according to one or more preferred modes among those supported and advertised by the dCDN through the FCI.RequestRouting object. One must understand that forcing (instead of letting the dCDN request router select) one particular request routing mode may trigger some inefficiency in the request routing process. By default all request routing modes supported by the dCDN can be used by the dCDN as part of its request routing process.'
           type: array
           items: 
             type: string
@@ -976,20 +976,20 @@ components:
       description: 'Allows for the specification of two tiers of CDN-specific identifiers and names. The interpretation of these identifiers is implementation specific.'
       properties:
         service-id:
-          description: 'A provider-specific identifier for the service (typically a customer account identifier). Either a literal (static string) or an expression using CDNI-MEL to dynamically construct the ID from elements of the HTTP request and/or response.'
+          description: 'A provider-specific identifier for the service (typically a customer account identifier); either a literal (static string) or an expression using CDNI-MEL to dynamically construct the ID from elements of the HTTP request and/or response.'
           type: string
         service-id-is-expression:
-          description: 'Flag to signal whether the service-id is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'
+          description: 'Flag to signal whether the service-id is a static string literal or a CDNI-MEL expression that needs to be dynamically evaluated.'
           type: boolean
           default: false
         service-name:
           description: 'Human-readable name for the service-id.'
           type: string
         property-id:
-          description: 'A provider-specific identifier for the property (typically identifies a child configuration within the parent service-id).Either a literal (static string) or an expression using CDNI-MEL to dynamically construct the ID from elements of the HTTP request and/or response.'
+          description: 'A provider-specific identifier for the property (typically identifies a child configuration within the parent service-id); either a literal (static string) or an expression using CDNI-MEL to dynamically construct the ID from elements of the HTTP request and/or response.'
           type: string
         property-id-is-expression:
-          description: 'Flag to signal whether the property-id is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'
+          description: 'Flag to signal whether the property-id is a static string literal or a CDNI-MEL expression that needs to be dynamically evaluated.'
           type: boolean
           default: false
         property-name:
@@ -1008,7 +1008,7 @@ components:
         - $ref: '#/components/schemas/MI.SourceMetadataExtended'
     MI.SourceMetadataExtended:
       type: object
-      description: 'An alternative to the CDNi standard SourceMetadata object,  which adds a property to specify load balancing across multiple sources, as well as a SourceExtended sub-object with additional attributes to the CDNi standard Source object. While both SourceMetadataExtended and SourceMetadata can be provided for backward compatibility, a dCDN that advertises capability for SourceMetadataExtended will ignore SourceMetadata if both are provided for a given host or path match.'
+      description: 'An alternative to the CDNi standard SourceMetadata object, which adds a property to specify load balancing across multiple sources, as well as a SourceExtended sub-object with additional attributes to the CDNi standard Source object. While both SourceMetadataExtended and SourceMetadata can be provided for backward compatibility, a dCDN that advertises capability for SourceMetadataExtended will ignore SourceMetadata if both are provided for a given host or path match.'
       properties:
         sources:
           description: 'Sources from which the dCDN can acquire content, listed in order of preference.'
@@ -1038,13 +1038,13 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.SourceExtended'
     MI.SourceExtended:
-      description: 'An alternative to the CDNi standard Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
+      description: 'An alternative to the CDNi standard MI.Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
       allOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Source'
         - type: object
           properties:
             origin-host:
-              description: 'HTTP host header to be used instead of the endpoints hostname when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
+              description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
               type: string
             webroot:  
               description: The path element that is prepended to a resource's URI before retrieving content from the source. 
