@@ -49,6 +49,7 @@ Then access to http://localhost in browser.
 
 # Testbed use case workflow example
 ## Workflow OC-APIs Test Bed Service Configuration 1
+<<<<<<< Updated upstream
 ![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf1.txt&token=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)
   
 ## Workflow OC-APIs Test Bed Service Configuration 2
@@ -58,6 +59,18 @@ Then access to http://localhost in browser.
 ![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf3.txt)
   
 ## Workflow OC-APIs Test Bed End User service access With DNS Redirect
-![alternative text](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/streaming-video-alliance/OC-API/try-to-generate-server/workflows/serviceconf4.txt)
+![alternative text](./worksflows/service1.png)
+  
+## Workflow OC-APIs Test Bed Service Configuration 2
+![alternative text](./worksflows/service2.png)
+
+## Workflow OC-APIs Test Bed Service Configuration 3
+![alternative text](./worksflows/service3.png)
+  
+## Workflow OC-APIs Test Bed End User service access With DNS Redirect
+![alternative text](./worksflows/service4.png)
+
+
+>>>>>>> Stashed changes
   
 
