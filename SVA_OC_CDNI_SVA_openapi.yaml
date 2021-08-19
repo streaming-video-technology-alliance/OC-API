@@ -133,7 +133,7 @@ components:
       type: object
       description: 'To signal/announce the supported OCN types  and/or  their transport arrangement and/or medium supported by OCNs.'
       properties:
-        ocn-acquisition-list:
+        ocn-delivery-list:
           description: 'List of supported medium and/or transport arrangements.'
           type: object
           properties:
