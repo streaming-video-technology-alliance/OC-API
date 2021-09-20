@@ -31,13 +31,13 @@ paths:
           description: 'Forbiden.'
         '404':
           description: 'No FCI advertisement.'
-  /OC/FCI/subscribe:
+  /OC/FCI/subscription:
     post:
       tags:
         - OC_FCI
-      summary: Suscribes to FCI updates notifications.
+      summary: 'Suscribes to FCI updates notifications.'
       operationId: oc_fci_post_subscribe
-      description: ''
+      description: 'A subscription ID is returned in the Location header of the response in case of successful creation.'
       requestBody:
         description: ''
         content:
@@ -69,7 +69,7 @@ paths:
                     schema:
                       type: array
                       items:
-                        $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
+                        $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/FCI_capabilities'
               responses:
                 '200':
                   description: 'FCI updated.'
@@ -79,7 +79,7 @@ paths:
                   description: 'Forbiden.'
       responses:
         201:
-          description: 'Subscription created. The "Location" header gathes the URL of the newly created resource.'
+          description: 'Subscription created. The "Location" header gathes the subscription ID (the URI) of the newly created resource.'
         400:
           description: 'Bad request.'
         403:
@@ -185,6 +185,8 @@ paths:
           description: Forbidden.
         404:
           description: Not found.
+        500:
+          description: "server error"
     get:
       tags:
         - OC_COI_simple
@@ -269,6 +271,8 @@ paths:
           description: Forbidden.
         404:
           description: 'Not found. There was no configuration file.' 
+        500:
+          description: "server error"
     get:
       tags:
         - OC_COI_simple_host
@@ -377,6 +381,8 @@ paths:
           description: 'Forbidden.'
         404:
           description: 'Not found.'
+        500:
+          description: "server error"
     get:
       tags:
         - OC_COI_simple_path-pattern
