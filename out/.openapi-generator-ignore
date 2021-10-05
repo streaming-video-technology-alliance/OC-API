@@ -22,4 +22,4 @@
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
 #
-openapi_server/controllers/*
+openapi_server/controllers/ocfci_controller.py
