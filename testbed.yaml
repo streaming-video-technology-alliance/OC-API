@@ -15,8 +15,8 @@ tags:
     description: 'Deals with COI'
 servers:
   - url: http://localhost:8080
-#security: 
-#  - jwt: []
+security: 
+  - jwt: []
 paths:
   /oc/fci/advertisement:
     get:
@@ -46,32 +46,49 @@ paths:
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: oc_ci_configure
       requestBody:
+        required: true
         description: 'the metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the entire dataset (HostIndex)'
         content:
-          application/cdni;ptype=MI.HostIndex:
-            schema:
-              $ref: '#/components/schemas/MIHostIndex'
-        required: true
+            #application/cdni;ptype=MI.HostIndex:
+            #workaround for https://github.com/OpenAPITools/openapi-generator/issues/1666
+            #with body as name for associated controller
+            application/json:
+             schema:
+               $ref: '#/components/schemas/MIHostIndex'
       responses:
         200:
           description: The configuration file has been modified as already existing.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+                $ref: '#/components/schemas/ci-trigger-status'
         201:
           description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
+                $ref: '#/components/schemas/ci-trigger-status'
         400:
           description: Command is invalid
         403:
           description: Forbidden
         404:
           description: Not found
-
+    delete:
+      tags:
+        - OC_COI_simple
+      summary: 'Deletes the whole configuration.'
+      operationId: oc_ci_deleteConfiguration
+      responses:
+        200:
+          description: 'Prepositioned configuration metadata is deleted/purged. This does cancel/stop the corresponding delegation.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {} 
 components:
   securitySchemes:
     jwt:
@@ -557,4 +574,150 @@ components:
           type: boolean
           description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform  this metadata object. Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
           default: false 
-     
+  # CI (Control) interface (RFC 8007) 
+# Regsitered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml
+    ci-trigger-command:
+      type: object
+      required:
+        - cdn-path 
+      properties:
+        cdn-path:
+          allOf:
+            - $ref: '#/components/schemas/CI_cdn-path'
+          description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
+        cancel:
+          allOf:
+            - $ref: '#/components/schemas/CI_cancel'
+          description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
+        trigger:
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
+          description: 'A specification of the trigger type and a set of data to act upon'
+    ci-trigger-status:
+      type: object
+      description: 'Trigger Status Resource created by the dCDN once processing a ci-trigger-Command'
+      required:
+        - trigger
+        - ctime
+        - mtime 
+        - status
+      properties:
+        trigger:
+          allOf:
+            - $ref: '#/components/schemas/CI_trigger'
+          description: 'The Trigger Specification posted in the body of the CI/T Command.
+          Note that this need not be a byte-for-byte copy.  
+          For example, in the JSON representation the dCDN may re-serialize the information differently.'
+        ctime:
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
+          description: 'Time at which the CI/T Command was received by the dCDN.
+          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
+        mtime:
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
+          description: 'Time at which the Trigger Status Resource was last modified.
+          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
+        etime:
+          allOf:
+            - $ref: '#/components/schemas/CI_time'
+          description: 'Estimate of the time at which the dCDN expects to complete the activity.
+          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
+        status:
+          $ref: '#/components/schemas/CI_status'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CI_error'
+    CI_status:
+      type: string
+      enum: [pending, active, complete, processed, failed, canceling, canceled]
+    CI_error:
+      type: object
+      required:
+        - error
+      description: 'Metadata and content references copied from the Trigger Specification.  Only those URLs and patterns to which the error applies are included in each property, but those URLs and patterns MUST be exactly as they appear in the request; the dCDN MUST NOT generalize the URLs. For example, if the uCDN requests pre-positioning of URLs "https://content.example.com/a" and "https://content.example.com/b", the dCDN must not generalize its error report to the pattern "https://content.example.com/*".)'
+      properties:
+        error:
+          type: string
+          enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
+        metadata.urls:
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
+          description: 'Copied from the CI_trigger related request/command concerned by the error'
+        content.urls:
+          allOf:
+            - $ref: '#/components/schemas/CI_urls'
+          description: 'Copied from the CI_trigger related request/command concerned by the error'
+        metadata.patterns:
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
+          description: 'The metadata the trigger applies to'
+        content.patterns:
+          allOf:
+            - $ref: '#/components/schemas/CI_patterns'
+          description: 'The content the trigger applies to'
+        description:
+          type: string
+          description: 'A human-readable description of the error'
+    CI_cdn-path:
+      type: array
+      items:
+        type: string
+    CI_cancel:
+       type: array
+       items:
+          type: string
+    CI_patterns:
+      type: array
+      items:
+        type: object
+        properties:
+          pattern:
+            type: string
+          case-sensitive:
+              type: boolean
+              default: false
+          match-query-string:
+            type: boolean
+            default: false
+            description: 'Flag indicating whether to include the query part of the URI when comparing against the pattern.'    
+    CI_urls:
+      type: array
+      items:
+        type: string
+      description: 'The URLs of content the CI Trigger Command applies to.'
+    CI_trigger:
+        type: object
+        required:
+          - type
+        properties:
+          type:
+            type: string
+            enum: [preposition, invalidate, purge]
+          metadata.urls:
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
+            description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
+          content.urls:
+            allOf:
+            - $ref: '#/components/schemas/CI_urls'
+            description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
+          content.ccid:
+            type: array
+            items:
+              type: string
+            description: 'The Content Collection IDentifier of content the trigger applies to.  
+            The "ccid" is a grouping of content, as defined by [RFC8006]'
+          metadata.patterns:
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
+            description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
+          content.patterns:
+            allOf:
+            - $ref: '#/components/schemas/CI_patterns'
+            description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
+    CI_time:
+      type: number
+      description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
+   
