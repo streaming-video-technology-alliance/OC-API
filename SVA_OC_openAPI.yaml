@@ -333,7 +333,7 @@ paths:
         - OC_COI_simple_path-pattern
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
-      operationId: OC_CI_configure
+      operationId: OC_CI_configure_host_path-pattern
       parameters:
         - name: host
           in: path

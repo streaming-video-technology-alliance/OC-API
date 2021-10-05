@@ -12,6 +12,14 @@ externalDocs:
 components:
   schemas:
 # FCI (Footprint & capacity) Interface: RFC 8008 extended with RFC 8804 (FCI.RedirectTarget)
+    FCI_capabilities:
+      type: object
+      description: 'The list of capabilities supported by the dCDN.'
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
       enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
@@ -55,7 +63,7 @@ components:
       description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the 
       "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
-        - acquisition-protocols
+        - delivery-protocols
       properties:
         delivery-protocols:
           type: array
@@ -94,8 +102,7 @@ components:
       properties:
         host: 
           description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
+          $ref: '#/components/schemas/MI_endpoint'
         scheme:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the provided scheme in for HTTP redirection to the dCDN.'
           type: string
@@ -326,7 +333,7 @@ components:
     MI_Footprint:
         oneOf:
           - $ref: '#/components/schemas/MI_link'
-          - $ref: '#/components/schemas/MI_Footprint'  
+          - $ref: '#/components/schemas/MI.Footprint'  
     MI.Footprint:
       type: object
       description: 'A Footprint object describes the footprint to which a LocationRule can be applied, e.g., an IPv4 address range or a geographic location.'

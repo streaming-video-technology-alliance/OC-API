@@ -17,7 +17,7 @@ components:
         capabilities:
           type: array
           items:
-            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_genericbase'
+            $ref: '#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
       enum: [FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
@@ -46,6 +46,7 @@ components:
             - $ref: '#/components/schemas/FCI.RequestRouting'
             - $ref: '#/components/schemas/FCI.PrivateFeatures'
             - $ref: '#/components/schemas/FCI.OcnSelection'
+            - $ref: '#/components/schemas/FCI.Telemetry'
           discriminator: 
             propertyName: capability-type
         footprints:
@@ -69,8 +70,6 @@ components:
             $ref: '#/components/schemas/MI_payloadtype'
     FCI.AuthTypes:
       type: object
-      required:
-        - auth-types
       properties:
         authe-types:
           type: array
@@ -152,7 +151,92 @@ components:
           type: array
           items: 
             type: string
-
+    FCI.Telemetry:
+      type: object
+      description: 'An array of telemetry source objects'
+      required: 
+        - sources
+      properties: 
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_TelemetrySource'
+    FCI_TelemetrySource:
+      type: object
+      description: ''
+      required:
+        - id
+        - type
+        - metrics
+      properties:
+        id:
+          description: 'The id of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          type: string
+        type:
+          description: 'The telemetry source type'
+          type: string
+          enum: [generic]
+        metrics:
+          description: 'The metrics exposed by the source'
+          type: array
+          items: 
+            $ref: '#/components/schemas/FCI_TelemetrySourceMetric'
+    FCI_TelemetrySourceMetric:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        name:
+          description: ' A unique (for the telemetry source) identifier for that metric. '
+          type: string
+        time-granularity:
+          description: 'Represents the time frame that the data represents in seconds.  I.e. is this a data set over 5 minutes, one hour, etc'
+          type: integer
+        data-percentile:
+          description: 'Represents what percentile calculation the data represents, i.e. 50 percentile would equate to the average over the time-granularity'
+          type: integer
+        latency:
+          description: 'Defines, in seconds, how far behind the data is from real time, i.e. is the data aggregation 15 minutes behind or 5 minutes behind real time.'
+          type: integer
+    FCI.CapacityLimits:
+      description: 'The top level limits. An array of metrics attached to a footprint and an entire uCDN  or a given host name (as part of the configured host index.'
+      type: array
+      items:
+        $ref: '#/components/schemas/FCI_CapacityLimit'
+    FCI_CapacityLimit:
+      type: object
+      description: 'Capacity metric limits'
+      required:
+        - limit-type
+        - maximum-hard
+      properties:
+        host:
+          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present then the limit is valid for the entire uCDN'
+          type: string
+        limit-type:
+          description: ' the following allowed types and their associated unit type: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
+          type: string
+          enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
+        maximum_hard:
+          description: 'Defines the maximum unit of capacity that is available for use.'
+          type: integer 
+        maximum_soft:
+          description: 'Defines a soft limit at which an upstream should consider deducing traffic to prevent hitting the hard limit.'
+          type: integer
+        telemetry-source: 
+          description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
+          $ref: '#/components/schemas/FCI_TelemetryMetricRef'
+    FCI_TelemetryMetricRef:
+      type: object
+      description: 'Defines a specific metric of a specific telemetry source.'
+      properties:
+        id:
+          description: 'The id of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          type: string
+        metric:
+          description: ' A unique (for the telemetry source) identifier for that metric. '
+          type: string
 # MI extensions
     MI.HostIndex:
       type: object
@@ -838,13 +922,13 @@ components:
           default: false
       example:
         value: {
-                  "headers" : { [
+                  "headers" : [
                   {"name" : "content-type", "value" : "text/plain"},
                   {"name" : "X-custom-response-header", "value" : "some static value"},
-                    ]},
+                  ],
                   "response-status" : "405",
                   "response-body" : "'Sorry, Access to resource ' . req.uri . ' is not allowed'",
-                  "body-is-expression", true
+                  "body-is-expression": true
                 }
     MI_HeaderTransform:
       oneOf:
@@ -901,7 +985,7 @@ components:
         value: {
                 "name" : "X-custom-response-header",
                 "value" : “$req.uri.query.session",
-                “value-is-expression”, true
+                “value-is-expression” : true
               }
     MI_RequestedCapacityLimits:
       oneOf:
