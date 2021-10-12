@@ -39,6 +39,7 @@ components:
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectionMode'
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
+            - $ref: '#/components/schemas/FCI.OpenCachingApiVersion'
             - $ref: '#/components/schemas/FCI.Metadata'
             - $ref: '#/components/schemas/FCI.AuthTypes'
             - $ref: '#/components/schemas/FCI.ProcessingStages'
@@ -54,6 +55,9 @@ components:
           description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006]).'
           items:
             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
+    FCI.OpenCachingApiVersion:
+      description: 'This object is mandatory. It advertizes about the SVA open CAching API supported by the dCDN'
+      type: string
     FCI.Metadata:
       type: object
       description: 'Extension of CDNI FCI.Metadata.'
@@ -200,10 +204,19 @@ components:
           description: 'Defines, in seconds, how far behind the data is from real time, i.e. is the data aggregation 15 minutes behind or 5 minutes behind real time.'
           type: integer
     FCI.CapacityLimits:
-      description: 'The top level limits. An array of metrics attached to a footprint and an entire uCDN  or a given host name (as part of the configured host index.'
-      type: array
-      items:
-        $ref: '#/components/schemas/FCI_CapacityLimit'
+      description: 'The uCDN dedicated top level limits and possibly the per host name limits  '
+      type: object
+      required:
+        - total-limits
+      properties:
+        total-limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_CapacityLimit'
+        host-limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_CapacityLimit'
     FCI_CapacityLimit:
       type: object
       description: 'Capacity metric limits'
@@ -212,7 +225,7 @@ components:
         - maximum-hard
       properties:
         host:
-          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present then the limit is valid for the entire uCDN'
+          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present then the limit is a total limit (i.e. valid for the entire uCDN)'
           type: string
         limit-type:
           description: ' the following allowed types and their associated unit type: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
@@ -476,7 +489,7 @@ components:
         - $ref: '#/components/schemas/MI_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy, MI.ComputedCacheKey,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI, .ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
