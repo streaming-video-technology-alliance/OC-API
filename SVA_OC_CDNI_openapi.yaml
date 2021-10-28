@@ -1,8 +1,7 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - CDNI schema
-  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).
-  This API itself is not elaborated. What matters in this file is the CDNI model (schema)'
+  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).This API itself is not elaborated. What matters in this file is the CDNI model (schema)'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
@@ -49,8 +48,7 @@ components:
              $ref: '#/components/schemas/MI.Footprint'
     FCI.DeliveryProtocol:
       type: object
-      description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the 
-      "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
+      description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
         - delivery-protocols
       properties:
@@ -60,8 +58,7 @@ components:
             $ref: '#/components/schemas/MI_protocol'
     FCI.AcquisitionProtocol:
       type: object
-      description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the 
-      "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
+      description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
         - delivery-protocols
       properties:
@@ -121,13 +118,11 @@ components:
         - host
       properties:
         host:
-          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that it SHOULD NOT include 
-          a port number and, in case a port number is present, the uCDN MUST ignore it.'
+          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that it SHOULD NOT include  a port number and, in case a port number is present, the uCDN MUST ignore it.'
           $ref: '#/components/schemas/MI_endpoint' 
     FCI.Logging:
       type: object
-      description: 'The CDNI Logging capability object is used to indicate support for CDNI Logging record-types, as well as CDNI Logging fields 
-      that are marked as optional for the specified record-types [RFC7937].'
+      description: 'The CDNI Logging capability object is used to indicate support for CDNI Logging record-types, as well as CDNI Logging fields that are marked as optional for the specified record-types [RFC7937].'
       required:
         - record-type
       properties:
@@ -135,10 +130,7 @@ components:
           type: string
           enum: [cdni_http_request_v1]
         fields:
-          description: 'List of supported CDNI Logging fields that are optional for the specified record-type.
-          Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported".  
-          An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, 
-          the fields in that list MUST be interpreted as "the only optional fields that are supported".'
+          description: 'List of supported CDNI Logging fields that are optional for the specified record-type. Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported". An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, the fields in that list MUST be interpreted as "the only optional fields that are supported".'
           type: array 
           items: 
             $ref: '#/components/schemas/FCI_loggingfieldname'
@@ -149,17 +141,13 @@ components:
         - metadata
       properties:
         metadata:
-          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI
-         Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as 
-         "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list
-         must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
           items: 
             $ref: '#/components/schemas/MI_payloadtype'
     FCI_loggingfieldname:
       type: string
-      enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, 
-      sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
+      enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
     FCI_redirectionmode:
       type: string
       enum: [DNS-I, DNS-R, HTTP-I, HTTP-R]
@@ -186,12 +174,8 @@ components:
         - host-metadata
       properties:
         host:
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
-          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
-          All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
-          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
+          $ref: '#/components/schemas/MI_endpoint'
+          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase. All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host'
@@ -247,13 +231,11 @@ components:
           description: 'Description: A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986]. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character). All other characters are treated as literals'
         case-sensitive:
           type: boolean
-          description: 'Flag indicating whether or not case-sensitive matching should be used.  
-          Note: Case insensitivity applies to ALPHA characters in the URI path prior to percent-decoding [RFC3986].'
+          description: 'Flag indicating whether or not case-sensitive matching should be used. Note: Case insensitivity applies to ALPHA characters in the URI path prior to percent-decoding [RFC3986].'
           default: false
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time.  
-      dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -302,11 +284,7 @@ components:
         - $ref: '#/components/schemas/MI.LocationACL'  
     MI.LocationACL:
       type: object
-      description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content.
-      A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location.
-      If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take.  
-      If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is an action of "deny".
-      Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
+      description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content. A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location. If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take. If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is a action of "deny". Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
       properties:
         locations:
           type: array
@@ -358,9 +336,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.TimeWindowACL'
     MI.TimeWindowACL:
-      description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time.
-      If two or more windows overlap, the first window that matches against the current time determines the action a CDN MUST take.
-      If the "times" property is included but is empty or if none of the listed windows match the current time, then the result is an action of "deny".'
+      description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time. If two or more windows overlap, the first window that matches against the current time determines the action a CDN MUST take. If the "times" property is included but is empty or if none of the listed windows match the current time, then the result is an action of "deny".'
       type: object
       properties:
         times:
@@ -403,10 +379,7 @@ components:
         - $ref: '#/components/schemas/MI.ProtocolACL'
     MI.ProtocolACL:
       type: object
-      description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; otherwise, a CDN MUST take the action from the first protocol to match against the request protocol.  
-      If two or more request protocols overlap, the first protocol that matches the request protocol determines the action a CDN MUST take.  
-      If the protocol-acl property is included but is empty or if none of the listed protocols match the request protocol, then the result is an action of "deny". 
-      Although the LocationACL (see Section 4.2.2), TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the ProtocolACL and denied based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
+      description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; otherwise, a CDN MUST take the action from the first protocol to match against the request protocol. If two or more request protocols overlap, the first protocol that matches the request protocol determines the action a CDN MUST take. If the protocol-acl property is included but is empty or if none of the listed protocols match the request protocol, then the result is an action of "deny". Although the LocationACL (see Section 4.2.2), TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the ProtocolACL and denied based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
       properties:
         protocol-acl:
           type: array
@@ -439,8 +412,7 @@ components:
       description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated from the URI of the content request [RFC7234]. In some cases, a CDN or content provider might want certain path segments or query parameters to be excluded from the cache key generation. The Cache object provides guidance on what parts of the path and query string to include.'
       properties:
         exclude-path-pattern:
-          description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986]. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. 
-        Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. Note: Inconsistency between the PatternMatch pattern and the exclude-path-pattern can result in inefficient caching.'
+          description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986]. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. Note: Inconsistency between the PatternMatch pattern and the exclude-path-pattern can result in inefficient caching.'
           type: string
         include-query-strings:
           description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive. If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, query parameters SHOULD be evaluated in the order specified in this array.'
@@ -520,19 +492,15 @@ components:
         - $ref: '#/components/schemas/MI.FallbackTarget'  
     MI.FallbackTarget: 
       type: object
-      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different 
-      from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
+      description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different  from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
       required:
         - host
       properties:
         host:
-          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that in case of DNS delegation, 
-          it SHOULD NOT include a port number, and in case a port number is present, the dCDN MUST ignore it.'
-          allOf:
-            - $ref: '#/components/schemas/MI_endpoint'
+          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that in case of DNS delegation, it SHOULD NOT include a port number, and in case a port number is present, the dCDN MUST ignore it.'
+          $ref: '#/components/schemas/MI_endpoint'
         scheme:
-          description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the 
-          provided scheme in for HTTP redirection to the uCDN.'
+          description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the provided scheme in for HTTP redirection to the uCDN.'
           type: string
           enum: [http, https]
     MI_footprinttype:
@@ -554,16 +522,13 @@ components:
       enum: [http/1.1, https/1.1, http/2, http/3]
     MI_endpoint:
       type: string
-      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291].  
-      Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
+      description: 'A hostname (with optional port) or an IP address (with optional port). All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
     MI_time:
       type: integer
       format: int32
-      description: 'A time value expressed in seconds since the UNIX epoch (i.e., zero hours, zero minutes, zero seconds, on January 1, 1970) 
-      Coordinated Universal Time (UTC) [POSIX].'
+      description: 'A time value expressed in seconds since the UNIX epoch (i.e., zero hours, zero minutes, zero seconds, on January 1, 1970) Coordinated Universal Time (UTC) [POSIX].'
     MI_ipv4cidr:
-      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation).
-      Single IP addresses can be expressed as /32.'
+      description: 'An IPv4address Classless Inter-Domain Routing (CIDR) block encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv4 CIDR notation). Single IP addresses can be expressed as /32.'
       type: string
     MI_ipv6cidr:
       description: 'An IPv6address CIDR block encoded in one of the IPv6 address formats specified in [RFC5952] followed by a "/" followed by an unsigned integer representing the leading bits of the routing prefix (i.e., IPv6 CIDR notation).  Single IP addresses can be expressed as /128.'
@@ -635,16 +600,13 @@ components:
         - cdn-path 
       properties:
         cdn-path:
-          allOf:
-            - $ref: '#/components/schemas/CI_cdn-path'
+          $ref: '#/components/schemas/CI_cdn-path'
           description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
         cancel:
-          allOf:
-            - $ref: '#/components/schemas/CI_cancel'
+          $ref: '#/components/schemas/CI_cancel'
           description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
         trigger:
-          allOf:
-            - $ref: '#/components/schemas/CI_trigger'
+          $ref: '#/components/schemas/CI_trigger'
           description: 'A specification of the trigger type and a set of data to act upon'
     ci-trigger-status:
       type: object
@@ -656,26 +618,17 @@ components:
         - status
       properties:
         trigger:
-          allOf:
-            - $ref: '#/components/schemas/CI_trigger'
-          description: 'The Trigger Specification posted in the body of the CI/T Command.
-          Note that this need not be a byte-for-byte copy.  
-          For example, in the JSON representation the dCDN may re-serialize the information differently.'
+          $ref: '#/components/schemas/CI_trigger'
+          description: 'The Trigger Specification posted in the body of the CI/T Command. Note that this need not be a byte-for-byte copy. For example, in the JSON representation the dCDN may re-serialize the information differently.'
         ctime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
-          description: 'Time at which the CI/T Command was received by the dCDN.
-          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
+          $ref: '#/components/schemas/CI_time'
+          description: 'Time at which the CI/T Command was received by the dCDN. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         mtime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
-          description: 'Time at which the Trigger Status Resource was last modified.
-          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
+          $ref: '#/components/schemas/CI_time'
+          description: 'Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
         etime:
-          allOf:
-            - $ref: '#/components/schemas/CI_time'
-          description: 'Estimate of the time at which the dCDN expects to complete the activity.
-          Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
+          $ref: '#/components/schemas/CI_time'
+          description: 'Estimate of the time at which the dCDN expects to complete the activity. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         status:
           $ref: '#/components/schemas/CI_status'
         errors:
@@ -695,20 +648,16 @@ components:
           type: string
           enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
         metadata.urls:
-          allOf:
-            - $ref: '#/components/schemas/CI_urls'
+          $ref: '#/components/schemas/CI_urls'
           description: 'Copied from the CI_trigger related request/command concerned by the error'
         content.urls:
-          allOf:
-            - $ref: '#/components/schemas/CI_urls'
+          $ref: '#/components/schemas/CI_urls'
           description: 'Copied from the CI_trigger related request/command concerned by the error'
         metadata.patterns:
-          allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+          $ref: '#/components/schemas/CI_patterns'
           description: 'The metadata the trigger applies to'
         content.patterns:
-          allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+          $ref: '#/components/schemas/CI_patterns'
           description: 'The content the trigger applies to'
         description:
           type: string
@@ -749,238 +698,23 @@ components:
             type: string
             enum: [preposition, invalidate, purge]
           metadata.urls:
-            allOf:
-            - $ref: '#/components/schemas/CI_urls'
+            $ref: '#/components/schemas/CI_urls'
             description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.urls:
-            allOf:
-            - $ref: '#/components/schemas/CI_urls'
+            $ref: '#/components/schemas/CI_urls'
             description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
           content.ccid:
             type: array
             items:
               type: string
-            description: 'The Content Collection IDentifier of content the trigger applies to.  
-            The "ccid" is a grouping of content, as defined by [RFC8006]'
+            description: 'The Content Collection IDentifier of content the trigger applies to. The "ccid" is a grouping of content, as defined by [RFC8006]'
           metadata.patterns:
-            allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+            $ref: '#/components/schemas/CI_patterns'
             description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
           content.patterns:
-            allOf:
-            - $ref: '#/components/schemas/CI_patterns'
+            $ref: '#/components/schemas/CI_patterns'
             description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
       description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
-# RI interface (RFC7975)
-    RI_ipaddress:
-      type: string
-      pattern: /^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>\\.(?4)){3}))$/iD
-    RI_uri:
-      type: string
-      pattern: https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)
-    RI_method:
-      type: string
-      enum: [GET, HEAD]
-    RI_iprange:
-      type: array
-      items:
-        oneOf:
-          - $ref: '#/components/schemas/MI_ipv4cidr'
-          - $ref: '#/components/schemas/MI_ipv6cidr'
-    RI_qtype:
-      type: string
-      enum: [A, AAAA]
-    RI_qclass:
-      type: string
-      enum: [IN]
-    RI_error:
-      description: 'per RFC7975 / section 4.7'
-      type: object
-      required:
-        - error-code
-      properties:
-        error-code:
-          type: integer
-          enum: [100, 400, 500, 501, 502, 503, 504, 505, 506]
-        reason:
-          type: string
-          description: " the list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7"
-    RI.Request:
-      type: object
-      description: 'dns or http property is required. not both'
-      required:
-        - cdn-path
-        - max-hops
-      properties:
-        dns:
-          $ref: '#/components/schemas/RI_dnsredirectionrequest'
-        http:
-          $ref: '#/components/schemas/RI_httpredirectionrequest'
-        cdn-path:
-          description: 'no CDN traversal in SVA. The cdn-path MUST be reflected back in RI response and MUST contain the value of cdn-path received in the associated RI request with the final dCDNs CDN Provider ID appended.'
-          type: array
-          items: 
-            type: string
-        max-hops:
-          type: integer
-          default: 1
-      example: 
-        value: { 
-          "http": 
-          {
-            "c-ip": "198.51.100.1",
-            "cs-uri": "http://www.example.com/manifest.mpd",
-            "cs-version": "HTTP/1.1",
-            "cs-method": "GET",
-            "cdn-path": ["AS64496:0"],
-            "max-hops": 1
-          }}
-    RI.Response:
-      type: object
-      description: 'dns or http property is required. not both'
-      properties:
-        dns:
-          $ref: '#/components/schemas/RI_dnsredirectionresponse' 
-        http:
-          $ref: '#/components/schemas/RI_httpredirectionresponse'
-        scope:
-          $ref: '#/components/schemas/RI_iprange'
-        error:
-          $ref: '#/components/schemas/RI_error'
-      example: 
-        value: { 
-        "http": 
-        {
-          "sc-status": 307,
-          "sc-version": "HTTP/1.1",
-          "sc-reason": "Found",
-          "cs-uri": "http://www.example.com/manifest.mpd",
-          "sc-(location)": "http://ocn3.dCDN.com:8090/www.example.com/manifest.mpd"
-        }}
-    RI_dnsredirectionrequest:
-      type: object
-      required:
-        - resolver-ip
-        - qtype
-        - qclass
-        - qname
-      properties:
-        resolver-ip: 
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
-          description: 'The IP address of the UA DNS resolver'
-        qtype:
-          allOf:
-            - $ref: '#/components/schemas/RI_qtype'
-          description: 'The type of Query made by the UA DNS resolver'
-        qclass:
-          allOf:
-            - $ref: '#/components/schemas/RI_qclass'
-          description: 'The DNS class of the query made by the UA DNS resolver '
-        qname:
-          type: string
-          description: 'The FQDN being quieried'
-        c-subnet:
-          allOf:
-            - $ref: '#/components/schemas/RI_iprange'
-          description: 'The IP address (or prefix) of the UA in Classless Inter-Domain Routing (CIDR) format.'
-    RI_httpredirectionrequest:
-      type: object
-      required:
-        - c-ip
-        - cs-uri
-        - cs-method
-        - cs-version
-      properties:
-        c-ip: 
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
-          description: 'The IP address of the User Agent'
-        cs-uri:
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
-          description: 'The URI ([RFC7230]) requested by the User Agent'
-        cs-method:
-          allOf:
-            - $ref: '#/components/schemas/RI_method'
-          description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
-        cs-version:
-          allOf:
-            - $ref: '#/components/schemas/RI_ipaddress'
-          description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
-    RI_statuscodes:
-      type: integer
-      enum: [302, 303, 307]
-    RI_version:
-      type: string
-      enum: [HTTP/1.1, http/2]
-    RI_reason:
-      type: string
-    RI_httpredirectionresponse:
-      type: object
-      required:
-        - sc-status
-        - sc-version
-        - sc-reason
-        - cs-uri
-        - sc-(location)
-      properties:
-        sc-status: 
-          allOf:
-            - $ref: '#/components/schemas/RI_statuscodes'
-          description: 'The status-code part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA (usually set to 302).'
-        sc-version:
-          allOf:
-            - $ref: '#/components/schemas/RI_version'
-          description: 'The HTTP-version part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA .'
-        sc-reason:
-          allOf:
-            - $ref: '#/components/schemas/RI_reason'
-          description: 'The reason-phrase part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA '
-        cs-uri:
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
-          description: 'The URI ([RFC7230]) requested by the User Agent'
-        sc-(location):
-          allOf:
-            - $ref: '#/components/schemas/RI_uri'
-          description: 'The content of the Location header to return to the UA: the URI ([RFC7230]) pointing to the redirect target (i.e. the OCN)'
-    RI_rcode:
-      type: integer
-      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22]
-    RI_dnsredirectionresponse:
-      type: object
-      description: 'MUST include at least one of the following keys: a, aaaa, or cname'
-      required:
-        - rcode
-        - name
-      properties:
-        rcode: 
-          allOf:
-            - $ref: '#/components/schemas/RI_rcode'
-          description: 'DNS response code [RFC6895]).'
-        name:
-          type: string
-          description: 'The FQDN the response relates to'
-        a:
-          type: array
-          items:
-            $ref: '#/components/schemas/RI_ipaddress'
-          description: 'IPv4 address(es) of the redirect target'
-        aaaa:
-          type: array
-          items:
-            $ref: '#/components/schemas/RI_ipaddress'
-          description: 'IPv6 address(es) of the redirect target'
-        cname :
-          type: array
-          items:
-            type: string
-          description: 'one (or more)  FQDN name(s) corresponding to the redirect target(s)'
-        ttl:
-          description: 'TTL in seconds of the DNS response'
-          type: integer
-          default: 0
  

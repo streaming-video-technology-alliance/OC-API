@@ -10,6 +10,13 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
+    BS_version:
+      type: object
+      required:
+        - open-caching
+      properties:
+        open-caching: 
+          type: string
     FCI_capabilities:
       type: object
       description: 'The list of capabilities supported by the dCDN.'
@@ -20,7 +27,7 @@ components:
             $ref: '#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
-      enum: [FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
+      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget, FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
     FCI_genericbase:
       type: object
       description: 'Adding properties to the FCI_genericbase object.'
@@ -29,9 +36,7 @@ components:
         - capability-value
       properties:
         capability-type:
-          allOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI_capabilitytype'
-            - $ref: '#/components/schemas/FCI_capabilitytype'
+          $ref: '#/components/schemas/FCI_capabilitytype'
         capability-value:
           oneOf:
             - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.DeliveryProtocol'
@@ -65,10 +70,7 @@ components:
         - metadata
       properties:
         metadata:
-          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI
-         Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as 
-         "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list
-         must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
           items:
             $ref: '#/components/schemas/MI_payloadtype'
@@ -231,10 +233,10 @@ components:
           description: ' the following allowed types and their associated unit type: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
           type: string
           enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
-        maximum_hard:
+        maximum-hard:
           description: 'Defines the maximum unit of capacity that is available for use.'
           type: integer 
-        maximum_soft:
+        maximum-soft:
           description: 'Defines a soft limit at which an upstream should consider deducing traffic to prevent hitting the hard limit.'
           type: integer
         telemetry-source: 
@@ -253,9 +255,7 @@ components:
 # MI extensions
     MI.HostIndex:
       type: object
-      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. 
-      An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find 
-      the HostMatch object that applies to the request.'
+      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
       required:
         - hosts
       properties:
@@ -275,14 +275,8 @@ components:
         - host-metadata
       properties:
         host:
-          allOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
-          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. 
-          In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase.  
-          All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. 
-          IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. 
-          Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123].  
-          Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
+          $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
+          description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase. All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
           description: 'CDNI Metadata to apply when delivering content that matches this host.'
@@ -311,8 +305,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
-      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply 
-      if the resource URI matches the pattern within the PatternMatch object.'
+      description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply if the resource URI matches the pattern within the PatternMatch object.'
       required:
         - path-pattern
         - path-metadata
@@ -331,9 +324,7 @@ components:
         - $ref: '#/components/schemas/MI.PathMetadata'
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time.  
-      dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.  
-      If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified. If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -343,8 +334,7 @@ components:
             $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
-          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, 
-          and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
+          description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
     MI_DeliveryAuthorizatione:
@@ -468,13 +458,10 @@ components:
                "alg": "ES256",
                "kid": "P5UpOv0eMq1wcxLf7WxIg09JdSYGYFDOWkldueaImf0"
            }
-       }
+        }
     MI_link:
       type: object
-      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication 
-      if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property 
-      is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect 
-      the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
+      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
       required:
         - href
       properties:
@@ -484,12 +471,10 @@ components:
         type:
           $ref: '#/components/schemas/MI_metadatatype'
     MI_metadatatype:
-      allOf:
-        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_payloadtype'
-        - $ref: '#/components/schemas/MI_payloadtype'
+        $ref: '#/components/schemas/MI_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
+      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -621,13 +606,12 @@ components:
           type: string
       example:
         value: {
-    "expression" : "$req.h.X-Cache-Key",
-  }
+          "expression" : "$req.h.X-Cache-Key",
+          }
     MI_CrossoriginPolicy:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CrossoriginPolicy'
-    
     MI.CrossoriginPolicy:
       type: object
       description: 'Controls the dynamically generated CORS headers.'
@@ -673,10 +657,10 @@ components:
       example:
         value: {
               "allow-origin": {
-                "allow-list": {
-                  "pattern": "*://sourcepage.example.com"},
+              "allow-list": {
+                "pattern": "*://sourcepage.example.com"},
                 "wildcard-return": false
-              },
+                },
               "allow-methods": ["GET","POST"],
               "allow-credentials": true,
               "allow-headers": ["X-PINGOTHER","Content-Type"],
@@ -704,13 +688,13 @@ components:
           $ref: '#/components/schemas/MI_CachePolicy'
       example:
         value: {
-        "error-codes": ["404", "503", "504"],
-        "cache-policy": {
-          "internal": "5",
-          "external": "no-cache",
-          "force": "true"
-        }
-      }
+          "error-codes": ["404", "503", "504"],
+          "cache-policy": {
+            "internal": "5",
+            "external": "no-cache",
+            "force": "true"
+            }
+          }
     MI_CacheBypassPolicy:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1138,27 +1122,7 @@ components:
       description: 'An alternative to the CDNi standard MI.Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
       allOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Source'
-        - type: object
-          properties:
-            origin-host:
-              description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
-              type: string
-            webroot:  
-              description: The path element that is prepended to a resource's URI before retrieving content from the source. 
-              type: string
-            follow-redirects:
-              description: 'If the follow-redirects property is set to True, HTTP redirect responses returned from the source will be followed when retrieving content.  Otherwise, the HTTP redirect response is returned to the client.'
-              type: boolean
-              default: true
-            timeout-ms: 
-              description: 'A timeout (in milliseconds) to apply when connecting to the source server.  If the connection is not established within timeout-ms, this source is abandoned and the next source in the MI.SourceMetadataExtended sources array is tried.  Once a connection is established, timeout-ms is used on subsequent reads of data from the uCDN.'
-              type: integer
-            failover-errors: 
-              description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/RFC-7231, page-47), that if returned from the uCDN, will trigger a failover to the next source in the MI.SourceMetadataExtended sources array.  If the uCDN returns an HTTP error code that is not in the failover-errors array, that error code is returned to the client of the dCDN.'
-              type: array
-              items:
-                type: string
-                enum: [502, 503, 504]
+        - $ref: '#/components/schemas/MI_SourceExt'
       example:
         value: {
                 "endpoints": [
@@ -1172,20 +1136,38 @@ components:
                 "timeout-ms": 4000,
                 "failover-errors": [ "502", "503", "504" ]
                 }
+    MI_SourceExt:
+      type: object
+      properties:
+        origin-host:
+          description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
+          type: string
+        webroot:  
+          description: The path element that is prepended to a resource's URI before retrieving content from the source. 
+          type: string
+        follow-redirects:
+          description: 'If the follow-redirects property is set to True, HTTP redirect responses returned from the source will be followed when retrieving content.  Otherwise, the HTTP redirect response is returned to the client.'
+          type: boolean
+          default: true
+        timeout-ms: 
+          description: 'A timeout (in milliseconds) to apply when connecting to the source server.  If the connection is not established within timeout-ms, this source is abandoned and the next source in the MI.SourceMetadataExtended sources array is tried.  Once a connection is established, timeout-ms is used on subsequent reads of data from the uCDN.'
+          type: integer
+        failover-errors: 
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/RFC-7231, page-47), that if returned from the uCDN, will trigger a failover to the next source in the MI.SourceMetadataExtended sources array.  If the uCDN returns an HTTP error code that is not in the failover-errors array, that error code is returned to the client of the dCDN.'
+          type: array
+          items:
+            type: string
+            enum: [502, 503, 504]
     MI_LoadBalanceMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.LoadBalanceMetadata'
     MI.LoadBalanceMetadata:
       type: object
-      description: 'Defines how content acquisition requests are distributed over the SourceExtended objects listed in the SourceMetadataExtended object. 
-'
+      description: 'Defines how content acquisition requests are distributed over the SourceExtended objects listed in the SourceMetadataExtended object.'
       properties:
         balance-algorithm:
-          description: 'This property specifies the algorithm to be used when distributing content acquisition requests over the sources in a SourceMetadataExtended object. The available algorithms are: round-robin, content-hash, and ip-hash.
-          round-robin: Requests are distributed over the sources in proportion to their associated weights.
-          content-hash: Requests are distributed over the sources in a consistent fashion, based on the balance-path-pattern property.
-          ip-hash: Requests are distributed over the sources in a consistent fashion based on the IP address of the client requestor.'
+          description: 'This property specifies the algorithm to be used when distributing content acquisition requests over the sources in a SourceMetadataExtended object. The available algorithms are: round-robin, content-hash, and ip-hash. round-robin: Requests are distributed over the sources in proportion to their associated weights. content-hash: Requests are distributed over the sources in a consistent fashion, based on the balance-path-pattern property.ip-hash: Requests are distributed over the sources in a consistent fashion based on the IP address of the client requestor.'
           type: string
           enum: [round-robin, content-hash, ip-hash]
         balance-weights:
@@ -1247,3 +1229,203 @@ components:
                 "traffic-type": "vod",
                 "hints": [ "low-latency", "catch-up" ]
                 }
+# RI interface (RFC7975)
+    RI_ipaddress:
+      type: string
+      pattern: /^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>\\.(?4)){3}))$/iD
+    RI_uri:
+      type: string
+      pattern: https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)
+    RI_method:
+      type: string
+      enum: [GET, HEAD]
+    RI_iprange:
+      type: array
+      items:
+        oneOf:
+          - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv4cidr'
+          - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv6cidr'
+    RI_qtype:
+      type: string
+      enum: [A, AAAA]
+    RI_qclass:
+      type: string
+      enum: [IN]
+    RI_error:
+      description: 'per RFC7975 / section 4.7'
+      type: object
+      required:
+        - error-code
+      properties:
+        error-code:
+          type: integer
+          enum: [100, 400, 500, 501, 502, 503, 504, 505, 506]
+        reason:
+          type: string
+          description: " the list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7"
+    RI.Request:
+      type: object
+      description: 'dns or http property is required. not both'
+      required:
+        - cdn-path
+        - max-hops
+      properties:
+        dns:
+          $ref: '#/components/schemas/RI_dnsredirectionrequest'
+        http:
+          $ref: '#/components/schemas/RI_httpredirectionrequest'
+        cdn-path:
+          description: 'no CDN traversal in SVA. The cdn-path MUST be reflected back in RI response and MUST contain the value of cdn-path received in the associated RI request with the final dCDNs CDN Provider ID appended.'
+          type: array
+          items: 
+            type: string
+        max-hops:
+          type: integer
+          default: 1
+      example: 
+        value: { 
+          "http": {
+            "c-ip": "198.51.100.1",
+            "cs-uri": "http://www.example.com/manifest.mpd",
+            "cs-version": "HTTP/1.1",
+            "cs-method": "GET",
+            },
+          "cdn-path": ["AS64496:0"],
+          "max-hops": 1
+          }
+    RI.Response:
+      type: object
+      description: 'dns or http property is required. not both'
+      properties:
+        dns:
+          $ref: '#/components/schemas/RI_dnsredirectionresponse' 
+        http:
+          $ref: '#/components/schemas/RI_httpredirectionresponse'
+        scope:
+          $ref: '#/components/schemas/RI_iprange'
+        error:
+          $ref: '#/components/schemas/RI_error'
+      example: 
+        value: { 
+          "http": {
+            "sc-status": 307,
+            "sc-version": "HTTP/1.1",
+            "sc-reason": "Found",
+            "cs-uri": "http://www.example.com/manifest.mpd",
+            "sc-(location)": "http://ocn3.dCDN.com:8090/www.example.com/manifest.mpd"
+              },
+          "error": {
+          "error-code": 100,
+          "description": "This is a human-readable message meant for debugging purposes"
+            }
+          }
+    RI_dnsredirectionrequest:
+      type: object
+      required:
+        - resolver-ip
+        - qtype
+        - qclass
+        - qname
+      properties:
+        resolver-ip: 
+          $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The IP address of the UA DNS resolver'
+        qtype:
+          $ref: '#/components/schemas/RI_qtype'
+          description: 'The type of Query made by the UA DNS resolver'
+        qclass:
+          $ref: '#/components/schemas/RI_qclass'
+          description: 'The DNS class of the query made by the UA DNS resolver '
+        qname:
+          type: string
+          description: 'The FQDN being quieried'
+        c-subnet:
+          $ref: '#/components/schemas/RI_iprange'
+          description: 'The IP address (or prefix) of the UA in Classless Inter-Domain Routing (CIDR) format.'
+    RI_httpredirectionrequest:
+      type: object
+      required:
+        - c-ip
+        - cs-uri
+        - cs-method
+        - cs-version
+      properties:
+        c-ip: 
+          $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The IP address of the User Agent'
+        cs-uri:
+          $ref: '#/components/schemas/RI_uri'
+          description: 'The URI ([RFC7230]) requested by the User Agent'
+        cs-method:
+          $ref: '#/components/schemas/RI_method'
+          description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
+        cs-version:
+          $ref: '#/components/schemas/RI_ipaddress'
+          description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
+    RI_statuscodes:
+      type: integer
+      enum: [302, 303, 307]
+    RI_version:
+      type: string
+      enum: [HTTP/1.1, http/2]
+    RI_reason:
+      type: string
+    RI_httpredirectionresponse:
+      type: object
+      required:
+        - sc-status
+        - sc-version
+        - sc-reason
+        - cs-uri
+        - sc-(location)
+      properties:
+        sc-status: 
+          $ref: '#/components/schemas/RI_statuscodes'
+          description: 'The status-code part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA (usually set to 302).'
+        sc-version:
+          $ref: '#/components/schemas/RI_version'
+          description: 'The HTTP-version part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA .'
+        sc-reason:
+          $ref: '#/components/schemas/RI_reason'
+          description: 'The reason-phrase part of the status-line as defined in Section 3.1.2 of [RFC7230] to return to the UA '
+        cs-uri:
+          $ref: '#/components/schemas/RI_uri'
+          description: 'The URI ([RFC7230]) requested by the User Agent'
+        sc-(location):
+          $ref: '#/components/schemas/RI_uri'
+          description: 'The content of the Location header to return to the UA: the URI ([RFC7230]) pointing to the redirect target (i.e. the OCN)'
+    RI_rcode:
+      type: integer
+      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22]
+    RI_dnsredirectionresponse:
+      type: object
+      description: 'MUST include at least one of the following keys: a, aaaa, or cname'
+      required:
+        - rcode
+        - name
+      properties:
+        rcode: 
+          $ref: '#/components/schemas/RI_rcode'
+          description: 'DNS response code [RFC6895]).'
+        name:
+          type: string
+          description: 'The FQDN the response relates to'
+        a:
+          type: array
+          items:
+            $ref: '#/components/schemas/RI_ipaddress'
+          description: 'IPv4 address(es) of the redirect target'
+        aaaa:
+          type: array
+          items:
+            $ref: '#/components/schemas/RI_ipaddress'
+          description: 'IPv6 address(es) of the redirect target'
+        cname :
+          type: array
+          items:
+            type: string
+          description: 'one (or more)  FQDN name(s) corresponding to the redirect target(s)'
+        ttl:
+          description: 'TTL in seconds of the DNS response'
+          type: integer
+          default: 0
