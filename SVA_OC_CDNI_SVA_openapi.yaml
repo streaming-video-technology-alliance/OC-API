@@ -27,7 +27,23 @@ components:
             $ref: '#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
-      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget, FCI.Metadata, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection] 
+      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection]
+    FCI_capabilityvalue:
+      oneOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.DeliveryProtocol'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.AcquisitionProtocol'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectionMode'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
+        - $ref: '#/components/schemas/FCI.OpenCachingApiVersion'
+        - $ref: '#/components/schemas/FCI.Metadata'
+        - $ref: '#/components/schemas/FCI.AuthTypes'
+        - $ref: '#/components/schemas/FCI.ProcessingStages'
+        - $ref: '#/components/schemas/FCI.SourceMetadataExtended'
+        - $ref: '#/components/schemas/FCI.RequestRouting'
+        - $ref: '#/components/schemas/FCI.PrivateFeatures'
+        - $ref: '#/components/schemas/FCI.OcnSelection'
+        - $ref: '#/components/schemas/FCI.Telemetry'
     FCI_genericbase:
       type: object
       description: 'Adding properties to the FCI_genericbase object.'
@@ -38,23 +54,7 @@ components:
         capability-type:
           $ref: '#/components/schemas/FCI_capabilitytype'
         capability-value:
-          oneOf:
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.DeliveryProtocol'
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.AcquisitionProtocol'
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectionMode'
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
-            - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
-            - $ref: '#/components/schemas/FCI.OpenCachingApiVersion'
-            - $ref: '#/components/schemas/FCI.Metadata'
-            - $ref: '#/components/schemas/FCI.AuthTypes'
-            - $ref: '#/components/schemas/FCI.ProcessingStages'
-            - $ref: '#/components/schemas/FCI.SourceMetadataExtended'
-            - $ref: '#/components/schemas/FCI.RequestRouting'
-            - $ref: '#/components/schemas/FCI.PrivateFeatures'
-            - $ref: '#/components/schemas/FCI.OcnSelection'
-            - $ref: '#/components/schemas/FCI.Telemetry'
-          discriminator: 
-            propertyName: capability-type
+          $ref: '#/components/schemas/FCI_capabilityvalue'         
         footprints:
           type: array
           description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006]).'
@@ -361,15 +361,15 @@ components:
         auth-type:
           $ref: '#/components/schemas/MI_authtype'
         auth_value:
-          oneOf:
-            - $ref: '#/components/schemas/MI_UriSigning'
-            - $ref: '#/components/schemas/MI_HeaderAuth'
-            - $ref: '#/components/schemas/MI_AWSv4Auth'
-          discriminator: 
-            propertyName: auth-type 
+          $ref: '#/components/schemas/MI_authvalue'
     MI_authtype:
       type: string
       enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+    MI_authvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_UriSigning'
+        - $ref: '#/components/schemas/MI_HeaderAuth'
+        - $ref: '#/components/schemas/MI_AWSv4Auth'
     MI_HeaderAuth:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -568,21 +568,20 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CachePolicy'
+    MI_cachepolicy_iors:
+      oneOf:
+        - type: integer
+        - type: string
+          enum: [as-is, no-cache, no-store]
     MI.CachePolicy:
       type: object
       properties:
         internal:  
           description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds, for example “5” is a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.' 
-          oneOf:
-            - type: string
-            - type: string
-              enum: [as-is, no-cache, no-store]
+          $ref: '#/components/schemas/MI_cachepolicy_iors'
         external:  
           description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.'
-          oneOf:
-            - type: string
-            - type: string
-              enum: [as-is, no-cache, no-store]
+          $ref: '#/components/schemas/MI_cachepolicy_iors'
         force:  
           description: 'If set to "True", the metadata interface cache policy defined in the MI.CachePolicy will override any cache control policy set in the response from the uCDN. If set to "False", the MI.CachePolicy is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy only if no policy is provided in the response from the uCDN.'
           type: boolean
@@ -876,9 +875,7 @@ components:
           $ref: '#/components/schemas/MI_HeaderTransform'
         response-status:
           description: 'Replacement value for the HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in no override of origin-provided response status. '
-          oneOf:
-            - type: string
-            - type: integer
+          $ref: '#/components/schemas/MI_sori'
         status-is-expression:
           description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code.'
           type: boolean
@@ -886,6 +883,10 @@ components:
         synthetic:
           description: 'Specification of a complete replacement of any HTTP response that may have been generated in an earlier processing stage with a synthetic response. Use of this property to specify a synthetic response would override any response transformations or status codes specified by other properties.'
           $ref: '#/components/schemas/MI_SyntheticResponse'
+    MI_sori:
+      oneOf:
+        - type: string
+        - type: integer
     MI_SyntheticResponse:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1242,9 +1243,11 @@ components:
     RI_iprange:
       type: array
       items:
-        oneOf:
-          - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv4cidr'
-          - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv6cidr'
+        $ref: '#/components/schemas/RI_cidr'
+    RI_cidr:
+      oneOf:
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv4cidr'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_ipv6cidr'
     RI_qtype:
       type: string
       enum: [A, AAAA]
@@ -1252,7 +1255,7 @@ components:
       type: string
       enum: [IN]
     RI_error:
-      description: 'per RFC7975 / section 4.7'
+      description: 'Per RFC7975 / section 4.7.'
       type: object
       required:
         - error-code
@@ -1262,7 +1265,7 @@ components:
           enum: [100, 400, 500, 501, 502, 503, 504, 505, 506]
         reason:
           type: string
-          description: " the list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7"
+          description: "The list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7."
     RI.Request:
       type: object
       description: 'dns or http property is required. not both'
@@ -1275,7 +1278,7 @@ components:
         http:
           $ref: '#/components/schemas/RI_httpredirectionrequest'
         cdn-path:
-          description: 'no CDN traversal in SVA. The cdn-path MUST be reflected back in RI response and MUST contain the value of cdn-path received in the associated RI request with the final dCDNs CDN Provider ID appended.'
+          description: 'No CDN traversal in SVA. The cdn-path MUST be reflected back in RI response and MUST contain the value of cdn-path received in the associated RI request with the final dCDNs CDN Provider ID appended.'
           type: array
           items: 
             type: string

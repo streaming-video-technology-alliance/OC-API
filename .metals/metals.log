@@ -1,0 +1,306 @@
+2020.11.10 08:53:18 INFO  started: Metals version 0.9.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.11.10 08:53:21 INFO  time: initialize in 2.25s
+2020.11.10 08:53:39 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 13:21:40 INFO  shutting down Metals
+2020.11.10 14:14:35 INFO  started: Metals version 0.9.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.11.10 14:14:39 INFO  time: initialize in 4.66s
+2020.11.10 14:14:54 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+Nov 10, 2020 6:52:41 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+2020.11.10 18:56:40 INFO  shutting down Metals
+2020.11.13 11:02:25 INFO  Started: Metals version 0.9.5 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.11.13 11:02:26 INFO  time: initialize in 1.27s
+2020.11.13 11:02:28 WARN  Build server is not auto-connectable.
+2020.11.13 11:02:28 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.13 12:19:56 INFO  shutting down Metals
+2020.11.19 09:26:54 INFO  Started: Metals version 0.9.5 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.11.19 09:26:56 INFO  time: initialize in 2.29s
+2020.11.19 09:27:13 WARN  Build server is not auto-connectable.
+2020.11.19 09:27:13 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.19 09:34:46 INFO  shutting down Metals
+2020.12.01 17:23:18 INFO  Started: Metals version 0.9.7 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.12.01 17:23:20 INFO  time: initialize in 1.87s
+2020.12.01 17:23:22 WARN  Build server is not auto-connectable.
+2020.12.01 17:23:22 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.12.01 23:41:30 INFO  shutting down Metals
+2020.12.11 10:34:18 INFO  Started: Metals version 0.9.7 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2020.12.11 10:34:19 INFO  time: initialize in 1.4s
+2020.12.11 10:34:22 WARN  Build server is not auto-connectable.
+2020.12.11 10:34:22 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.12.11 20:09:49 INFO  shutting down Metals
+2021.01.18 16:02:49 INFO  Started: Metals version 0.9.8 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2021.01.18 16:02:51 INFO  time: initialize in 2.27s
+2021.01.18 16:02:53 WARN  Build server is not auto-connectable.
+2021.01.18 16:02:53 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2021.01.18 23:06:36 INFO  shutting down Metals
+2021.01.21 16:29:30 INFO  Started: Metals version 0.9.8 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode.
+2021.01.21 16:29:31 INFO  time: initialize in 1.69s
+2021.01.21 16:29:33 WARN  Build server is not auto-connectable.
+2021.01.21 16:29:33 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2021.01.21 22:01:56 INFO  shutting down Metals
+[0m2021.01.25 08:35:28 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.52.1.[0m
+[0m2021.01.25 08:35:29 INFO  time: initialize in 1.3s[0m
+[0m2021.01.25 08:35:30 WARN  resetting database: C:\Users\bichotg\Documents\Development\SVA\OC-API\.metals\metals.h2.db[0m
+[0m2021.01.25 08:35:32 WARN  Build server is not auto-connectable.[0m
+[0m2021.01.25 08:35:32 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jan 25, 2021 10:07:33 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+[0m2021.01.25 22:09:06 INFO  shutting down Metals[0m
+[0m2021.01.29 08:34:42 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.52.1.[0m
+[0m2021.01.29 08:34:43 INFO  time: initialize in 1.56s[0m
+[0m2021.01.29 08:34:45 WARN  Build server is not auto-connectable.[0m
+[0m2021.01.29 08:34:45 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.01.29 13:26:25 INFO  shutting down Metals[0m
+[0m2021.01.31 18:17:42 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.52.1.[0m
+[0m2021.01.31 18:17:44 INFO  time: initialize in 1.59s[0m
+[0m2021.01.31 18:17:45 WARN  Build server is not auto-connectable.[0m
+[0m2021.01.31 18:17:45 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jan 31, 2021 6:58:18 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+[0m2021.01.31 23:56:36 INFO  shutting down Metals[0m
+[0m2021.02.04 09:10:58 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.52.1.[0m
+[0m2021.02.04 09:11:00 INFO  time: initialize in 1.54s[0m
+[0m2021.02.04 09:11:02 WARN  Build server is not auto-connectable.[0m
+[0m2021.02.04 09:11:02 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.02.04 23:51:09 INFO  shutting down Metals[0m
+[0m2021.02.11 14:29:23 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.52.1.[0m
+[0m2021.02.11 14:29:25 INFO  time: initialize in 1.66s[0m
+[0m2021.02.11 14:29:27 WARN  Build server is not auto-connectable.[0m
+[0m2021.02.11 14:29:27 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.02.11 23:21:59 INFO  shutting down Metals[0m
+[0m2021.02.16 08:51:58 INFO  Started: Metals version 0.9.10 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.53.1.[0m
+[0m2021.02.16 08:52:00 INFO  time: initialize in 1.89s[0m
+[0m2021.02.16 08:52:03 WARN  Build server is not auto-connectable.[0m
+[0m2021.02.16 08:52:03 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Feb 16, 2021 11:08:43 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+[0m2021.02.16 22:32:25 INFO  shutting down Metals[0m
+[0m2021.03.18 12:17:35 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.18 12:17:37 INFO  time: initialize in 2.1s[0m
+[0m2021.03.18 12:17:39 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.18 12:17:39 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.18 22:45:59 INFO  shutting down Metals[0m
+[0m2021.03.19 09:18:52 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.19 09:18:53 INFO  time: initialize in 1.2s[0m
+[0m2021.03.19 09:18:55 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.19 09:18:55 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.19 15:33:59 INFO  shutting down Metals[0m
+[0m2021.03.22 15:06:24 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.22 15:06:25 INFO  time: initialize in 1.45s[0m
+[0m2021.03.22 15:06:27 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.22 15:06:27 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.22 23:57:29 INFO  shutting down Metals[0m
+[0m2021.03.23 14:38:07 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.23 14:38:09 INFO  time: initialize in 1.41s[0m
+[0m2021.03.23 14:38:10 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.23 14:38:10 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.23 21:53:46 INFO  shutting down Metals[0m
+[0m2021.03.24 08:11:53 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.24 08:11:54 INFO  time: initialize in 1.4s[0m
+[0m2021.03.24 08:11:56 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.24 08:11:56 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.24 08:44:18 INFO  shutting down Metals[0m
+[0m2021.03.26 16:52:37 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.26 16:52:38 INFO  time: initialize in 1.34s[0m
+[0m2021.03.26 16:52:39 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.26 16:52:39 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.26 19:47:47 INFO  shutting down Metals[0m
+[0m2021.03.29 16:30:37 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.29 16:30:39 INFO  time: initialize in 1.76s[0m
+[0m2021.03.29 16:30:41 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.29 16:30:41 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.29 20:19:09 INFO  shutting down Metals[0m
+[0m2021.03.30 09:01:11 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.03.30 09:01:14 INFO  time: initialize in 3.56s[0m
+[0m2021.03.30 09:01:16 WARN  Build server is not auto-connectable.[0m
+[0m2021.03.30 09:01:16 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.03.30 19:05:00 INFO  shutting down Metals[0m
+[0m2021.04.06 17:27:39 INFO  Started: Metals version 0.10.0 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.54.3.[0m
+[0m2021.04.06 17:27:41 INFO  time: initialize in 1.84s[0m
+[0m2021.04.06 17:27:42 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.06 17:27:42 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Apr 06, 2021 6:11:34 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+[0m2021.04.06 23:13:58 INFO  shutting down Metals[0m
+[0m2021.04.13 16:40:18 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.13 16:40:19 INFO  time: initialize in 1.67s[0m
+[0m2021.04.13 16:40:21 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.13 16:40:21 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.13 22:54:30 INFO  shutting down Metals[0m
+[0m2021.04.15 18:33:09 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.15 18:33:11 INFO  time: initialize in 2.07s[0m
+[0m2021.04.15 18:33:13 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.15 18:33:13 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.15 22:45:00 INFO  shutting down Metals[0m
+[0m2021.04.19 14:25:31 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.19 14:25:33 INFO  time: initialize in 1.76s[0m
+[0m2021.04.19 14:25:34 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.19 14:25:34 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.19 23:21:03 INFO  shutting down Metals[0m
+[0m2021.04.20 09:45:45 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.20 09:45:46 INFO  time: initialize in 1.51s[0m
+[0m2021.04.20 09:45:48 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.20 09:45:48 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.20 18:57:20 INFO  shutting down Metals[0m
+[0m2021.04.21 10:58:16 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.21 10:58:18 INFO  time: initialize in 1.75s[0m
+[0m2021.04.21 10:58:20 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.21 10:58:20 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.21 22:58:08 INFO  shutting down Metals[0m
+[0m2021.04.22 15:10:20 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.22 15:10:22 INFO  time: initialize in 2.13s[0m
+[0m2021.04.22 15:10:24 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.22 15:10:24 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.22 21:44:26 INFO  shutting down Metals[0m
+[0m2021.04.23 10:11:43 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.23 10:11:45 INFO  time: initialize in 2.82s[0m
+[0m2021.04.23 10:11:47 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.23 10:11:47 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.23 18:05:32 INFO  shutting down Metals[0m
+[0m2021.04.26 16:58:12 INFO  Started: Metals version 0.10.1 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.26 16:58:14 INFO  time: initialize in 1.62s[0m
+[0m2021.04.26 16:58:16 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.26 16:58:16 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.26 18:23:40 INFO  shutting down Metals[0m
+[0m2021.04.27 12:32:27 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.1.[0m
+[0m2021.04.27 12:32:28 INFO  time: initialize in 1.47s[0m
+[0m2021.04.27 12:32:30 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.27 12:32:30 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.27 22:32:45 INFO  shutting down Metals[0m
+[0m2021.04.28 17:11:59 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.04.28 17:12:00 INFO  time: initialize in 1.62s[0m
+[0m2021.04.28 17:12:02 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.28 17:12:02 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.28 22:36:38 INFO  shutting down Metals[0m
+[0m2021.04.29 17:24:25 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.04.29 17:24:26 INFO  time: initialize in 1.35s[0m
+[0m2021.04.29 17:24:28 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.29 17:24:28 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.29 18:11:34 INFO  shutting down Metals[0m
+[0m2021.04.30 09:32:31 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.04.30 09:32:32 INFO  time: initialize in 1.05s[0m
+[0m2021.04.30 09:32:34 WARN  Build server is not auto-connectable.[0m
+[0m2021.04.30 09:32:34 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.04.30 18:26:44 INFO  shutting down Metals[0m
+[0m2021.05.03 09:12:48 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.03 09:12:49 INFO  time: initialize in 1.42s[0m
+[0m2021.05.03 09:12:51 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.03 09:12:51 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.03 21:45:17 INFO  shutting down Metals[0m
+[0m2021.05.04 19:28:59 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.04 19:29:00 INFO  time: initialize in 1.19s[0m
+[0m2021.05.04 19:29:02 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.04 19:29:02 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.04 22:53:11 INFO  shutting down Metals[0m
+[0m2021.05.05 20:47:47 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.05 20:47:49 INFO  time: initialize in 2.56s[0m
+[0m2021.05.05 20:47:53 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.05 20:47:53 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.05 21:58:52 INFO  shutting down Metals[0m
+[0m2021.05.07 14:59:02 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.07 14:59:04 INFO  time: initialize in 2.09s[0m
+[0m2021.05.07 14:59:06 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.07 14:59:06 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.07 19:44:12 INFO  shutting down Metals[0m
+[0m2021.05.10 09:58:12 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.10 09:58:14 INFO  time: initialize in 1.27s[0m
+[0m2021.05.10 09:58:15 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.10 09:58:15 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.10 23:28:27 INFO  shutting down Metals[0m
+[0m2021.05.12 17:33:19 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.12 17:33:21 INFO  time: initialize in 1.44s[0m
+[0m2021.05.12 17:33:23 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.12 17:33:23 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.13 00:06:16 INFO  shutting down Metals[0m
+[0m2021.05.18 10:12:33 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.18 10:12:34 INFO  time: initialize in 1.63s[0m
+[0m2021.05.18 10:12:36 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.18 10:12:36 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.18 18:58:38 INFO  shutting down Metals[0m
+[0m2021.05.27 18:08:18 INFO  Started: Metals version 0.10.2 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client vscode 1.55.2.[0m
+[0m2021.05.27 18:08:20 INFO  time: initialize in 1.85s[0m
+[0m2021.05.27 18:08:22 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.27 18:08:22 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.27 18:33:44 INFO  shutting down Metals[0m
+[0m2021.05.28 15:20:48 INFO  Started: Metals version 0.10.3 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.55.2.[0m
+[0m2021.05.28 15:20:52 INFO  time: initialize in 4.02s[0m
+[0m2021.05.28 15:20:52 WARN  Build server is not auto-connectable.[0m
+[0m2021.05.28 15:20:52 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.05.29 01:04:45 INFO  shutting down Metals[0m
+[0m2021.06.01 17:50:46 INFO  Started: Metals version 0.10.3 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.55.2.[0m
+[0m2021.06.01 17:50:56 INFO  time: initialize in 9.36s[0m
+[0m2021.06.01 17:50:56 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.01 17:50:56 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.01 23:12:36 INFO  shutting down Metals[0m
+[0m2021.06.08 09:16:14 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.55.2.[0m
+[0m2021.06.08 09:16:28 INFO  time: initialize in 13s[0m
+[0m2021.06.08 09:16:28 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.08 09:16:28 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.08 23:10:04 INFO  shutting down Metals[0m
+[0m2021.06.09 17:08:04 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.55.2.[0m
+[0m2021.06.09 17:08:11 INFO  time: initialize in 7.33s[0m
+[0m2021.06.09 17:08:11 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.09 17:08:11 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.09 19:02:41 INFO  shutting down Metals[0m
+[0m2021.06.14 18:24:25 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.56.2.[0m
+[0m2021.06.14 18:24:35 INFO  time: initialize in 9.13s[0m
+[0m2021.06.14 18:24:35 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.14 18:24:35 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.14 22:44:25 INFO  shutting down Metals[0m
+[0m2021.06.16 15:16:17 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.56.2.[0m
+[0m2021.06.16 15:16:22 INFO  time: initialize in 5.22s[0m
+[0m2021.06.16 15:16:22 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.16 15:16:22 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.16 18:50:28 INFO  shutting down Metals[0m
+[0m2021.06.22 08:57:58 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.56.2.[0m
+[0m2021.06.22 08:58:14 INFO  time: initialize in 16s[0m
+[0m2021.06.22 08:58:14 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.22 08:58:14 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.22 09:58:21 INFO  shutting down Metals[0m
+[0m2021.06.22 12:17:35 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.56.2.[0m
+[0m2021.06.22 12:17:39 INFO  time: initialize in 4.09s[0m
+[0m2021.06.22 12:17:39 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.22 12:17:39 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 22, 2021 12:22:51 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.22 12:26:38 INFO  shutting down Metals[0m
+[0m2021.06.23 08:07:20 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.23 08:07:25 INFO  time: initialize in 5.36s[0m
+[0m2021.06.23 08:07:25 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.23 08:07:25 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 23, 2021 10:47:52 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.23 17:56:48 INFO  shutting down Metals[0m
+[0m2021.06.24 10:43:43 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.24 10:43:50 INFO  time: initialize in 6.71s[0m
+[0m2021.06.24 10:43:50 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.24 10:43:50 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 24, 2021 6:05:48 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.24 18:28:44 INFO  shutting down Metals[0m
+[0m2021.06.25 08:34:59 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.25 08:35:02 INFO  time: initialize in 2.9s[0m
+[0m2021.06.25 08:35:02 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.25 08:35:02 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 25, 2021 10:31:04 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.25 22:32:41 INFO  shutting down Metals[0m
+[0m2021.06.28 09:06:03 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.28 09:06:06 INFO  time: initialize in 2.57s[0m
+[0m2021.06.28 09:06:06 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.28 09:06:06 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 28, 2021 9:32:47 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.28 22:56:17 INFO  shutting down Metals[0m
+[0m2021.06.29 10:38:31 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.29 10:38:34 INFO  time: initialize in 3.53s[0m
+[0m2021.06.29 10:38:34 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.29 10:38:34 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Jun 29, 2021 6:32:37 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.06.29 18:36:08 INFO  shutting down Metals[0m
+[0m2021.07.01 10:47:40 INFO  Started: Metals version 0.10.4 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.57.1.[0m
+[0m2021.07.01 10:47:44 INFO  time: initialize in 4.78s[0m
+[0m2021.07.01 10:47:45 WARN  Build server is not auto-connectable.[0m
+[0m2021.07.01 10:47:45 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.07.01 16:17:11 INFO  shutting down Metals[0m

@@ -176,7 +176,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
         required: true
       responses:
         200:
@@ -185,21 +185,21 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration file has been created.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration file. The URL corresponds to the configuration file modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed".'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden.
         404:
@@ -218,7 +218,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
         400:
           description: Command is invalid.
           content: {}
@@ -265,7 +265,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         required: true
       responses:
         200:
@@ -274,21 +274,21 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration metadata file has been successfully updated, creating a new Host entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.HostMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed".'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden.
         404:
@@ -314,7 +314,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         400:
           description: Command is invalid.
           content: {}
@@ -352,7 +352,7 @@ paths:
   /OC/CI/configuration/{host}/{path-pattern}:
     put:
       tags:
-        - OC_COI_simple_path-pattern
+        - OC_COI_simple_pathPattern
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host_pathPattern
@@ -375,7 +375,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
+              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         required: true
       responses:
         200:
@@ -384,21 +384,21 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration metadata file has been successfully updated, creating a new path metadata entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.PathMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed"'
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         403:
           description: 'Forbidden.'
         404:
@@ -407,8 +407,8 @@ paths:
           description: "server error"
     get:
       tags:
-        - OC_COI_simple_path-pattern
-      summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern'
+        - OC_COI_simple_pathPattern
+      summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern.'
       description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve a valid configuration subset. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration_pathPattern
       parameters:
@@ -430,7 +430,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         400:
           description: Command is invalid.
           content: {}
@@ -442,7 +442,7 @@ paths:
           content: {}  
     delete:
       tags:
-        - OC_COI_simple_path-pattern
+        - OC_COI_simple_pathPattern
       summary: 'Deletes part of the configuration associated with a host name AND a path pattern'
       operationId: OC_CI_deleteConfiguration_pathPattern
       parameters:
@@ -509,7 +509,7 @@ paths:
                   content:
                     application/cdni:
                       schema:
-                        $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+                        $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
                 404:
                   description: Not found
                   content: {}
@@ -546,7 +546,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status' 
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -580,7 +580,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         304:
           description: 'not modified.'
           content: {}
@@ -603,7 +603,7 @@ paths:
           application/cdni;ptype=redirection-request:
             schema:
               description: ''
-              $ref: 'SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/RI.Request'
+              $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/RI.Request'
         required: true
       responses:
         200:
@@ -612,7 +612,7 @@ paths:
             application/cdni;ptype=redirection-response:
               schema:
                 description: 'The reponse that contains information about the redirection target or an error to be used for building the response to the user agent.'
-                $ref: 'SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/RI.Response'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/RI.Response'
         400:
           description: Command is invalid.
         403:

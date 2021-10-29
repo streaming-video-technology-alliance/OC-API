@@ -22,6 +22,14 @@ components:
     FCI_capabilitytype:
       type: string
       enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
+    FCI_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.DeliveryProtocol'
+        - $ref: '#/components/schemas/FCI.AcquisitionProtocol'
+        - $ref: '#/components/schemas/FCI.RedirectionMode'
+        - $ref: '#/components/schemas/FCI.Logging'
+        - $ref: '#/components/schemas/FCI.Metadata'
+        - $ref: '#/components/schemas/FCI.RedirectTarget'
     FCI_genericbase:
       type: object
       description: 'A Generic FCI base object is a wrapper for managing individual FCI properties in an opaque manner'
@@ -32,15 +40,7 @@ components:
         capability-type:
           $ref: '#/components/schemas/FCI_capabilitytype'
         capability-value:
-          oneOf:
-            - $ref: '#/components/schemas/FCI.DeliveryProtocol'
-            - $ref: '#/components/schemas/FCI.AcquisitionProtocol'
-            - $ref: '#/components/schemas/FCI.RedirectionMode'
-            - $ref: '#/components/schemas/FCI.Logging'
-            - $ref: '#/components/schemas/FCI.Metadata'
-            - $ref: '#/components/schemas/FCI.RedirectTarget'
-          discriminator: 
-            propertyName: capability-type
+          $ref: '#/components/schemas/FCI_capabilityvalue'         
         footprints:
           type: array
           description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
@@ -324,13 +324,16 @@ components:
         footprint-value:
           type: array
           items:
-            oneOf:
-            - $ref: '#/components/schemas/MI_ipv4cidr'
-            - $ref: '#/components/schemas/MI_ipv6cidr'
-            - $ref: '#/components/schemas/MI_asn'
-            - $ref: '#/components/schemas/MI_countrycode'
-          discriminator:
-              propertyName: footprint-type
+            $ref: '#/components/schemas/MI_footprintvalue'
+    MI_footprinttype:
+      type: string
+      enum: [ipv4cidr, ipv6cidr, asn, countrycode]
+    MI_footprintvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_ipv4cidr'
+        - $ref: '#/components/schemas/MI_ipv6cidr'
+        - $ref: '#/components/schemas/MI_asn'
+        - $ref: '#/components/schemas/MI_countrycode'
     MI_TimeWindowACL:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -503,9 +506,6 @@ components:
           description: 'A URI scheme to be used in the redirect response location construction.  When present, the dCDN MUST use the provided scheme in for HTTP redirection to the uCDN.'
           type: string
           enum: [http, https]
-    MI_footprinttype:
-      type: string
-      enum: [ipv4cidr, ipv6cidr, asn, countrycode]
     MI_link:
       type: object
       description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a Generic Metadata object.'
