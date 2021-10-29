@@ -61,7 +61,7 @@ components:
           items:
             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
     FCI.OpenCachingApiVersion:
-      description: 'This object is mandatory. It advertizes about the SVA open CAching API supported by the dCDN'
+      description: 'This object is mandatory. It advertizes about the SVA open CAching API supported by the dCDN.'
       type: string
     FCI.Metadata:
       type: object
