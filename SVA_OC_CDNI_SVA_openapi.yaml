@@ -904,9 +904,7 @@ components:
             $ref: '#/components/schemas/MI_HTTPHeader'
         response-status:
           description: 'HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the upstream HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in a 500 status for the synthetic response.'
-          oneOf:
-            - type: string
-            - type: integer 
+          $ref: '#/components/schemas/MI_sori'
         status-is-expression:
           description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code.'
           type: boolean
