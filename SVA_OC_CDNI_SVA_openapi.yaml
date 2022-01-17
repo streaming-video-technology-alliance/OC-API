@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - CDNI schema extended with SVA Open Caching  objects and properties
-  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
+  title: Open Caching API - CDNi schema extended with SVA Open Caching  objects and properties
+  description: 'This is the CDNi schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 2.0.0
+  version: 1.0.0
 externalDocs:
     description: Find out more
     url: 'https://www.streamingvideoalliance.org/'
@@ -15,7 +15,26 @@ components:
       required:
         - open-caching
       properties:
-        open-caching: 
+        open-caching:
+          description: 'SVA Open Caching API version'
+          type: string
+        fci: 
+          description: 'Footprint and capabilities interface version'
+          type: string
+        coi: 
+          description: 'Configuration interface version'
+          type: string
+        rri: 
+          description: 'Request Routing Interface version'
+          type: string
+        cmi:
+          description: 'Content management version'
+          type: string
+        tmi: 
+          description: 'Telemetry interface version. Indicates the list of potential supported types'
+          type: string
+        loi: 
+          description: 'Logging interface version'
           type: string
     FCI_capabilities:
       type: object
@@ -57,7 +76,7 @@ components:
           $ref: '#/components/schemas/FCI_capabilityvalue'         
         footprints:
           type: array
-          description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006]).'
+          description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006]).'
           items:
             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
     FCI.OpenCachingApiVersion:
@@ -65,12 +84,12 @@ components:
       type: string
     FCI.Metadata:
       type: object
-      description: 'Extension of CDNI FCI.Metadata.'
+      description: 'Extension of CDNi FCI.Metadata.'
       required:
         - metadata
       properties:
         metadata:
-          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          description: 'List of supported CDNi GenericMetadata types. List of strings corresponding to entries from the "CDNi Payload Types" registry [RFC7736] that correspond to CDNi GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
           items:
             $ref: '#/components/schemas/MI_payloadtype'
@@ -110,7 +129,7 @@ components:
       description: 'To signal/announce the supported request routing modes. This can be optionally used by the uCDN to further select a subset of those modes when operating one of the iterative delegation modes. See the section  GenericMetadata: RequestRouting.'
       properties: 
         request-routing-modes: 
-          description: 'List of supported request routing modes by the dCDN. THis information is useful when the uCDN decides to perform a delegation in iterative mode. If the dCDN does not advertise the supported request routing modes then they are all supported by default.'
+          description: 'List of supported request routing modes by the dCDN. This information is useful when the uCDN decides to perform a delegation in iterative mode. If the dCDN does not advertise the supported request routing modes, they are all supported by default.'
           type: array
           items: 
             type: string
@@ -120,7 +139,7 @@ components:
       description: 'To signal/announce the list of supported private features. See the section GenericMetadata: PrivateFeatureList.'
       properties:
         features:
-          description: 'The list of supported private feature.'
+          description: 'The list of supported private features.'
           type: array
           items:
             type: object
@@ -136,7 +155,7 @@ components:
                 type: string
     FCI.OcnSelection:
       type: object
-      description: 'To signal/announce the supported OCN types  and/or  their transport arrangement and/or medium supported by OCNs.'
+      description: 'To signal/announce the supported OCN types and/or their transport arrangement and/or medium supported by OCNs.'
       properties:
         ocn-delivery-list:
           description: 'List of supported medium and/or transport arrangements.'
@@ -153,7 +172,7 @@ components:
                 type: string
                 enum: [MABR]
         ocn-type-list:
-          description: 'List of supported OCN types. Example could be: “HOME” or “EDGE”.'
+          description: 'List of supported OCN types. An example could be: “HOME” or “EDGE”.'
           type: array
           items: 
             type: string
@@ -176,7 +195,7 @@ components:
         - metrics
       properties:
         id:
-          description: 'The id of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          description: 'The ID of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
           type: string
         type:
           description: 'The telemetry source type'
@@ -197,16 +216,16 @@ components:
           description: ' A unique (for the telemetry source) identifier for that metric. '
           type: string
         time-granularity:
-          description: 'Represents the time frame that the data represents in seconds.  I.e. is this a data set over 5 minutes, one hour, etc'
+          description: 'Represents the time frame that the data represents in seconds, i.e., this is a data set of over 5 minutes, one hour, etc'
           type: integer
         data-percentile:
-          description: 'Represents what percentile calculation the data represents, i.e. 50 percentile would equate to the average over the time-granularity'
+          description: 'Represents what percentile calculation the data represents, i.e., 50 percentile would equate to the average over the time-granularity'
           type: integer
         latency:
-          description: 'Defines, in seconds, how far behind the data is from real time, i.e. is the data aggregation 15 minutes behind or 5 minutes behind real time.'
+          description: 'Defines, in seconds, how far behind the data is from real time, i.e., the data aggregation 15 minutes behind or 5 minutes behind real time.'
           type: integer
     FCI.CapacityLimits:
-      description: 'The uCDN dedicated top level limits and possibly the per host name limits  '
+      description: 'The uCDN dedicated top-level limits and possibly the per-host name limits  '
       type: object
       required:
         - total-limits
@@ -227,17 +246,17 @@ components:
         - maximum-hard
       properties:
         host:
-          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present then the limit is a total limit (i.e. valid for the entire uCDN)'
+          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present, the limit is a total limit (i.e. valid for the entire uCDN)'
           type: string
         limit-type:
-          description: ' the following allowed types and their associated unit type: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
+          description: 'The following types and their associated unit type are allowed: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
           type: string
           enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
         maximum-hard:
           description: 'Defines the maximum unit of capacity that is available for use.'
           type: integer 
         maximum-soft:
-          description: 'Defines a soft limit at which an upstream should consider deducing traffic to prevent hitting the hard limit.'
+          description: 'Defines a soft limit at which an upstream should consider reducing traffic to prevent hitting the hard limit.'
           type: integer
         telemetry-source: 
           description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
@@ -247,7 +266,7 @@ components:
       description: 'Defines a specific metric of a specific telemetry source.'
       properties:
         id:
-          description: 'The id of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          description: 'The ID of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
           type: string
         metric:
           description: ' A unique (for the telemetry source) identifier for that metric. '
@@ -255,7 +274,7 @@ components:
 # MI extensions
     MI.HostIndex:
       type: object
-      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
+      description: 'The HostIndex object is the entry point into the CDNi Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
       required:
         - hosts
       properties:
@@ -279,14 +298,14 @@ components:
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase. All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
-          description: 'CDNI Metadata to apply when delivering content that matches this host.'
+          description: 'CDNi Metadata to apply when delivering content that matches this host.'
     MI_HostMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI.HostMetadata'
         - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
-      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
+      description: 'A HostMetadata object contains the CDNi Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
       required:
         - metadata
       properties:
@@ -324,7 +343,7 @@ components:
         - $ref: '#/components/schemas/MI.PathMetadata'
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified. If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      description: 'A PathMetadata object contains the CDNi Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified. If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -431,7 +450,7 @@ components:
         - $ref: '#/components/schemas/MI.UriSigning'
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing.'
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNi) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing.'
       properties:
         enforce: 
           type: boolean
@@ -461,7 +480,7 @@ components:
         }
     MI_link:
       type: object
-      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
+      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNi Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
       required:
         - href
       properties:

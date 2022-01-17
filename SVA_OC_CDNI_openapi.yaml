@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - CDNI schema
-  description: 'This is the CDNI schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).This API itself is not elaborated. What matters in this file is the CDNI model (schema)'
+  title: Open Caching API - CDNi schema
+  description: 'This is the CDNi schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).This API itself is not elaborated. What matters in this file is the CDNi model (schema)'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
@@ -43,12 +43,12 @@ components:
           $ref: '#/components/schemas/FCI_capabilityvalue'         
         footprints:
           type: array
-          description: 'List of CDNI Footprint objects (from the "CDNI Metadata Footprint Types" registry [RFC8006])'
+          description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006])'
           items:
              $ref: '#/components/schemas/MI.Footprint'
     FCI.DeliveryProtocol:
       type: object
-      description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
+      description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
         - delivery-protocols
       properties:
@@ -58,7 +58,7 @@ components:
             $ref: '#/components/schemas/MI_protocol'
     FCI.AcquisitionProtocol:
       type: object
-      description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNI Metadata Protocol Types" registry (defined in [RFC8006]).'
+      description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
         - delivery-protocols
       properties:
@@ -68,7 +68,7 @@ components:
             $ref: '#/components/schemas/MI_protocol'
     FCI.RedirectionMode:
       type: object
-      description: 'List of supported CDNI redirection modes'
+      description: 'List of supported CDNi redirection modes'
       required:
         - redirection-modes
       properties:
@@ -122,7 +122,7 @@ components:
           $ref: '#/components/schemas/MI_endpoint' 
     FCI.Logging:
       type: object
-      description: 'The CDNI Logging capability object is used to indicate support for CDNI Logging record-types, as well as CDNI Logging fields that are marked as optional for the specified record-types [RFC7937].'
+      description: 'The CDNi Logging capability object is used to indicate support for CDNi Logging record-types, as well as CDNi Logging fields that are marked as optional for the specified record-types [RFC7937].'
       required:
         - record-type
       properties:
@@ -130,18 +130,18 @@ components:
           type: string
           enum: [cdni_http_request_v1]
         fields:
-          description: 'List of supported CDNI Logging fields that are optional for the specified record-type. Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported". An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, the fields in that list MUST be interpreted as "the only optional fields that are supported".'
+          description: 'List of supported CDNi Logging fields that are optional for the specified record-type. Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported". An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, the fields in that list MUST be interpreted as "the only optional fields that are supported".'
           type: array 
           items: 
             $ref: '#/components/schemas/FCI_loggingfieldname'
     FCI.Metadata:
       type: object
-      description: 'The CDNI Metadata capability object is used to indicate support for CDNI GenericMetadata types [RFC8006].'
+      description: 'The CDNi Metadata capability object is used to indicate support for CDNi GenericMetadata types [RFC8006].'
       required:
         - metadata
       properties:
         metadata:
-          description: 'List of supported CDNI GenericMetadata types. List of strings corresponding to entries from the "CDNI Payload Types" registry [RFC7736] that correspond to CDNI GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          description: 'List of supported CDNi GenericMetadata types. List of strings corresponding to entries from the "CDNi Payload Types" registry [RFC7736] that correspond to CDNi GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
           items: 
             $ref: '#/components/schemas/MI_payloadtype'
@@ -154,7 +154,7 @@ components:
 # MI (Metatadata) Interface: RFC 8006    
     MI.HostIndex:
       type: object
-      description: 'The HostIndex object is the entry point into the CDNI Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
+      description: 'The HostIndex object is the entry point into the CDNi Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
       required:
         - hosts
       properties:
@@ -178,14 +178,14 @@ components:
           description: 'Hostname or IP address and optional port to match against the requested host, i.e., the host and port as described in [RFC3986]. In order for a hostname or IP address in a content request to match the hostname or IP address in the "host" property, the value from the content request when converted to lowercase MUST be identical to the value of the "host" property when converted to lowercase. All implementations MUST support IPv4 addresses encoded as specified by the "IPv4address" rule in Section 3.2.2 of [RFC3986]. IPv6 addresses MUST be encoded in one of the IPv6 address formats specified in [RFC5952], although receivers MUST support all IPv6 address formats specified in [RFC4291]. Hostnames MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]. Internationalized Domain Names (IDNs) must first be transformed to the A-label form [RFC5890] as per [RFC5891].'
         host-metadata:
           $ref: '#/components/schemas/MI_HostMetadata'
-          description: 'CDNI Metadata to apply when delivering content that matches this host'
+          description: 'CDNi Metadata to apply when delivering content that matches this host'
     MI_HostMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI.HostMetadata'
         - $ref: '#/components/schemas/MI_link'
     MI.HostMetadata:
       type: object
-      description: 'A HostMetadata object contains the CDNI Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
+      description: 'A HostMetadata object contains the CDNi Metadata properties for content served for a particular host (defined in the HostMatch object) and possibly child PathMatch objects.'
       required:
         - metadata
       properties:
@@ -235,7 +235,7 @@ components:
           default: false
     MI.PathMetadata:
       type: object
-      description: 'A PathMetadata object contains the CDNI Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
+      description: 'A PathMetadata object contains the CDNi Metadata properties for content requests that match against the associated URI path (defined in a PathMatch object). Note that if DNS-based redirection is employed, then a dCDN will be unable to evaluate any metadata at the PathMetadata level or below because only the hostname of the content request is available at Request Routing time. dCDNs SHOULD still process all PathMetadata for the host before responding to the redirection request to detect if any unsupported metadata is specified.If any metadata not supported by the dCDN is marked as mandatory-to-enforce, the dCDN SHOULD NOT accept the content redirection request, in order to avoid receiving content requests that it will not be able to satisfy/serve.'
       required:
         - metadata
       properties:
@@ -461,7 +461,7 @@ components:
         - $ref: '#/components/schemas/MI.UriSigning'  
     MI.UriSigning:
       type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNI) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
+      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNi) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
       properties:
         enforce: 
           type: boolean
@@ -508,7 +508,7 @@ components:
           enum: [http, https]
     MI_link:
       type: object
-      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNI Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a Generic Metadata object.'
+      description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNi Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a Generic Metadata object.'
       required:
         - href
       properties:
@@ -571,7 +571,7 @@ components:
         - $ref: '#/components/schemas/MI.GenericMetadata'
     MI.GenericMetadata:
       type: object
-      description: 'A GenericMetadata object is a wrapper for managing individual CDNI Metadata properties in an opaque manner'
+      description: 'A GenericMetadata object is a wrapper for managing individual CDNi Metadata properties in an opaque manner'
       required:
         - generic-metadata-type
         - generic-metadata-value

@@ -14,7 +14,7 @@ paths:
   /OC/bootstrap:
     get:
       tags:
-        - OC_BS
+        - OC_BSI
       summary: 'Discover the dCDN OpenCaching exposed API information.'
       operationId: oc_bs_get_bootstrap
       responses:
@@ -135,7 +135,7 @@ paths:
                     type: string
                     enum: [fci]
         400:
-          description: 'bad request'
+          description: 'Bad request'
         403:
           description: 'Forbidden'
         404:
@@ -263,7 +263,7 @@ paths:
       requestBody:
         description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the metadata associated with a host name. the MI.HostMetadata object must be provided.'
         content:
-          application/cdni;ptype=MI.HostIndex:
+          application/cdni;ptype=MI.HostMetadata:
             schema:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         required: true
@@ -312,7 +312,7 @@ paths:
         200:
           description: 'Prepositioned configuration metadata. The MI.HostMetadata object is returned.'
           content:
-            application/cdni;ptype=MI.HostIndex:
+            application/cdni;ptype=MI.HostMetadata:
               schema:
                 $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         400:
@@ -371,7 +371,7 @@ paths:
             type: string
             format: URL
       requestBody:
-        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is a part of it according to the host and path-pattern parameters. The MI.PathMetadata object is provided.'
+        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNi RFCs 8006/8804. It is a part of it according to the host and path-pattern parameters. The MI.PathMetadata object is provided.'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -428,7 +428,7 @@ paths:
         200:
           description: 'Part of the prepositioned configuration metadata according to the host and path-pattern parameters'
           content:
-            application/cdni;ptype=MI.HostIndex:
+            application/cdni;ptype=MI.PathMetadata:
               schema:
                 $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         400:
