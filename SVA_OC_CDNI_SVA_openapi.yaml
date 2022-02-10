@@ -10,7 +10,7 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
-    BS_version:
+    version:
       type: object
       required:
         - open-caching
@@ -63,6 +63,7 @@ components:
         - $ref: '#/components/schemas/FCI.PrivateFeatures'
         - $ref: '#/components/schemas/FCI.OcnSelection'
         - $ref: '#/components/schemas/FCI.Telemetry'
+        - $ref: '#/components/schemas/FCI.ForwardTarget'
     FCI_genericbase:
       type: object
       description: 'Adding properties to the FCI_genericbase object.'
@@ -226,18 +227,9 @@ components:
           type: integer
     FCI.CapacityLimits:
       description: 'The uCDN dedicated top-level limits and possibly the per-host name limits  '
-      type: object
-      required:
-        - total-limits
-      properties:
-        total-limits:
-          type: array
-          items:
-            $ref: '#/components/schemas/FCI_CapacityLimit'
-        host-limits:
-          type: array
-          items:
-            $ref: '#/components/schemas/FCI_CapacityLimit'
+      type: array
+      items:
+        $ref: '#/components/schemas/FCI_CapacityLimit'
     FCI_CapacityLimit:
       type: object
       description: 'Capacity metric limits'
@@ -245,9 +237,9 @@ components:
         - limit-type
         - maximum-hard
       properties:
-        host:
-          description: 'Optional host name that corresponds to one of the configured host names as part of the host index. If this property is not present, the limit is a total limit (i.e. valid for the entire uCDN)'
-          type: string
+        scope:
+          description: 'Defines an additional scope requirement for a limit within the FCI footprint context.'
+          $ref: '#/components/schemas/FCI.CapacityLimitScope'
         limit-type:
           description: 'The following types and their associated unit type are allowed: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
           type: string
@@ -261,6 +253,21 @@ components:
         telemetry-source: 
           description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
           $ref: '#/components/schemas/FCI_TelemetryMetricRef'
+    FCI.CapacityLimitScope:
+      type: object
+      description: 'An FCI.CapacityLimitScope object is used to define a more granular scope for a limit within the encompassing footprint.  The object will define what type of scope is being declared (published host, service ids, etc..) and will then contain an array of items of the type defined (publishedhostA.cdn.com, publishedhostB.cdn.com,etc..).  The scope types are meant to be extendible and reference already established identifiers as used in the SVA Configuration API framework.  The scope types MUST be mutually understood between the uCDN and dCDN. '
+      required:
+        - type 
+        - values
+      properties:
+        type:
+          description: 'Defines the type of scope definition. published-host is the host name that corresponds to one of the configured host names as part of the host index. service-id and property-id are properties of the MI.ServiceIDs.'
+          enum: [published-host, service-id, property-id]
+        values:
+          description: 'An array of strings of identifiers of the scope type'
+          type: array
+          items:
+            type: string
     FCI_TelemetryMetricRef:
       type: object
       description: 'Defines a specific metric of a specific telemetry source.'
@@ -271,6 +278,40 @@ components:
         metric:
           description: ' A unique (for the telemetry source) identifier for that metric. '
           type: string
+    FCI.ForwardTarget:
+      type: object
+      description: 'To advertize about the dCDN Request Routing Interface endpoint'
+      properties:
+        forwarding-hosts:
+          description: 'One or more uCDN hosts to which this forward target is attached.  A forwarding host SHOULD be a host that was published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
+          type: array
+          items:
+             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
+        request-router-target:
+          description: 'target URI of the dCDN request router exposing the Request Routing Interface.'
+          $ref: '#/components/schemas/FCI.RequestRoutingInterfaceTarget'
+        interaction-mode:
+          description: 'The mode of interaction supported over that interface.'
+          type: array
+          items:
+            type: string
+            enum: [PROXY, CDNI_7975]
+    FCI.RequestRoutingInterfaceTarget:
+      type: object
+      description: 'To advertize about the dCDN Request Routing Interface endpoint'
+      required:
+        - host
+      properties:
+        host: 
+          description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
+          $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
+        path-prefix:
+          description: 'A prefix of a path-absolute as defined in Section 3.3 of [RFC3986]. The prefix MUST end with a trailing slash to indicate the end of the last path segment in the prefix.'
+          type: string
+        include-forwarding-host:
+          description: 'A flag indicating whether or not to include the forwarding host as the first path segment after the path-prefix (if any). If set to true and a "path-prefix" is used, the uCDN forwarding host MUST be added as a separate path segment after the path-prefix and before the original URL path.  If set to true and there is no path-prefix, the uCDN forwarding host MUST be prepended as the first path segment in the forwarding URL.'
+          type: boolean
+          default: false
 # MI extensions
     MI.HostIndex:
       type: object
