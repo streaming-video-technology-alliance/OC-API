@@ -373,7 +373,7 @@ paths:
       requestBody:
         description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNi RFCs 8006/8804. It is a part of it according to the host and pathPattern parameters. The MI.PathMetadata object is provided.'
         content:
-          application/cdni;ptype=MI.HostIndex:
+          application/cdni;ptype=MI.PathMetadata:
             schema:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         required: true
