@@ -349,7 +349,7 @@ paths:
         404:
           description: Not found.
           content: {}
-  /OC/CI/configuration/{host}/{path-pattern}:
+  /OC/CI/configuration/{host}/{pathPattern}:
     put:
       tags:
         - OC_COI_simple_pathPattern
@@ -363,7 +363,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: path-pattern
+        - name: pathPattern
           in: path
           description: 'Parameter to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
           required: true
@@ -371,7 +371,7 @@ paths:
             type: string
             format: URL
       requestBody:
-        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNi RFCs 8006/8804. It is a part of it according to the host and path-pattern parameters. The MI.PathMetadata object is provided.'
+        description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNi RFCs 8006/8804. It is a part of it according to the host and pathPattern parameters. The MI.PathMetadata object is provided.'
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
@@ -418,7 +418,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: path-pattern
+        - name: pathPattern
           in: path
           description: 'Parameter to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned.'
           required: true
@@ -426,7 +426,7 @@ paths:
             type: string
       responses:
         200:
-          description: 'Part of the prepositioned configuration metadata according to the host and path-pattern parameters'
+          description: 'Part of the prepositioned configuration metadata according to the host and pathPattern parameters'
           content:
             application/cdni;ptype=MI.PathMetadata:
               schema:
@@ -452,7 +452,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: path-pattern
+        - name: pathPattern
           in: path
           description: 'Parameter to delete the configuration related to a host AND a path pattern.'
           required: true
@@ -460,7 +460,7 @@ paths:
             type: string
       responses:
         200:
-          description: 'Part of the prepositioned configuration metadata, according to the host and the path-pattern parameters, is deleted/purged. This does cancel/stop the corresponding delegation.'
+          description: 'Part of the prepositioned configuration metadata, according to the host and the pathPattern parameters, is deleted/purged. This does cancel/stop the corresponding delegation.'
           content: {}
         400:
           description: Command is invalid.
@@ -484,7 +484,7 @@ paths:
           application/cdni;ptype=ci-trigger-command:
             schema:
               description: 'For triggering the creation of a trigger command for metadata or content pre-positioning. The URL(s) present in the ci-trigger-commnd metadata.urls property should conform to the callbacks format (see below).'
-              $ref: 'SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-command'
+              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-command'
         required: true
       callbacks:
         requestMetadata:
