@@ -46,7 +46,7 @@ components:
             $ref: '#/components/schemas/FCI_genericbase'
     FCI_capabilitytype:
       type: string
-      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection]
+      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget, FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection, FCI.Telemetry, FCI.ForwardTarget, FCI.CapacityLimits]
     FCI_capabilityvalue:
       oneOf:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.DeliveryProtocol'
@@ -64,6 +64,7 @@ components:
         - $ref: '#/components/schemas/FCI.OcnSelection'
         - $ref: '#/components/schemas/FCI.Telemetry'
         - $ref: '#/components/schemas/FCI.ForwardTarget'
+        - $ref: '#/components/schemas/FCI.CapacityLimits'
     FCI_genericbase:
       type: object
       description: 'Adding properties to the FCI_genericbase object.'
