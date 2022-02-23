@@ -228,9 +228,14 @@ components:
           type: integer
     FCI.CapacityLimits:
       description: 'The uCDN dedicated top-level limits and possibly the per-host name limits  '
-      type: array
-      items:
-        $ref: '#/components/schemas/FCI_CapacityLimit'
+      type: object
+      required:
+        - limits
+      properties:
+        limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_CapacityLimit'
     FCI_CapacityLimit:
       type: object
       description: 'Capacity metric limits'
