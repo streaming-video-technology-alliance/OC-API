@@ -255,6 +255,9 @@ components:
         maximum-soft:
           description: 'Defines a soft limit at which an upstream should consider reducing traffic to prevent hitting the hard limit.'
           type: integer
+        current: 
+          description: 'Specifies the current usage value of the limit.  It is not recommended to specify the current usage value inline with the FCI.CapacityLimits advertisements as it will reduce the ability to cache the response.  The intended method is to reference a telemetry-source to poll for the current usage.'
+          type: integer
         telemetry-source: 
           description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
           $ref: '#/components/schemas/FCI_TelemetryMetricRef'
