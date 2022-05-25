@@ -11,7 +11,7 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
-  /OC/bootstrap:
+  /OC/bootstrap/version:
     get:
       tags:
         - OC_BSI
@@ -23,7 +23,7 @@ paths:
           content:
             jason:
               schema:
-                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/version'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI_Versions'
         '400':
           description: 'Bad request.'
         '403':

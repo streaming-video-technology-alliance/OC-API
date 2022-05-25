@@ -304,3 +304,8 @@ INFO: Unsupported notification method: $/setTrace
 [0m2021.07.01 10:47:45 WARN  Build server is not auto-connectable.[0m
 [0m2021.07.01 10:47:45 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
 [0m2021.07.01 16:17:11 INFO  shutting down Metals[0m
+[0m2021.11.08 15:10:09 INFO  Started: Metals version 0.10.9 in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API' for client Visual Studio Code 1.60.2.[0m
+[0m2021.11.08 15:10:10 INFO  time: initialize in 1.07s[0m
+[0m2021.11.08 15:10:15 WARN  Build server is not auto-connectable.[0m
+[0m2021.11.08 15:10:15 WARN  no build tool detected in workspace 'C:\Users\bichotg\Documents\Development\SVA\OC-API'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.11.08 18:12:50 INFO  shutting down Metals[0m

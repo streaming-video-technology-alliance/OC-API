@@ -86,7 +86,7 @@ components:
           items:
              $ref: '#/components/schemas/MI_endpoint'
         dns-target:
-          description: 'The DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'
+          description: 'An FQDN used as an alias in a CNAME record response (see [RFC1034]) of the uCDN DNS router'
           $ref: '#/components/schemas/FCI_dnstarget'
         http-target:
           description: 'Target URI for an HTTP redirect.'

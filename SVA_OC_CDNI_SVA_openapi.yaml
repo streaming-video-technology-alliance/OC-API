@@ -10,32 +10,52 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
-    version:
+    BSI_versions:
       type: object
       required:
         - open-caching
       properties:
         open-caching:
-          description: 'SVA Open Caching API version'
+          description: 'SVA Open Caching API version. It must be compliant with the following form: "<Major>.<minor>.<patch>".'
           type: string
         fci: 
-          description: 'Footprint and capabilities interface version'
-          type: string
+          description: 'Footprint and Capabilities Interface API version'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_Version'
         coi: 
-          description: 'Configuration interface version'
-          type: string
+          description: 'COnfiguration interface API version'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_Version'
         rri: 
-          description: 'Request Routing Interface version'
-          type: string
+          description: 'Request Routing Interface API version'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_Version'
         cmi:
-          description: 'Content management version'
-          type: string
-        tmi: 
-          description: 'Telemetry interface version. Indicates the list of potential supported types'
-          type: string
+          description: 'Content Management Interface API version'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_Version'
         loi: 
-          description: 'Logging interface version'
+          description: 'Logging Interface API version'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_Version'
+    BSI_Version:
+      type: object
+      description: 'For each version published, the number and the corresponding URL must be provided.'
+      required:
+        - number
+        - url
+      properties:
+        number:
           type: string
+          description: 'It must be compliant with the following form: "<Major>.<minor>.<patch>".'
+        url:  
+          type: string
+          description: 'The Interface API end point URL exposed by the dCND correeponding to the version number. The URL'
     FCI_capabilities:
       type: object
       description: 'The list of capabilities supported by the dCDN.'
