@@ -269,6 +269,7 @@ components:
       description: 'A Source object describes the source to be used by the dCDN for content acquisition (e.g., a Surrogate within the uCDN or an alternate origin server), the protocol to be used, and any authentication method to be used when contacting that source. Endpoints within a Source object MUST be treated as equivalent/equal. A uCDN can specify an array of MI.Source, ordered by preference, within a SourceMetadata object.  Then, for each Source object ranked by preference, a uCDN can specify an array of endpoints that are equivalent (e.g., a pool of servers that are not behind a load balancer).'
       required:
         - endpoints
+        - protocol
       properties:
         acquisition-auth: 
           $ref: '#/components/schemas/MI_Auth'
