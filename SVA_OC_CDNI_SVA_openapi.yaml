@@ -145,7 +145,7 @@ components:
           type: array
           items:
             type: string
-            enum: [round-robin, content-hash, ip-hash]
+            enum: [random, content-hash, ip-hash]
     FCI.RequestRouting:
       type: object
       description: 'To signal/announce the supported request routing modes. This can be optionally used by the uCDN to further select a subset of those modes when operating one of the iterative delegation modes. See the section  GenericMetadata: RequestRouting.'
