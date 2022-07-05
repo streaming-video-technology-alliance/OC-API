@@ -179,6 +179,13 @@ paths:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
         required: true
       responses:
+        102:
+          description: 'The 102 (Processing) status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currenly under processing. The reponse gathers in the Location header that containes the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
+                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration file has been modified.
           content:
@@ -569,7 +576,7 @@ paths:
       parameters:
         - in: path
           name: triggerId
-          description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the /OC/MI/provision API (trigger command).'
+          description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the PUT /OC/CI/configuration API and the POST OC/CI/trigger API.'
           required: true
           schema:
             type: string
