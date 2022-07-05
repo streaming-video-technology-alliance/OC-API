@@ -23,7 +23,7 @@ paths:
           content:
             jason:
               schema:
-                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI_Versions'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI_versions'
         '400':
           description: 'Bad request.'
         '403':

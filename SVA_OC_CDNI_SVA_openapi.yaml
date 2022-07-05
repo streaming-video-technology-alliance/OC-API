@@ -14,36 +14,37 @@ components:
       type: object
       required:
         - open-caching
+      description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>"'
       properties:
         open-caching:
-          description: 'SVA Open Caching API version. It must be compliant with the following form: "<Major>.<minor>.<patch>".'
+          description: 'SVA Open Caching API version.'
           type: string
         fci: 
           description: 'Footprint and Capabilities Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         coi: 
           description: 'COnfiguration interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         rri: 
           description: 'Request Routing Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         cmi:
           description: 'Content Management Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         loi: 
           description: 'Logging Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
-    BSI_Version:
+            $ref: '#/components/schemas/BSI_version'
+    BSI_version:
       type: object
       description: 'For each version published, the number and the corresponding URL must be provided.'
       required:
