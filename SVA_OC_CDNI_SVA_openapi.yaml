@@ -156,6 +156,19 @@ components:
           items: 
             type: string
             enum: [DNS, HTTP-R, MANIFEST_REWRITE]
+    FCI.PrivateFeature:
+      description: 'Description of one private feature'
+      type: object
+      required:
+        - feature-oid
+        - feature-type
+      properties:
+        feature-oid:
+          description: 'The owner/organisation that has specified that feature.'
+          type: string
+        feature-type:
+          description: 'Used to indicate the type/name of the private feature configuration object.'
+          type: string
     FCI.PrivateFeatures:
       type: object
       description: 'To signal/announce the list of supported private features. See the section GenericMetadata: PrivateFeatureList.'
@@ -164,17 +177,7 @@ components:
           description: 'The list of supported private features.'
           type: array
           items:
-            type: object
-            required:
-              - feature-oid
-              - feature-type
-            properties:
-              feature-oid:
-                description: 'The owner/organisation that has specified that feature.'
-                type: string
-              feature-type:
-                description: 'Used to indicate the type/name of the private feature configuration object.'
-                type: string
+            $ref: '#/components/schemas/FCI.PrivateFeature'
     FCI.OcnSelection:
       type: object
       description: 'To signal/announce the supported OCN types and/or their transport arrangement and/or medium supported by OCNs.'
@@ -676,14 +679,18 @@ components:
         external:  
           description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.'
           $ref: '#/components/schemas/MI_cachepolicy_iors'
-        force:  
-          description: 'If set to "True", the metadata interface cache policy defined in the MI.CachePolicy will override any cache control policy set in the response from the uCDN. If set to "False", the MI.CachePolicy is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy only if no policy is provided in the response from the uCDN.'
+        force-internal:  
+          description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy internal property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy internal property value is only used if there is no cache control policy provided in the response from the uCDN.. The default is False, which will apply the MI.CachePolicy internal property value only if no policy is provided in the response from the uCDN.'
+          type: boolean
+        force-external:  
+          description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy external property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy external property value is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy external property value only if no policy is provided in the response from the uCDN.'
           type: boolean
       example:
         value:  {
                   "internal": "as-is",
                   "external": "no-cache",
-                  "force": "true"
+                  "force-internal": "true",
+                  "force-external": "true"
                   }
     MI_ComputedCacheKey:
       oneOf:
@@ -701,6 +708,25 @@ components:
         value: {
           "expression" : "$req.h.X-Cache-Key",
           }
+    MI_AccessControlAllowOrigin:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AccessControlAllowOrigin'
+    MI.AccessControlAllowOrigin:
+        type: object
+        description: 'Validation of simple CORS requests. Nested object of CrossoriginPolicy. '
+        required:
+          - allow-list
+          - wildcard-return
+        properties:
+          allow-list:
+            description: 'List of valid URLs that will be used to match the request origin header. The Origin header is a HTTP extension. Its value is a version of the Referer header in some specific requests, and used for Cross Origin requests. Permitted values are schema://hostname[:port] '
+            type: array
+            items: 
+              $ref: '#/components/schemas/MI_PatternMatch'
+          wildcard-return:
+            description: 'If true, the OCN will include a wildcard (*) in the Access-Control-Allow-Origin response header. If false, the OCN will reflect back the request Origin header in the Access-Control-Allow-Origin response header.'
+            type: boolean
     MI_CrossoriginPolicy:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -713,19 +739,7 @@ components:
       properties:
         allow-origin:
           description: 'Validation of simple CORS requests.' 
-          type: object
-          required:
-            - allow-list
-            - wildcard-return
-          properties:
-            allow-list:
-              description: 'List of valid URLs (only scheme and hostname) that will be used to match the request origin header.'
-              type: array
-              items: 
-                $ref: '#/components/schemas/MI_PatternMatch'
-            wildcard-return:
-              description: 'If true, the OCN will include a wildcard (*) in the Access-Control-Allow-Origin response header. If false, the OCN will reflect back the request Origin header in the Access-Control-Allow-Origin response header.'
-              type: boolean
+          $ref: '#/components/schemas/MI_AccessControlAllowOrigin'
         expose-headers:
           description: 'A list of values the OCN will include in the Access-Control-Expose-Headers response header to a preflight request.'
           type: array
@@ -771,11 +785,11 @@ components:
         - cache-policy
       properties:
         error-codes:
-          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in cache-policy. by default the policy expressed in RFC8006 is applied.'
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/rfc7231#page-47), that if returned from the uCDN, will be cached using the cache policy defined in cache-policy. By default the policy expressed in RFC8006 is applied. An empty or unspecified list may function as a means to revoke a list inherited from an upper level configuration.'
           type: array
           items:
             type: string
-            enum: [404, 503, 504]
+            description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99. Note that use of 4xx would specify that 416 responses are cached.
         cache-policy:
           description: 'MI.CachePolicy to apply to the HTTP response error status codes returned by the uCDN.'
           $ref: '#/components/schemas/MI_CachePolicy'
@@ -800,6 +814,22 @@ components:
           description: 'A Boolean value that can activate the feature for a given client request.  It is expected that this feature will be used within ProcessingStages to allow a client request to be marked to bypass a cache.'
           type: boolean
           default: false
+    MI_OcnDelivery:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.OcnDelivery'
+    MI.OcnDelivery:
+      description: 'This nested of object MI.OcnSelection is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
+      type: object
+      properties:
+        ocn-medium:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          type: string
+          enum: [SATELLITE]
+        ocn-transport:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          type: string
+          enum: [MABR]
     MI_OcnSelection:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -810,16 +840,7 @@ components:
       properties:
         ocn-delivery:
           description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
-          type: object
-          properties:
-            ocn-medium:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties, ocn-medium and ocn-transport, must be present.'
-              type: string
-              enum: [SATELLITE]
-            ocn-transport:
-              description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
-              type: string
-              enum: [MABR]
+          $ref: '#/components/schemas/MI_OcnDelivery'
         ocn-type:
           description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
           type: string
@@ -1284,11 +1305,11 @@ components:
           type: boolean
           default: false
         stale-if-error:
-          description: 'This property is used to instruct the dCDN to serve a stale version of a resource if an error was received when trying to refresh the resource with the uCDN.  When set, the dCDN will return a previously cached version of a resource instead of caching the error response. The default is to cache the error response received from the uCDN.'
+          description: 'Instructs the dCDN to serve a stale version of a resource if any one of a specified set of HTTP status codes was received when trying to refresh the resource with the uCDN.  In this case, the dCDN will return a previously cached version of a resource instead of caching the error response. While this capability is typically used for well-understood HTTP error status codes, a list of any HTTP codes can be provided for maximum flexibility. The default is to not serve stale content.  An empty or unspecified list may function as a means to revoke a list inherited from an upper level configuration If specified, the  stale-if-error list must not be empty.'
           type: array 
           items:
             type: string
-            enum: [503, 504]  
+            description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99.
         failed-refresh-ttl:
           description: 'This property is used to instruct the dCDN to serve a stale version of a resource for the number of seconds specified in failed-refresh-ttl before trying to revalidate the resource with the uCDN.  Use of failed-refresh-ttl allows the load to be reduced on the uCDN during times of system stress.'
           type: integer
