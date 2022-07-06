@@ -1212,8 +1212,7 @@ components:
           items:
               $ref: '#/components/schemas/MI_SourceExtended'
         load-balance:
-          description:  'Specifies load balancing rules for the set of sources.'
-          type: 
+          description:  'Specifies load balancing rules for the set of sources.' 
           $ref: '#/components/schemas/MI_LoadBalanceMetadata'
       example:
         value: {
@@ -1347,10 +1346,8 @@ components:
 # RI interface (RFC7975)
     RI_ipaddress:
       type: string
-      pattern: /^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>\\.(?4)){3}))$/iD
     RI_uri:
       type: string
-      pattern: https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)
     RI_method:
       type: string
       enum: [GET, HEAD]
