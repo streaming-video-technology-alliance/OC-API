@@ -156,7 +156,7 @@ components:
           type: array
           items: 
             type: string
-            enum: [DNS, HTTP-R, MANIFEST_REWRITE]
+            enum: [DNS, HTTP, MANIFEST_REWRITE]
     FCI.PrivateFeature:
       description: 'Description of one private feature'
       type: object
