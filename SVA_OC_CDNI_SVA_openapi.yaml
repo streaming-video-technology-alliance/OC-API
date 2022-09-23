@@ -14,36 +14,37 @@ components:
       type: object
       required:
         - open-caching
+      description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>"'
       properties:
         open-caching:
-          description: 'SVA Open Caching API version. It must be compliant with the following form: "<Major>.<minor>.<patch>".'
+          description: 'SVA Open Caching API version.'
           type: string
         fci: 
           description: 'Footprint and Capabilities Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         coi: 
           description: 'COnfiguration interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         rri: 
           description: 'Request Routing Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         cmi:
           description: 'Content Management Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
+            $ref: '#/components/schemas/BSI_version'
         loi: 
           description: 'Logging Interface API version'
           type: array
           items:
-            $ref: '#/components/schemas/BSI_Version'
-    BSI_Version:
+            $ref: '#/components/schemas/BSI_version'
+    BSI_version:
       type: object
       description: 'For each version published, the number and the corresponding URL must be provided.'
       required:
@@ -155,7 +156,7 @@ components:
           type: array
           items: 
             type: string
-            enum: [DNS, HTTP-R, MANIFEST_REWRITE]
+            enum: [DNS, HTTP, MANIFEST_REWRITE]
     FCI.PrivateFeature:
       description: 'Description of one private feature'
       type: object
@@ -1211,8 +1212,7 @@ components:
           items:
               $ref: '#/components/schemas/MI_SourceExtended'
         load-balance:
-          description:  'Specifies load balancing rules for the set of sources.'
-          type: 
+          description:  'Specifies load balancing rules for the set of sources.' 
           $ref: '#/components/schemas/MI_LoadBalanceMetadata'
       example:
         value: {
@@ -1346,10 +1346,8 @@ components:
 # RI interface (RFC7975)
     RI_ipaddress:
       type: string
-      pattern: /^(?>(?>([a-f0-9]{1,4})(?>:(?1)){7}|(?!(?:.*[a-f0-9](?>:|$)){8,})((?1)(?>:(?1)){0,6})?::(?2)?)|(?>(?>(?1)(?>:(?1)){5}:|(?!(?:.*[a-f0-9]:){6,})(?3)?::(?>((?1)(?>:(?1)){0,4}):)?)?(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?>\\.(?4)){3}))$/iD
     RI_uri:
       type: string
-      pattern: https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)
     RI_method:
       type: string
       enum: [GET, HEAD]

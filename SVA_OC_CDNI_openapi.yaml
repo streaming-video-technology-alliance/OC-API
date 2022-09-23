@@ -60,9 +60,9 @@ components:
       type: object
       description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
       required:
-        - delivery-protocols
+        - acquisition-protocols
       properties:
-        delivery-protocols:
+        acquisition-protocols:
           type: array
           items:
             $ref: '#/components/schemas/MI_protocol'
