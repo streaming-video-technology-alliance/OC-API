@@ -442,10 +442,13 @@ components:
     MI.DeliveryAuthorization:
       type: object
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
+      required:
+        - delivery-auth-methods
       properties:
         delivery-auth-methods:
           description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods in the list is satisfied for that request.'
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_Auth'
     MI_Auth:
