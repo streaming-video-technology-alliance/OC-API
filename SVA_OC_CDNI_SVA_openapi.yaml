@@ -205,7 +205,7 @@ components:
     FCI.Telemetry:
       type: object
       description: 'An array of telemetry source objects'
-      required: 
+      required:
         - sources
       properties: 
         sources:
@@ -484,7 +484,7 @@ components:
           description: 'Name of the authentication header.'
         header-value:
           description: 'Value of the authentication header (typically a pre-shared key).'
-          type: string
+          $ref: '#/components/schemas/MI_SecretValue'
       example:
         value: {
           "auth-type": "headerauth",
@@ -513,7 +513,7 @@ components:
           type: string
         secret-access-key:
           description: 'The pre-shared authorization secret, which is the basis of building the signature. This is a secret key that should not be disclosed; it should be protected by some mechanism while resident in configuration objects.'
-          type: string
+          $ref: '#/components/schemas/MI_SecretValue'
         aws-region:
           description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
           type: string
@@ -557,6 +557,105 @@ components:
                "kid": "P5UpOv0eMq1wcxLf7WxIg09JdSYGYFDOWkldueaImf0"
            }
         }
+    MI_SecretStore:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretStore'
+    MI.SecretStore:
+      type: object
+      description: 'MI.SecretStore instructs the counterparty on how to dereference the value of any MI.SecretValue objects linked to the store. For embedded stores, MI.SecretStore identifies the certificate used for encrypting the values. For external stores (Vault), MI.SecretStore specifies the service endpoint that should be used in conjunction with the MI.SecretValue key path to obtain the secure data.'
+      required:
+        - secret-store-id
+        - secret-store-type
+        - secret-store-config
+      properties:
+        secret-store-id:
+          description: 'A unique identifier for this store configuration that is referenced from linked MI.SecretValue objects.'
+          type: string
+        secret-store-type:
+          description: 'A type discriminator for the config object, this property specifies whether the linked MI.SecretValue objects contain embedded secret objects or reference an external store.'
+          type: string
+          enum: [MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeVault]
+        secret-store-config:
+          description: 'The appropriate configuration object for the specified store type.'
+          oneOf:
+            - $ref: '#/components/schemas/MI_SecretStoreTypeEmbedded'
+            - $ref: '#/components/schemas/MI_SecretStoreTypeVault'
+        secret-certificate-id:
+          description: 'The ID of the MI.SecretStoreCertificate used to encrypt secret messages linked with this store configuration. Used only in the case of MI.SecretStoreTypeEmbedded.'
+          type: string
+    MI_SecretStoreTypeEmbedded:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
+    MI.SecretStoreTypeEmbedded:
+      type: object
+      description: 'MI.SecretStoreTypeEmbedded contains the configuration necessary to decrypt embedded secrets in MI.SecretValue.The only currently supported encrypted message format is Cryptographic Message Syntax as defined in [RFC5652]. Messages must be CMS type "EnvelopedData" and Base64 encoded. A cleartext format is also defined for testing purposes. In this case, the value of a MI.SecretValue object's secret-value property is the cleartext secret.'
+      required:
+        - format
+      properties:
+        format:
+          description: 'The format of the embedded encrypted message.'
+          type: string
+          enum: [cms, cleartext]
+    MI_SecretStoreTypeVault:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeVault'
+    MI.SecretStoreTypeVault:
+      type: object
+      description: 'MI.SecretStoreTypeVault contains the configuration necessary to reference secrets stored in an external instance of HashiCorp Vault KV store. MI.SecretValue objects referencing secrets stored in Vault use the secret-path property to identify the path and property key. See the MI.SecretValue documentation for details.'
+      required:
+        - endpoint
+        - namespace
+        - version
+      properties:
+        endpoint:
+          description: 'The base URL of the Vault instance.'
+          type: string
+        namespace:
+          description: 'The Vault namespace in which secret lookups should be performed.'
+          type: string
+        version:
+          description: 'The Vault KV version.'
+          type: integer
+          enum: [1,2]
+    MI_SecretValue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretValue'
+    MI.SecretValue:
+      type: object
+      description: 'MI.SecretValue may be used in any FCI or MI object where sensitive data must be transmitted only to intended recipients.'
+      required:
+        - secret-store-id
+      properties:
+        secret-store-id:
+          description: 'The linked MI.SecretStore which contains the configuration defining how to decrypt or access the referenced secret.'
+          type: string
+        secret-value:
+          description: 'Used only for embedded secrets; the Base64 encoded value of a CMS message or the cleartext string, depending on the defined MI.SecretStore configuration.'
+          type: string
+        secret-path:
+          description: 'Used only for HashiCorp Vault secrets; the path, not including namespace, to the secret, including the key of the particular property to access as the last path parameter.'
+          type: string
+    MI_SecretCertificate:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretCertificate'
+    MI.SecretCertificate:
+      type: object
+      description: 'MI.SecretCertificate is used to share an [X.509] certificate to be used for encrypting embedded secret messages. In lab and testing environments, this certificate may be self-signed depending on participant agreement. In production environments, this should be a certificate signed by an appropriate CA and validated by the counterparty.'
+      required:
+        - certificate-id
+        - certificate-value
+      properties:
+        certificate-id:
+          description: 'A unique ID for this certificate that can be referenced from a corresponding MI.SecretStore configuration defined by the counterparty.'
+          type: string
+        certificate-value:
+          description: 'The Base64 encoded certificate.'
+          type: string
     MI_link:
       type: object
       description: ' Link object can be used in place of any of the objects described above.  Link objects can be used to avoid duplication if the same metadata information is repeated within the metadata tree.  When a Link object replaces another object, its "href" property is set to the URI of the resource and its "type" property is set to the CDNi Payload Type of the object it is replacing. dCDNs can detect the presence of a Link object by detecting the presence of a property named "href" within the object.  This means that GenericMetadata types MUST NOT contain a property named "href" because doing so would conflict with the ability for dCDNs to detect Link objects being used to reference a GenericMetadata object.'
@@ -572,7 +671,7 @@ components:
         $ref: '#/components/schemas/MI_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType]
+      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Fotprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType, MI.SetVariable, MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata, MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.EndpointDetention, MI.ClientConnectionControl, MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -622,6 +721,21 @@ components:
         - $ref: '#/components/schemas/MI.LoadBalanceMetadata'        
         - $ref: '#/components/schemas/MI.StaleContentCachePolicy'        
         - $ref: '#/components/schemas/MI.TrafficType'        
+        - $ref: '#/components/schemas/MI.SetVariable'
+        - $ref: '#/components/schemas/MI.CertificateMetadata'
+        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
+        - $ref: '#/components/schemas/MI.LocationACLExtended'
+        - $ref: '#/components/schemas/MI.LocationRuleExtended'
+        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
+        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+        - $ref: '#/components/schemas/MI.EndpointDetentionTrigger'
+        - $ref: '#/components/schemas/MI.EndpointDetention'
+        - $ref: '#/components/schemas/MI.ClientConnectionControl'
+        - $ref: '#/components/schemas/MI.SecretCertificate'
+        - $ref: '#/components/schemas/MI.SecretValue'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeVault'
+        - $ref: '#/components/schemas/MI.SecretStore'
     MI_GenericMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -654,14 +768,27 @@ components:
         - $ref: '#/components/schemas/MI.AllowCompress'
     MI.AllowCompress:
       type: object
+      description: 'AllowCompress is a new GenericMetadata object that allows the dCDN to compress content before sending to the client.'
       properties:
         allow-compress:
+          description: 'If set to true, then the dCDN will try to compress the response to the client based on the Accept-Encoding request header.'
           type: boolean
           default: false
       example:
         value: {
-                    "allow-compress": "true"
+                    "allow-compress": true
                 }
+    MI_ClientConnectionControl:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientConnectionControl'
+    MI.ClientConnectionControl:
+      type: object
+      description: 'ClientConnectionControl is a new GenericMetadata object that specifies how a dCDN manages its connections to clients/players. When not specified, a default value selected by the dCDN will be used.'
+      properties:
+        connection-keep-alive-time-ms:
+          description: 'Specifies the time in milliseconds to keep an idle connection open.'
+          type: integer
     MI_CachePolicy:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -683,15 +810,17 @@ components:
         force-internal:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy internal property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy internal property value is only used if there is no cache control policy provided in the response from the uCDN.. The default is False, which will apply the MI.CachePolicy internal property value only if no policy is provided in the response from the uCDN.'
           type: boolean
+          default: false
         force-external:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy external property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy external property value is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy external property value only if no policy is provided in the response from the uCDN.'
           type: boolean
+          default: false
       example:
         value:  {
                   "internal": "as-is",
                   "external": "no-cache",
-                  "force-internal": "true",
-                  "force-external": "true"
+                  "force-internal": true,
+                  "force-external": true
                   }
     MI_ComputedCacheKey:
       oneOf:
@@ -800,7 +929,8 @@ components:
           "cache-policy": {
             "internal": "5",
             "external": "no-cache",
-            "force": "true"
+            "force-internal": true,
+            "force-external": true
             }
           }
     MI_CacheBypassPolicy:
@@ -926,9 +1056,7 @@ components:
           $ref: '#/components/schemas/MI_ExpressionMatch'
         stage-metadata:
           description: 'The set of StageMetadata to be applied at the processing stage if the match expression evaluates to true or is not present. '
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageMetadata'
+          $ref: '#/components/schemas/MI_StageMetadata'
     MI_ExpressionMatch:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -968,7 +1096,7 @@ components:
       type: object
       description: 'Metadata for transforming the HTTP request for a specific StageRules. The transformation can be the modification of any request header and/or the modification of the URI. Modifications are applied such that downstream processing stages receive the modified HTTP request as their input.'
       properties:
-        headers:
+        header-transform:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         uri:
@@ -986,7 +1114,7 @@ components:
       type: object
       description: 'Metadata for transforming the HTTP response for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
       properties:
-        headers:
+        header-transform:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         response-status:
@@ -1272,6 +1400,273 @@ components:
           items:
             type: string
             enum: [502, 503, 504]
+        connection-control:
+          description: 'Specifies how connection related errors and timeouts are handled. When specified, overrides the timeout-ms property'
+          $ref: '#/components/schemas/MI_SourceConnectionControl'
+        http-code-failover:
+          description: 'Specifies how HTTP response error codes are handled. When specified, overrides the failover-errors property'
+          $ref: '#/components/schemas/MI_HTTPCodeFailover'
+        endpoint-detention:
+          description: 'Defines error-based triggers for which an endpoint is put in detention (excluded from future use) for a given duration of time'
+          $ref: '#/components/schemas/MI_EndpointDetention'
+    MI_EndpointDetention:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointDetention'
+    MI.EndpointDetention:
+      type: object
+      description: 'EndpointDetention is a subobject of SourceExtended that is used to track the health of an Endpoint (see [RFC8006] Section 4.3.3) and place in detention, if deemed unhealthy. Unhealthy EndPoints are not used for future HTTP requests until a set cool-off time is met. Error-based triggers are defined for which an endpoint can be put in detention for a given duration of time.'
+      required:
+        - detention-seconds
+      properties:
+        connection-setup-fail-trigger:
+          description: 'A trigger for the connection setup error, including timeouts for connection establishment, that is fired for a given threshold of such errors.  If not specified, then no health check and detention is done for connection errors or connection timeout'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        read-timeout-trigger:
+          description: 'A trigger for the byte read timeout error that is fired for a given threshold of such errors.  If not specified, then no health check and detention is done for both first byte and byte read timeout errors.'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        http-error-code-trigger:
+          description: 'A list of error HTTP codes for which a trigger is fired for a given threshold of such error codes received from an Endpoint. If not specified, then no health check and detention is done upon receiving HTTP error codes.'
+          $ref: '#/components/schemas/MI_HTTPErrorCodeTrigger'
+        detention-seconds:
+          description: 'The time in seconds for which an endpoint is put in detention (not used) after any of the error-based trigger fires. Values: A value greater than 0 to define a time in seconds for which an endpoint is put in detention (not used).'
+          type: integer
+    MI_EndpointDetentionTrigger:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointDetentionTrigger'
+    MI.EndpointDetentionTrigger:
+      type: object
+      description: 'HttpErrorCodeTrigger is a subobject of EndpointDetention that defines a trigger for detention based on HTTP error codes. Any HTTP code received from an EndPoint that matches against the list of defined HTTP error codes counts against a single EndPointTrigger for detention.'
+      required:
+        - trigger-value
+      properties:
+        trigger-value:
+          description: 'The threshold at which an Endpoint is triggered to unhealthy state and put in detention.'
+          $ref: '#/components/schemas/MI_EndpointRepeatingFailures'
+    MI_EndpointRepeatingFailures:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointRepeatingFailures'
+    MI.EndpointRepeatingFailures:
+      type: object
+      description: 'EndpointRepeatingFailures is a subobject of EndpointDetentionTrigger that triggers an Endpoint to failure state if “event-count” of errors takes place during “time-window-millisec” while accounting for at least “fail-event-percent-threshold”% of the transactions to this endpoint during this period.'
+      required:
+        - event-count
+        - time-window-millsec
+      properties:
+        event-count:
+          description: 'The number of errors against an Endpoint within a duration of time-window-millsec.'
+          type: integer
+        time-window-millsec:
+          description: 'The duration in milliseconds for which error statistics of event-count and fail-event-percent-threshold are tracked against an Endpoint.'
+          type: integer
+        fail-event-percent-threshold:
+          description: 'The minimum percentage of errors against an Endpoint within a duration of time-window-millsec.  If not specified, then an EndPoint is triggered to an unhealthy state after encountering event-count errors without regards to the overall percentage of such errors.'
+          type: integer
+    MI_HTTPErrorCodeTrigger:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPErrorCodeTrigger'
+    MI.HTTPErrorCodeTrigger:
+      type: object
+      description: 'HttpErrorCodeTrigger is a subobject of EndpointDetention that defines a trigger for detention based on HTTP error codes. Any HTTP code received from an EndPoint that matches against the list of defined HTTP error codes counts against a single EndPointTrigger for detention.'
+      required:
+        - trigger
+        - error-codes
+      properties:
+        trigger:
+          description: 'A trigger for HTTP error codes that is fired for a given threshold of such error codes received in HTTP responses.'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        error-codes:
+          description: 'Array of error HTTP response codes that when returned from an Endpoint can cause the Endpoint to be triggered into an unhealthy state. The error codes are from 400 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99.'
+          type: array
+          items:
+            type: string
+    MI_SourceDetention:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceDetention'
+    MI.SourceDetention:
+      type: object
+      description: 'SourceDetention is a subobject of SourceMetadataExtended that defines detention rules at the set of sources.'
+      properties:
+        detention-full-behavior:
+          description: 'Defines how a response is constructed when every Endpoint of each SourceMetadata has been put in detention. '
+          $ref: '#/components/schemas/MI_DetentionFullBehavior'
+        detention-reset-behavior:
+          description: 'After every Endpoint of each SourceMetadata is put in detention, defines early removal of an EndPoint from detention without having served the full duration of detention. If not specified, then an Endpoint is removed from detention only upon the completion of the detention duration.'
+          $ref: '#/components/schemas/MI_DetentionResetBehavior'
+    MI_DetentionFullBehavior:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DetentionFullBehavior'
+    MI.DetentionFullBehavior:
+      type: object
+      description: 'A uCDN can configure how a response is constructed when all Endpoints are in detention.'
+      properties:
+        serve-if-stale-available:
+          description: 'A stale version of the requested object is served back to the client. If no stale object exists, then other properties of DetentionFullBehavior apply.'
+          type: boolean
+          default: false
+        synthetic-response:
+          description: 'The synthetic response to return back to the client. If not specified, then the dCDN specific error response is used.'
+          $ref: '#/components/schemas/MI_SyntheticResponse'
+    MI_DetentionResetBehavior:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DetentionResetBehavior'
+    MI.DetentionResetBehavior:
+      type: object
+      description: 'When all Endpoints of a SourceMetadata are put in detention, this object allows a uCDN to define the early removal of an Endpoint from detention. Endpoints removed from detention through this behavior are available for immediate use for all subsequent client requests.'
+      properties:
+        reset-endpoints:
+          description: 'The list of Endpoints to be removed from detention after no healthy Endpoints are available across all SourceExtended objects.  The default value is an empty array indicating that no Endpoints can be removed early from detention.'
+          type: array
+          items:
+            $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_endpoint'
+        reset-all-endpoints:
+          description: 'All Endpoints are removed from detention after no healthy Endpoints are available across all SourceExtended objects. The default value is False indicating that no Endpoints can be removed early from detention.'
+          type: boolean
+          default: false
+    MI_SourceConnectionControl:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceConnectionControl'
+    MI.SourceConnectionControl:
+      type: object
+      description: 'SourceConnectionControl is a subobject of SourceExtended that allows for the dCDN to specify how it will handle connection timeouts and errors against the origin/uCDN. The mere use of this object overrides the timeout-ms property of SourceExtended, even if any timeout properties of this object are not configured.'
+      properties:
+        connection-setup-timeout-ms:
+          description: 'The time in milliseconds within which a connection must be established against an endpoint of a MI.SourceExtended object.'
+          type: integer
+        connection-setup-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the connection couldn’t be established within a given timeout, as specified by the connection-setup-timeout-ms property. It is an error to specify this property without the corresponding connection-setup-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceTimeoutActions'
+        first-byte-read-timeout-ms:
+          description: 'The time in milliseconds within which the first byte must be received/read on a new network connection.'
+          type: integer
+        first-byte-read-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the first byte on a new connection couldn’t be read within a given timeout, as specified by the first-byte-read-timeout-ms property. It is an error to specify this property without the corresponding first-byte-read-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceTimeoutActions'
+        byte-read-timeout-ms:
+          description: 'A value greater than 0 to define a timeout in milliseconds for reading the next byte on an established network connection.'
+          type: integer
+        byte-read-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the next byte on a connection couldn’t be read within a given timeout, as specified by the byte-read-timeout-ms property. It is an error to specify this property without the corresponding byte-read-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceByteReadTimeoutActions'
+        connection-keep-alive-time-ms:
+          description: 'Specifies the time in milliseconds to keep an idle connection open.'
+          type: integer
+        max-connection-retries-per-source:
+          description: 'Specifies the upper bound of retries allowed across all endpoints of a MI.SourceExtended object for all timeout errors. A value greater than or equal to 0 indicating the maximum number of retries against all endpoints of the current MI.SourceExtended object for connection establishment, first-byte-read and byte-read timeout errors. A value of 0 indicates that no retries are to be performed against this source.'
+          type: integer
+        resume-from-last-byte-of-previous-source:
+          description: 'Upon establishing a new connection to the Origin/uCDN, specifies whether the next byte to read will start from the last byte read from a previous MI.SourceExtended object. This is only applicable when the content length of the object being downloaded is known. If True, the next byte read will resume from the last successful byte downloaded from a previous MI.SourceExtended object. Default value is False.'
+          type: boolean
+          default: false
+        resume-from-last-byte-of-previous-endpoint:
+          description: 'Upon establishing a new connection to the Origin/uCDN, specifies whether the next byte read will start from the last byte read from a previous endpoint of the current MI.SourceExtended. This is only applicable when the content length of the object being downloaded is known.  If True, the next byte read will resume from the last successful byte downloaded from a previous endpoint of the current MI.SourceExtended object. Default value is False.'
+          type: boolean
+          default: false
+    MI_SourceByteReadTimeoutActions:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceByteReadTimeoutActions'
+    MI.SourceByteReadTimeoutActions:
+      type: object
+      description: 'SourceByteReadTimeoutActions is a subobject of MI.SourceConnectionControl that allows for specifying the actions to be taken when a timeout happens when reading the next byte on an existing network connection against an endpoint of an Origin/uCDN.'
+      properties:
+        retries:
+          description: 'Specifies the number of retries that MUST happen against a given endpoint when an error happens.'
+          $ref: '#/components/schemas/MI_SourceConnectionRetries'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: '#/components/schemas/MI_SetVariable'
+        resume-from-last-byte:
+          description: 'Specifies whether to resume reading from the last byte of the current endpoint only if the content length of the object being downloaded is known.'
+          type: boolean
+          default: false
+    MI_SourceTimeoutActions:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceTimeoutActions'
+    MI.SourceTimeoutActions:
+      type: object
+      description: 'SourceTimeoutActions is a subobject of MI.SourceConnectionControl that allows for specifying the actions to be taken when a timeout happens against an endpoint of an Origin/uCDN.'
+      properties:
+        retries:
+          description: 'Specifies the number of retries that MUST happen against a given endpoint when an error happens.'
+          $ref: '#/components/schemas/MI_SourceConnectionRetries'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: '#/components/schemas/MI_SetVariable'
+    MI_SourceConnectionRetries:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceConnectionRetries'
+    MI.SourceConnectionRetries:
+      type: object
+      description: 'SourceConnectionRetries is a subobject that  allows for specifying retries to be performed against endpoints of a MI.SourceExtended object.'
+      properties:
+        max-retries-per-source:
+          description: 'Specifies the maximum number of retries against all endpoints of the MI.SourceExtended object for a given class of error. Accepted values: A value of greater than or equal to 0 indicating the number of retries. Example: If the value of max-retries-per-source of the retries property of connection-setup-timeout-ms-actions is set to 5, then a maximum of 5 retries are allowed for connection-setup timeout errors across all endpoints of the current MI.SourceExtended object. If this value is set to 0, then no retries will be done.'
+          type: integer
+        retries-per-endpoint:
+          description: 'Specifies the number of retries against the current endpoint of the MI.SourceExtended object for a given class of error. Values: A value of greater than equal to 0 indicating the number of retries. Example: If the value of retries-per-endpoint of the retries property of connection-setup-timeout-ms-actions is set to 5, then 5 retries will be done for connection-setup timeout errors on the current endpoint of the current MI.SourceExtended object. If this value is set to 0, then no retries will be done.'
+          type: integer
+    MI_HTTPCodeFailover:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailover'
+    MI.HTTPCodeFailover:
+      type: object
+      description: 'HttpCodeFailover is a new GenericMetadata subobject of SourceExtended that allows for the dCDN to specify how it will handle error HTTP codes against the origin/uCDN.'
+      required:
+        - http-code-failover-actions
+      properties:
+        max-reforwards-per-source:
+          description: 'Specifies the upper bound of reforwards allowed across all endpoints of a MI.SourceExtended object for all configured HTTP error codes. A value greater than or equal to 0 indicating the maximum number of retries against all endpoints of the current MI.SourceExtended object for all configured HTTP error codes.'
+          type: integer
+        http-code-failover-actions:
+          description: 'Specifies the different HTTP codes for which failover actions against the Origin/uCDN must be done.'
+          $ref: '#/components/schemas/MI_HTTPCodeFailoverActions'
+    MI_HTTPCodeFailoverActions:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailoverActions'
+    MI.HTTPCodeFailoverActions:
+      type: object
+      description: 'HttpCodeFailoverActions is a subobject of HttpCodeFailover. It defines one or more error HTTP codes against which some failover action must be performed.'
+      required:
+        - reforwards
+      properties:
+        http-codes:
+          description: 'Specifies the list of error HTTP codes received from Origin/uCDN for which a failover must be performed. The value is an array of error (4xx and above) HTTP codes.'
+          type: array
+          items:
+            type: string
+        reforwards:
+          description: 'Specifies how the reforwards must be done.'
+          $ref: '#/components/schemas/MI_HTTPCodeReforwards'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: '#/components/schemas/MI_SetVariable'
+    MI_HTTPCodeReforwards:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeReforwards'
+    MI.HTTPCodeReforwards:
+      type: object
+      description: 'HttpCodeReforwards is a subobject of MI.HttpCodeFailoverActions that allows for specifying the reforwards that must happen against endpoints of a MI.SourceExtended object.'
+      properties:
+        max-reforwards-per-source:
+          description: 'Specifies the maximum number of reforwards that can be performed across all endpoints of the MI.SourceExtended object for a given set of error HTTP codes. A value greater than or equal to 0 indicates the maximum number of reforwards against a MI.SourceExtended object. A value of 0 indicates that no reforwards will be done against this source for the given set of error HTTP codes.'
+          type: integer
+        reforwards-per-endpoint:
+          description: 'Specifies the number of reforwards to be performed across the current endpoint of the MI.SourceExtended object for a given set of error HTTP codes. A value of greater than or equal to 0 indicates the number of reforwards against the current endpoint. A value of 0 indicates that no reforwards will be performed against the current endpoint for the given set of error HTTP codes.'
+          type: integer
+          default: 0
     MI_LoadBalanceMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1317,7 +1712,7 @@ components:
         value: {
                 "stale-while-revalidating": “true”, 
                 “stale-if-error”: [“404”, “503”, “504” ],
-                “failed-refresh-ttl”: "5"  
+                “failed-refresh-ttl”: 5
               }
     MI_TrafficType:
       oneOf:
@@ -1343,6 +1738,183 @@ components:
                 "traffic-type": "vod",
                 "hints": [ "low-latency", "catch-up" ]
                 }
+    MI_SetVariable:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SetVariable'
+    MI.SetVariable:
+        type: object
+        description: 'Allows to set user-defined variables that can be accessed from the Metadata Expression Language.'
+        required:
+          - variable-name
+          - variable-value
+        properties:
+          variable-name:
+            description: 'Name of the variable to be set. The value of the variable-name is an alphanumeric string with both upper and lower case and must start with an alphabet.'
+            type: string
+          variable-value:
+            description: 'Specifies the string value to set for the user-defined variable.'
+            type: string
+          value-is-expression:
+            description: 'Flag to signal whether the value is a static string literal or a [CDNI-MEL] expression that needs to be dynamically evaluated.'
+            type: boolean
+            default: false
+    MI_LocationACLExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationACLExtended'
+    MI.LocationACLExtended:
+        type: object
+        description: 'MI.LocationAclExtended is an alternative to the CDNI standard MI.LocationAcl object that defines which locations a User Agent needs to be in, in order to be able to receive the associated content. MI.LocationAclExtended uses ACL rules of type MI.LocationRuleExtended, providing rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.LocationAcl and the two are mutually exclusive.'
+        required:
+          - rules
+        properties:
+          rules:
+            description: 'An array of MI.LocationRuleExtended objects.'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_LocationRuleExtended'
+    MI_LocationRuleExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationRuleExtended'
+    MI.LocationRuleExtended:
+        type: object
+        description: ''
+        required:
+          - locations
+        properties:
+          locations:
+            description: 'An array of footprints to match against. These footprints, defined by pairs of MI_footprinttype_ex and 	MI_footprintvalue_ex respectively extend the CDNI MI_footprinttype and MI_footprintvalue. On top of the 4 footprint types defined by CDNI in rfc8006 [ipv4cidr,ipv6cidr,asn,countrycode], 3 new types are added: [ipv4range, ipv6range, subdivisioncode]'
+            type: array
+            items:
+              type: string
+              enum: [ipv4cidr, ipv6cidr, asn, countrycode, ipv4range, ipv6range, subdivisioncode]
+          action:
+            description: 'The action to take place upon location match'
+            type: string
+            enum: [allow, deny]
+            default: deny
+          comment:
+            description: 'An optional text comment for user readability and for  incorporating in logging '
+            type: string
+          deny-response:
+            description: 'configuration of the 	entire response to the client in case of deny action.'
+            $ref: '#/components/schemas/MI_SyntheticResponse'
+            default: { "response-status" : "403" }
+          match-all-locations:
+            description: 'The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode'
+            type: boolean
+            default: false
+    MI_TimeWindowAclExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
+    MI.TimeWindowAclExtended:
+        type: object
+        description: 'MI.TimeWindowAclExtended is an alternative to the CDNI standard MI.TimeWindow object for implementing time-based access restrictions. It uses ACL rules of type MI.TimeWindowRuleExtended to provide rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.TimeWindowAcl and the two are mutually exclusive'
+        required:
+          - rules
+        properties:
+          rules:
+            description: 'An array of MI.TimeWindowRuleExtended objects.'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_TimeWindowRuleExtended'
+    MI_TimeWindowRuleExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+    MI.TimeWindowRuleExtended:
+        type: object
+        description: ''
+        required:
+          - windows
+        properties:
+          windows:
+            description: 'An array of MI.TimeWindow objects to match against'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_TimeWindow'
+          action:
+            description: 'The action to take place upon time window match'
+            type: string
+            enum: [allow, deny]
+            default: deny
+          comment:
+            description: 'An optional text comment for user readability and for  incorporating in logging '
+            type: string
+          deny-response:
+            description: 'configuration of the 	entire response to the client in case of deny action.'
+            $ref: '#/components/schemas/MI_SyntheticResponse'
+            default: { "response-status" : "403" }
+    MI_CertificateMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CertificateMetadata'
+    MI.CertificateMetadata:
+        type: object
+        description: 'To allow for secure delivery of content, a dCDN must be configured to support HTTPs.  The MI.CertificateMetadata object is used to configure the dCDN’s HTTPs attributes such as TLS certificate credentials, encryption levels, protocols, and ciphers.'
+        required:
+          - encryption-level
+          - delegated-credentials
+        properties:
+          encryption-level:
+            description: 'A reference to a MI.EncryptionLevelMetadata object that specifies the TLS protocols and ciphers to use.'
+            $ref: '#/components/schemas/MI_EncryptionLevelMetadata'
+          delegated-credentials:
+            description: 'A reference to the certificate delegated credentials to use when establishing a TLS session with the client.'
+            $ref: '#/components/schemas/MI_CertificateCredentialsMetadata'
+          ocsp-enabled:
+            description: 'When ocsp-enabled is set to True, the dCDN will check the revocation status of the configured certificate and include that information with the  response to the client.  See https://datatracker.ietf.org/doc/html/rfc6066#section-8'
+            type: boolean
+            default: false
+          prefer-server-ciphers:
+            description: 'When prefer-server-ciphers is set to False (the default), the dCDN will prefer to use cipher suites in the order presented by the client when negotiating the TLS handshake.   When prefer-server-ciphers is set to True, cipher suites will be selected in the order preferred by the dCDN server.'
+            type: boolean
+            default: false
+    MI_EncryptionLevelMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+    MI.EncryptionLevelMetadata:
+        type: object
+        description: 'MI.EncryptionLevelMetadata is a subobject of MI.CertificateMetadata to support HTTPs content delivery.  MI.EncryptionLevelMetadata specifies the protocols and ciphers to be used by the associated MI.CertificateMetadata object.  Externalizing MI.EncryptionLevelMetadata from MI.CertificateMetadata allows security policy (TLS protocols and ciphers) to be defined once and referenced by many configurations.'
+        required:
+          - encryption-level-name
+          - protocols
+          - ciphers
+        properties:
+          encryption-level-name:
+            description: 'A descriptive name for the MI.EncryptionLevelMetadata object.  This name is expected to be used by operators to reference the MI.EncryptionLevelMetadata configuration.'
+            type: string
+          protocols:
+            description: 'An array that lists the allowed protocols for the TLS session.'
+            type: array
+            items:
+              type: string
+          ciphers:
+            description: 'An array that lists the allowed ciphers for the TLS session.'
+            type: array
+            items:
+              type: string
+    MI_CertificateCredentialsMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
+    MI.CertificateCredentialsMetadata:
+        type: object
+        description: 'MI.CertificateCredentialsMetadata is a subobject of MI.CertificateMetadata  that defines the credentials to use when establishing a TLS session between a dCDN and client.'
+        required:
+          - delegated-credentials-type
+          - delegated-credentials-value
+        properties:
+          delegated-credentials-type:
+            description: 'DelegatedCredentials type (The CDNI Payload Type [RFC7736]  of the GenericMetadata object contained in the delegated-credentials-value property).'
+            type: string
+          delegated-credentials-value:
+            description: 'An object conforming to the specification associated with the DelegatedCredentials type.'
+            $ref: '#/components/schemas/MI_GenericMetadata'
 # RI interface (RFC7975)
     RI_ipaddress:
       type: string
