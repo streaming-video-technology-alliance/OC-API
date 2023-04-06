@@ -57,5 +57,6 @@ Objects related to client access control:
 - MI_TimeWindowAclExtended
 - MI_TimeWindowRuleExtended
 
-
-
+Objects related to NamedPrivateFeatures:
+- MI.NamedPrivateFeatureType
+- MI_NamedPrivateFeatureValue
