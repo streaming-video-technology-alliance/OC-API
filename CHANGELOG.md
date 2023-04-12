@@ -6,12 +6,6 @@ Modified property type from string to MI_SecretValue:
 - MI.HeaderAuth, property header-value
 - MI.AWSv4Auth, property secret-access-key
 
-Changed property name:
-- from "headers" to "header-transform" in MI.RequestTransform and MI_ResponseTransform
-
-Modified property type MI.StageRules:
-- Modified stage-metadata type from array of MI_StageMetadata to MI_StageMetadata
-
 ## Added properties in existing MI objects
 
 Added properties in MI_SourceExtended:
