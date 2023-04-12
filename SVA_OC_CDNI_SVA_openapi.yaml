@@ -205,7 +205,7 @@ components:
     FCI.Telemetry:
       type: object
       description: 'An array of telemetry source objects'
-      required: 
+      required:
         - sources
       properties: 
         sources:
@@ -654,13 +654,15 @@ components:
         - $ref: '#/components/schemas/MI.AllowCompress'
     MI.AllowCompress:
       type: object
+      description: 'AllowCompress is a new GenericMetadata object that allows the dCDN to compress content before sending to the client.'
       properties:
         allow-compress:
+          description: 'If set to true, then the dCDN will try to compress the response to the client based on the Accept-Encoding request header.'
           type: boolean
           default: false
       example:
         value: {
-                    "allow-compress": "true"
+                    "allow-compress": true
                 }
     MI_CachePolicy:
       oneOf:
@@ -683,15 +685,17 @@ components:
         force-internal:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy internal property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy internal property value is only used if there is no cache control policy provided in the response from the uCDN.. The default is False, which will apply the MI.CachePolicy internal property value only if no policy is provided in the response from the uCDN.'
           type: boolean
+          default: false
         force-external:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy external property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy external property value is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy external property value only if no policy is provided in the response from the uCDN.'
           type: boolean
+          default: false
       example:
         value:  {
                   "internal": "as-is",
                   "external": "no-cache",
-                  "force-internal": "true",
-                  "force-external": "true"
+                  "force-internal": true,
+                  "force-external": true
                   }
     MI_ComputedCacheKey:
       oneOf:
@@ -800,7 +804,8 @@ components:
           "cache-policy": {
             "internal": "5",
             "external": "no-cache",
-            "force": "true"
+            "force-internal": true,
+            "force-external": true
             }
           }
     MI_CacheBypassPolicy:
@@ -926,9 +931,7 @@ components:
           $ref: '#/components/schemas/MI_ExpressionMatch'
         stage-metadata:
           description: 'The set of StageMetadata to be applied at the processing stage if the match expression evaluates to true or is not present. '
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageMetadata'
+          $ref: '#/components/schemas/MI_StageMetadata'
     MI_ExpressionMatch:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -968,7 +971,7 @@ components:
       type: object
       description: 'Metadata for transforming the HTTP request for a specific StageRules. The transformation can be the modification of any request header and/or the modification of the URI. Modifications are applied such that downstream processing stages receive the modified HTTP request as their input.'
       properties:
-        headers:
+        header-transform:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         uri:
@@ -986,7 +989,7 @@ components:
       type: object
       description: 'Metadata for transforming the HTTP response for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
       properties:
-        headers:
+        header-transform:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
           $ref: '#/components/schemas/MI_HeaderTransform'
         response-status:
@@ -1317,7 +1320,7 @@ components:
         value: {
                 "stale-while-revalidating": “true”, 
                 “stale-if-error”: [“404”, “503”, “504” ],
-                “failed-refresh-ttl”: "5"  
+                “failed-refresh-ttl”: 5
               }
     MI_TrafficType:
       oneOf:
