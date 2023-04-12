@@ -590,7 +590,7 @@ components:
         - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
     MI.SecretStoreTypeEmbedded:
       type: object
-      description: 'MI.SecretStoreTypeEmbedded contains the configuration necessary to decrypt embedded secrets in MI.SecretValue.The only currently supported encrypted message format is Cryptographic Message Syntax as defined in [RFC5652]. Messages must be CMS type "EnvelopedData" and Base64 encoded. A cleartext format is also defined for testing purposes. In this case, the value of a MI.SecretValue object's secret-value property is the cleartext secret.'
+      description: 'MI.SecretStoreTypeEmbedded contains the configuration necessary to decrypt embedded secrets in MI.SecretValue.The only currently supported encrypted message format is Cryptographic Message Syntax as defined in [RFC5652]. Messages must be CMS type "EnvelopedData" and Base64 encoded. A cleartext format is also defined for testing purposes. In this case, the value of a MI.SecretValue objects secret-value property is the cleartext secret.'
       required:
         - format
       properties:
@@ -1849,7 +1849,7 @@ components:
             description: 'An array of MI.TimeWindow objects to match against'
             type: array
             items:
-              $ref: '#/components/schemas/MI_TimeWindow'
+              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_TimeWindow'
           action:
             description: 'The action to take place upon time window match'
             type: string
