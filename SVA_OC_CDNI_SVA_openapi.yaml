@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - CDNi schema extended with SVA Open Caching  objects and properties
-  description: 'This is the CDNi schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).'
+  title: Open Caching API - CDNi schema extended with SVTA Open Caching  objects and properties
+  description: 'This is the SVTA schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Technology Alliance (SVA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
@@ -12,8 +12,6 @@ components:
   schemas:
     BSI_versions:
       type: object
-      required:
-        - open-caching
       description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>"'
       properties:
         open-caching:

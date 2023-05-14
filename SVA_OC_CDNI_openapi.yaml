@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - CDNi schema
-  description: 'This is the CDNi schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Alliance (SVA).This API itself is not elaborated. What matters in this file is the CDNi model (schema)'
+  description: 'This is the CDNi schema required to ellaborate an Open Caching API model as exposed by an ISP according to the Streaming Video Technology Alliance (SVTA).This API itself is not elaborated. What matters in this file is the CDNi model (schema)'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
