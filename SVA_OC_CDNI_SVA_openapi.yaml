@@ -265,9 +265,9 @@ components:
         - limit-type
         - maximum-hard
       properties:
-        scope:
-          description: 'Defines an additional scope requirement for a limit within the FCI footprint context.'
-          $ref: '#/components/schemas/FCI.CapacityLimitScope'
+        Id:
+          description: 'Specifies a unique identifier associated with a limit.  This CAN be used as a relational identifier to a specific FCI.CapacityLimit object'
+          type: string
         limit-type:
           description: 'The following types and their associated unit type are allowed: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
           $ref: '#/components/schemas/FCI_capacitylimittype'
