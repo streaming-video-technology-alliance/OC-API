@@ -275,13 +275,6 @@ paths:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         required: true
       responses:
-        202:
-          description: 'The 202 status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete'
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currenly under processing. The reponse gathers in the Location header that containes the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration metadata part associated with the Host entry has been modified successfully.
           content:
@@ -399,13 +392,6 @@ paths:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         required: true
       responses:
-        202:
-          description: 'The 202 status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete'
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currently under processing. The response gathers in the Location header that contains the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration file has been modified successfully.
           content:
