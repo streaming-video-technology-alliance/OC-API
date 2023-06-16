@@ -73,7 +73,6 @@ components:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectionMode'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.Logging'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/FCI.RedirectTarget'
-        - $ref: '#/components/schemas/FCI.OpenCachingApiVersion'
         - $ref: '#/components/schemas/FCI.Metadata'
         - $ref: '#/components/schemas/FCI.AuthTypes'
         - $ref: '#/components/schemas/FCI.ProcessingStages'
@@ -100,9 +99,6 @@ components:
           description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006]).'
           items:
             $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Footprint'
-    FCI.OpenCachingApiVersion:
-      description: 'This object is mandatory. It advertizes about the SVA open CAching API supported by the dCDN.'
-      type: string
     FCI.Metadata:
       type: object
       description: 'Extension of CDNi FCI.Metadata.'
@@ -389,7 +385,7 @@ components:
         metadata: 
           type: array
           items:
-            $ref: '#/components/schemas/MI.GenericMetadata'
+            $ref: '#/components/schemas/MI_GenericMetadata'
         paths:
           type: array
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
