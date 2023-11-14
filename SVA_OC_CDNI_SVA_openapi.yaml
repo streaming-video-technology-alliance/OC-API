@@ -191,12 +191,12 @@ components:
               type: array
               items:
                 type: string
-                enum: [SATELLITE]
+                enum: [SATELLITE,CELLULAR,BROADBAND]
             ocn-transport:
               type: array
               items:
                 type: string
-                enum: [MABR]
+                enum: [MABR,HAS]
         ocn-type-list:
           description: 'List of supported OCN types. An example could be: “HOME” or “EDGE”.'
           type: array
@@ -435,19 +435,6 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
-    MI_DeliveryAuthorizatione:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
-    MI.DeliveryAuthorization:
-      type: object
-      description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
-      properties:
-        delivery-auth-methods:
-          description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods in the list is satisfied for that request.'
-          type: array
-          items:
-            $ref: '#/components/schemas/MI_Auth'
     MI_Auth:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -462,12 +449,13 @@ components:
           $ref: '#/components/schemas/MI_authvalue'
     MI_authtype:
       type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.CATAuth]
     MI_authvalue:
       oneOf:
-        - $ref: '#/components/schemas/MI_UriSigning'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI_UriSigning'
         - $ref: '#/components/schemas/MI_HeaderAuth'
         - $ref: '#/components/schemas/MI_AWSv4Auth'
+        - $ref: '#/components/schemas/MI_CATAuth'
     MI_HeaderAuth:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -523,40 +511,6 @@ components:
         host-name:
           description: 'The host name to use as part of the signature calculation.'
           type: string
-    MI_UriSigning:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.UriSigning'
-    MI.UriSigning:
-      type: object
-      description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNi) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing.'
-      properties:
-        enforce: 
-          type: boolean
-          default: true
-          description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing. URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
-        issuers:
-          type: array
-          items:
-            type: string
-          description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
-        package-attribute:
-          type: string
-          description: 'The name to use for the URI Signing Package. Default name is "URISigningPackage".'
-        jwt-header:
-          type: string
-          description: 'The header part of JWT that is used for generating or verifying a signed JWT when the JWT token in the URI Signing Package does not contain a header part.  By default, the header is assumed to be included in the JWT token.'
-      example:
-        value: {
-         "enforce": true,
-         "issuers": ["csp", "ucdn1", "ucdn2"],
-         "package-attribute": "usp",
-         "jwt-header":
-           {
-               "alg": "ES256",
-               "kid": "P5UpOv0eMq1wcxLf7WxIg09JdSYGYFDOWkldueaImf0"
-           }
-        }
     MI_SecretStore:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -639,6 +593,27 @@ components:
         secret-path:
           description: 'Used only for HashiCorp Vault secrets; the path, not including namespace, to the secret, including the key of the particular property to access as the last path parameter.'
           type: string
+    MI_SecretStoreTypeHashiCorpVault:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeHashiCorpVault'
+    MI.SecretStoreTypeHashiCorpVault:
+      type: object
+      description: 'MI.SecretStoreTypeHashiCorpVault contains the configuration necessary to reference secrets stored in an external instance of a HashiCorp Vault KV store.'
+      required:
+        - endpoint
+        - namespace
+        - version
+      properties:
+        endpoint:
+          description: 'The base URL of the Vault instance.'
+          type: string
+        namespace:
+          description: 'The Vault namespace in which secret lookups should be performed.'
+          type: string
+        version:
+          description: 'The Vault KV version.'
+          type: integer
     MI_SecretCertificate:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -673,7 +648,7 @@ components:
         - $ref: '#/components/schemas/MI.NamedPrivateFeatureType'
     MI_payloadtype:
       type: string
-      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Fotprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType, MI.SetVariable, MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata, MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.EndpointDetention, MI.ClientConnectionControl, MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore]
+      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Fotprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.ClientRequestStage, MI.OriginRequestStage, MI.OriginResponseStage, MI.ClientResponseStage, MI.MatchGroup, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.SourceConnectionControl, MI.SourceByteReadTimeoutActions, MI.SourceTimeoutActions MI.SourceConnectionRetries, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType, MI.SetVariable, MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata, MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.EndpointDetention, MI.ClientConnectionControl, MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore, MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault, MI.HTTPCodeFailover, MI.HTTPCodeFailoverActions, MI.HTTPCodeReforwards, MI.HTTPErrorCodeTrigger, MI.EndpointRepeatingFailures, MI.SourceDetention,MI.DetentionFullBehavior,MI.DetentionResetBehavior, MI.ClientAuthMetadata, MI.CATAuth, MI.CATTokenLocator, MI.CATTokenConfiguration, MI.CATTokenVerificationAction, MI.CATTokenDefinedResponse, MI.CATIF, MI.CATTokenObject, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -693,11 +668,11 @@ components:
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Cache'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.Grouping'
         - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.FallbackTarget'                     
-        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.DeliveryAuthorization'
         - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.AWSv4Auth'
         - $ref: '#/components/schemas/MI.HeaderAuth'
-        - $ref: '#/components/schemas/MI.UriSigning'
+        - $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.UriSigning'
         - $ref: '#/components/schemas/MI.AllowCompress'
         - $ref: '#/components/schemas/MI.CachePolicy'
         - $ref: '#/components/schemas/MI.ComputedCacheKey'
@@ -708,6 +683,11 @@ components:
         - $ref: '#/components/schemas/MI.PrivateFeatureList'
         - $ref: '#/components/schemas/MI.NamedPrivateFeatureValue'
         - $ref: '#/components/schemas/MI.ProcessingStages'
+        - $ref: '#/components/schemas/MI.ClientRequestStage'
+        - $ref: '#/components/schemas/MI.OriginRequestStage'
+        - $ref: '#/components/schemas/MI.OriginResponseStage'
+        - $ref: '#/components/schemas/MI.ClientResponseStage'
+        - $ref: '#/components/schemas/MI.MatchGroup'
         - $ref: '#/components/schemas/MI.StageRules'
         - $ref: '#/components/schemas/MI.ExpressionMatch'
         - $ref: '#/components/schemas/MI.StageMetadata'
@@ -720,7 +700,11 @@ components:
         - $ref: '#/components/schemas/MI.RequestRouting'        
         - $ref: '#/components/schemas/MI.ServiceIDs'        
         - $ref: '#/components/schemas/MI.SourceMetadataExtended'        
-        - $ref: '#/components/schemas/MI.SourceExtended'        
+        - $ref: '#/components/schemas/MI.SourceExtended'
+        - $ref: '#/components/schemas/MI.SourceConnectionControl'
+        - $ref: '#/components/schemas/MI.SourceByteReadTimeoutActions'
+        - $ref: '#/components/schemas/MI.SourceTimeoutActions'
+        - $ref: '#/components/schemas/MI.SourceConnectionRetries'
         - $ref: '#/components/schemas/MI.LoadBalanceMetadata'        
         - $ref: '#/components/schemas/MI.StaleContentCachePolicy'        
         - $ref: '#/components/schemas/MI.TrafficType'        
@@ -739,6 +723,27 @@ components:
         - $ref: '#/components/schemas/MI.SecretValue'
         - $ref: '#/components/schemas/MI.SecretStoreTypeVault'
         - $ref: '#/components/schemas/MI.SecretStore'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeHashiCorpVault'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailover'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailoverActions'
+        - $ref: '#/components/schemas/MI.HTTPCodeReforwards'
+        - $ref: '#/components/schemas/MI.HTTPErrorCodeTrigger'
+        - $ref: '#/components/schemas/MI.EndpointRepeatingFailures'
+        - $ref: '#/components/schemas/MI.SourceDetention'
+        - $ref: '#/components/schemas/MI.DetentionFullBehavior'
+        - $ref: '#/components/schemas/MI.DetentionResetBehavior'
+        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
+        - $ref: '#/components/schemas/MI.CATAuth'
+        - $ref: '#/components/schemas/MI.CATTokenLocator'
+        - $ref: '#/components/schemas/MI.CATTokenConfiguration'
+        - $ref: '#/components/schemas/MI.CATTokenVerificationAction'
+        - $ref: '#/components/schemas/MI.CATTokenDefinedResponse'
+        - $ref: '#/components/schemas/MI.CATIF'
+        - $ref: '#/components/schemas/MI.CATTokenObject'
+        - $ref: '#/components/schemas/MI.AccessControlAllowOrigin'
+        - $ref: '#/components/schemas/MI.OcnDelivery'
+        - $ref: '#/components/schemas/MI.MediaServiceDescription'
     MI_GenericMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -807,9 +812,11 @@ components:
         internal:  
           description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds, for example “5” is a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.' 
           $ref: '#/components/schemas/MI_cachepolicy_iors'
+          default: as-is
         external:  
           description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". “no-cache”. If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.'
           $ref: '#/components/schemas/MI_cachepolicy_iors'
+          default: as-is
         force-internal:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy internal property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy internal property value is only used if there is no cache control policy provided in the response from the uCDN.. The default is False, which will apply the MI.CachePolicy internal property value only if no policy is provided in the response from the uCDN.'
           type: boolean
@@ -892,8 +899,17 @@ components:
           description: 'The value the OCN will include in the Access-Control-Allow-Credentials response header to a preflight request.'
           type: boolean
         max-age:
-          description: The value the OCN will include in the Access-Control-Max-Age response header to a preflight request.
+          description: 'The value the OCN will include in the Access-Control-Max-Age response header to a preflight request.'
           type: integer
+        no-origin-response-headers:
+          description:  In the case of a request that has no Origin field, return this set of headers with the response.
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_HTTPHeader'
+        preflight-only:
+          description: Setting this flag to “True” the dCDN will only generate synthetic responses to OPTIONS requests with proper CORS response headers.
+          type: boolean
+          default: false
       example:
         value: {
               "allow-origin": {
@@ -930,7 +946,7 @@ components:
         value: {
           "error-codes": ["404", "503", "504"],
           "cache-policy": {
-            "internal": "5",
+            "internal": 5,
             "external": "no-cache",
             "force-internal": true,
             "force-external": true
@@ -957,13 +973,13 @@ components:
       type: object
       properties:
         ocn-medium:
-          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”. At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”, "CELLULAR", "BROADBAND". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
           type: string
-          enum: [SATELLITE]
+          enum: [SATELLITE,CELLULAR,BROADBAND]
         ocn-transport:
-          description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR", "HAS". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
           type: string
-          enum: [MABR]
+          enum: [MABR,HAS]
     MI_OcnSelection:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1057,6 +1073,84 @@ components:
           type: array
           items:
              $ref: '#/components/schemas/MI_StageRules'
+    MI_ClientRequestStage:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientRequestStage'
+    MI.ClientRequestStage:
+      type: object
+      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN upon receiving an inbound HTTP request from a client prior to further processing.'
+      required:
+        - match-groups
+      properties:
+        match-groups:
+          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
+          type: array
+          items:
+             $ref: '#/components/schemas/MI_MatchGroup'
+    MI_OriginRequestStage:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.OriginRequestStage'
+    MI.OriginRequestStage:
+      type: object
+      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN prior to making an HTTP request to the origin upon a cache miss.'
+      required:
+        - match-groups
+      properties:
+        match-groups:
+          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
+          type: array
+          items:
+             $ref: '#/components/schemas/MI_MatchGroup'
+    MI_OriginResponseStage:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.OriginResponseStage'
+    MI.OriginResponseStage:
+      type: object
+      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN after an HTTP response is received from the origin and before being placed in the cache or forwarded to the client.'
+      required:
+        - match-groups
+      properties:
+        match-groups:
+          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
+          type: array
+          items:
+             $ref: '#/components/schemas/MI_MatchGroup'
+    MI_ClientResponseStage:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientResponseStage'
+    MI.ClientResponseStage:
+      type: object
+      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN prior to sending the HTTP response to the client. If the response is from the cache, rules are applied to the response retrieved from the cache prior to sending to the client.'
+      required:
+        - match-groups
+      properties:
+        match-groups:
+          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
+          type: array
+          items:
+             $ref: '#/components/schemas/MI_MatchGroup'
+    MI_MatchGroup:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.MatchGroup'
+    MI.MatchGroup:
+      type: object
+      description: 'MI.MatchGroup is a subobject of MI.ClientRequestStage, MI.ClientResponseStage,  MI.OriginRequestStage, and MI.OriginResposeStage, allowing for a structured set of if/else rules to be applied based on an OPTIONAL match of an expression.'
+      required:
+        - if-rule
+      properties:
+        if-rule:
+          description: 'An MI.StageRules object that is always processed. If it contains a match expression that evaluates to "True" (or is an unconditional rule with no match expression), the metadata defined within the stage rule is applied and any else-if-rules are ignored.'
+          $ref: '#/components/schemas/MI_StageRules'    
+        else-if-rules:
+          description: 'An array of  MI.StageRules objects that are processed in order whenever the if-rule does not terminate processing. If a stage rule expression match  evaluates to "True" (or is an unconditional rule with no match expression), the metadata defined within the stage rule is applied and all subsequent entries in the  else-if-rules are ignored. Processing is halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
+          type: array
+          items:
+             $ref: '#/components/schemas/MI_StageRules'        
     MI_StageRules:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1180,7 +1274,7 @@ components:
                   {"name" : "content-type", "value" : "text/plain"},
                   {"name" : "X-custom-response-header", "value" : "some static value"},
                   ],
-                  "response-status" : "405",
+                  "response-status" : 405,
                   "response-body" : "'Sorry, Access to resource ' . req.uri . ' is not allowed'",
                   "body-is-expression": true
                 }
@@ -1198,12 +1292,12 @@ components:
           items:
             $ref: '#/components/schemas/MI_HTTPHeader'
         replace:
-          description: 'List of HTTP headers (name/value pairs) that should be added to the HTTP request or response, replacing any previous headers with the same name.'
+          description: 'List of HTTP headers (name/value pairs) that should be added to the HTTP request or response, replacing any previous headers with the same name. Matching is not case sensitive. Both key and value are replaced wtih the provided case.'
           type: array 
           items:
             $ref: '#/components/schemas/MI_HTTPHeader'
         delete:
-          description: 'List of names of HTTP headers that should be deleted from the HTTP request or response. If a named header appears multiple times, all occurrences are deleted.'
+          description: 'List of names of HTTP headers that should be deleted from the HTTP request or response. If a named header appears multiple times, all occurrences are deleted. Matching is not case sensitive.'
           type: array 
           items:
             type: string 
@@ -1246,7 +1340,8 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.RequestedCapacityLimits'
     MI.RequestedCapacityLimits:
-      type: object
+      type: object  
+      deprecated: true
       description: 'Allows the uCDN to communicate to the dCDN a desired change in the advertised traffic delegation limits for a given host and footprint.'
       required:
         - requested-limits
@@ -1271,8 +1366,9 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.RequestedCapacityLimit'
-    MI.RequestedCapacityLimit:
+    MI.RequestedCapacityLimit:    
       type: object
+      deprecated: true
       description: 'uCDN requested capacity limit'
       required:
         - limit-type
@@ -1353,6 +1449,9 @@ components:
           type: array 
           items:
               $ref: '#/components/schemas/MI_SourceExtended'
+        source-detention:
+          description: 'Specifies rules for handling detention at the set of sources.'
+          $ref: '#/components/schemas/MI_SourceDetention'
         load-balance:
           description:  'Specifies load balancing rules for the set of sources.' 
           $ref: '#/components/schemas/MI_LoadBalanceMetadata'
@@ -1413,7 +1512,7 @@ components:
           type: array
           items:
             type: string
-            enum: [502, 503, 504]
+            description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99. Note that use of 4xx would specify that 416 responses are cached.
         connection-control:
           description: 'Specifies how connection related errors and timeouts are handled. When specified, overrides the timeout-ms property'
           $ref: '#/components/schemas/MI_SourceConnectionControl'
@@ -1654,6 +1753,7 @@ components:
       description: 'HttpCodeFailoverActions is a subobject of HttpCodeFailover. It defines one or more error HTTP codes against which some failover action must be performed.'
       required:
         - reforwards
+        - http-codes
       properties:
         http-codes:
           description: 'Specifies the list of error HTTP codes received from Origin/uCDN for which a failover must be performed. The value is an array of error (4xx and above) HTTP codes.'
@@ -1719,9 +1819,10 @@ components:
           items:
             type: string
             description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99.
-        failed-refresh-ttl:
-          description: 'This property is used to instruct the dCDN to serve a stale version of a resource for the number of seconds specified in failed-refresh-ttl before trying to revalidate the resource with the uCDN.  Use of failed-refresh-ttl allows the load to be reduced on the uCDN during times of system stress.'
+        failed-revalidation-delta-seconds:
+          description: 'Drives the dCDN behavior when revalidation attempts to the uCDN fail, specifying the number of seconds to wait before making another attempt to revalidate the resource with the uCDN. Use of failed-revalidation-delta-seconds allows load to be reduced on the uCDN during times of system stress. Stale content is served during this wait period.'
           type: integer
+          default: 0
       example:
         value: {
                 "stale-while-revalidating": “true”, 
@@ -1752,6 +1853,25 @@ components:
                 "traffic-type": "vod",
                 "hints": [ "low-latency", "catch-up" ]
                 }
+    MI_MediaServiceDescription:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.MediaServiceDescription'
+    MI.MediaServiceDescription:
+      type: object
+      description: 'MI.MediaServiceDescription metadata defines a set of descriptors associated with a media service delegated to the dCDN. This metadata can be used by the CDN or OCN provider to implement specific strategies that will maximize performance. Note that these strategies are implementation specific and not specified by SVTA. For instance,  by knowing the location of the manifest, the dCDN is able to implement some segment prefetching strategies. Further, indicating the notion of media service allows the CDN or OCN provider to track and monitor streaming sessions in a more comprehensive manner.'
+      properties:
+        manifestURL:
+          description: 'Path of the manifest (mpd or m3u8) file related to this media service.'
+          type: string
+        mediaServiceName:
+          description: 'String describing or identifying the media service.'
+          type: string 
+      example:
+        value: {
+            "manifestURL": "/live/channelXYZ/index.mpd",
+            "mediaServiceName": "ChannelXYZ",
+            }
     MI_SetVariable:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1929,6 +2049,157 @@ components:
           delegated-credentials-value:
             description: 'An object conforming to the specification associated with the DelegatedCredentials type.'
             $ref: '#/components/schemas/MI_GenericMetadata'
+    MI_ClientAuthMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
+    MI.ClientAuthMetadata:
+        type: object
+        description: 'The MI.ClientAuthMetadata defines how a dCDN authenticates client requests.'
+        required:
+          - delivery-auth
+        properties:
+          delivery-auth:
+            description: 'Authentication method to use when granting access to a resource requested by a client.'
+            $ref: '#/components/schemas/MI_Auth'
+    MI_CATAuth:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATAuth'
+    MI.CATAuth:
+        type: object
+        description: 'The MI.CATAuth object defines the configuration for a dCDN to authenticate client requests using the Common Access Token standard. The MI.CATAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to to client requests by including it under the MI.ClientAuthMetadata.delivery-auth property.'
+        required:
+          - tokens
+          - configuration
+          - verification-action
+        properties:
+          version:
+            description: 'Specifies the version of the CAT token. dCDN must reject a token for an unsupported version number. A rejected token results in the client response being defined by the ‘verification-action’ property'
+            type: integer
+            default: 1
+          token-object-name:
+            description: 'Description: Specifies the name of the token object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032].'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_CATTokenObject'
+          tokens:
+            description: 'Specifies the location in the client request where one or more tokens are present and read for evaluation. When multiple tokens are present, the tokens are read and processed per  Common Access Token specification, Section 4.4 (Token Location).'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_CATTokenLocator'
+          configuration:
+            description: 'Specifies the configuration parameters needed to verify a token.'
+            $ref: '#/components/schemas/MI_CATTokenConfiguration'
+          verification-action:
+            description: 'Specifies how an invalid token OR a valid but rejected token defines the response returned to the client.'
+            $ref: '#/components/schemas/MI_CATTokenVerificationAction'
+    MI_CATTokenLocator:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATTokenLocator'
+    MI.CATTokenLocator:
+        type: object
+        description: 'The MI.CATTokenLocator object defines the location to read one or more tokens from the client request.'
+        required:
+          - location
+        properties:
+          location:
+            description: 'Specifies the location name to find one or more tokens in the client request. Valid location names are: Authorization-Header for the Authorization request header, url-path-style-parameter per [RFC6570], section 3.2.7, query-parameter per [RFC6570], section 3.2.8 and [RFC6570], section 3.2.9, cookie for HTTP Cookies'
+            type: string
+            enum: [Authorization-Header, url-path-style-parameter,query-parameter, cookie]
+          scheme:
+            description: 'The scheme for the Authorization request header that contains the CAT token'
+            type: string
+          namespace:
+            description: 'The names of the url-path-style parameter, query parameter or HTTP cookies that contain one or more CAT tokens.'
+            type: string
+    MI_CATTokenConfiguration:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATTokenConfiguration'
+    MI.CATTokenConfiguration:
+        type: object
+        description: 'The MI.TokenConfiguration object defines the configuration parameters for verifying a CAT token.'
+        required:
+          - integrity-algo
+          - integrity-algo-key
+        properties:
+          integrity-algo:
+            description: 'The algorithm used for integrity protection of the CAT token. The minimum set of values to support are “hs256” (see [RFC9053], section 3.1)and “es256” (see [RFC9053], section 2.1)'
+            type: string
+          integrity-algo-key:
+            description: 'The value of the key used for integrity protection of the CAT token.'
+            $ref: '#/components/schemas/MI_SecretValue'
+          namespace:
+            description: 'The names of the url-path-style parameter, query parameter or HTTP cookies that contain one or more CAT tokens.'
+            type: string
+    MI_CATTokenVerificationAction:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATTokenVerificationAction'
+    MI.CATTokenVerificationAction:
+        type: object
+        description: 'The MI.CATTokenVerificationAction object defines how a client response is created for an invalid OR valid but rejected token.'
+        required:
+          - rejected-token-action
+        properties:
+          rejected-token-action:
+            description: 'An enumeration of ways in which a client response is created. Valid values are: fail for returning a HTTP 403 response. allow for ignoring the result of token validation, as if the token was not present. This typically would result in serving a HTTP 200 for the requested resource. token-defined for constructing the client response per the parameters defined within the token. For a valid but rejected CAT token, the catif claim is used to construct the client response.'
+            type: string
+            enum: [fail, allow, token-defined]
+          token-defined-response:
+            description: 'Specifies how the token values are used to create the client response for an invalid OR valid but rejected token. This property gets used when the value of rejected-token-action property is token-defined. Use of this property for any other value of rejected-token-action is an invalid configuration.'
+            $ref: '#/components/schemas/MI_CATTokenDefinedResponse'
+    MI_CATTokenDefinedResponse:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATTokenDefinedResponse'
+    MI.CATTokenDefinedResponse:
+        type: object
+        description: 'The MI.CATTokenDefinedResponse object defines how a client response is constructed using the token’s available ‘catif’ claim or some fallback.'
+        properties:
+          fallback-response:
+            description: 'An enumeration defining a fallback response when the token defined values are inapplicable. Valid values are: “fail” for returning a HTTP 403 response. “allow” for ignoring the result of token validation, as if it was not present. For CAT, this fallback-response will get used under the following conditions: A missing token. An invalid CAT token. A valid but rejected CAT token with: A missing ‘catif’ claim OR A ‘catif’ claim without claim keys on which the CAT token was rejected.'
+            type: string
+            enum: [fail, allow]
+            default: fail
+          catif:
+            description: 'Specifies the configuration for processing the ‘catif’ claim to construct the client response for a valid but rejected CAT token.'
+            $ref: '#/components/schemas/MI_CATIF'
+    MI_CATIF:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATIF'
+    MI.CATIF:
+        type: object
+        description: 'The  MI.CATIF object specifies the processing of the ‘catif’ claim to construct the client response for a valid but rejected CAT token. See Common Access Token specification, catif claim section.'
+        properties:
+          response-header-names-force-add:
+            description: 'For specific named headers of a rejected claim within the ‘catif’ claim, these will be added to the client response, even if headers with same names were already going to be added to the response via other means.'
+            type: array
+            items:
+              type: string
+    MI_CATTokenObject:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CATTokenObject'
+    MI.CATTokenObject:
+        type: object
+        description: 'The MI.CATTokenObject object defines a read-only object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032].'
+        properties:
+          status:
+            description: 'Captures the verification status of the CAT token via the following string values: ‘success’ ‘failure’'
+            type: string
+            enum: [success, failure]
+          token:
+            description: 'The string literal of the token in the request'
+            type: string
+          status_details:
+            description: ' Specifies details about the token verification result when the token verification ‘status’ is ‘failure’, else it is an empty string. This string contains one of the following values: Empty string for a missing token. “Invalid CAT” when a token cannot be parsed, per [RFC8392], Section 7.2 “Invalid Claim: <name of the first claim that caused the CAT token to be rejected>”'
+            type: string
+            enum: ['', status, failure]
+
 # RI interface (RFC7975)
     RI_ipaddress:
       type: string
