@@ -275,13 +275,6 @@ paths:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
         required: true
       responses:
-        202:
-          description: 'The 202 status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete'
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currenly under processing. The reponse gathers in the Location header that containes the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration metadata part associated with the Host entry has been modified successfully.
           content:
@@ -297,7 +290,7 @@ paths:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
                 $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         202:
-          description: 'The 102 (Processing) status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete. The reponse gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
+          description: 'The 202 (Processing) status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete. The reponse gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
@@ -399,13 +392,6 @@ paths:
               $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
         required: true
       responses:
-        202:
-          description: 'The 202 status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete'
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currently under processing. The response gathers in the Location header that contains the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration file has been modified successfully.
           content:
@@ -628,7 +614,7 @@ paths:
   /OC/RI/routing_request:
     post:
       tags:
-        - OC_RI
+        - OC_RRI
       summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975).
       description: 'Simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP.'
       operationId: OC_RI_routingrequest
