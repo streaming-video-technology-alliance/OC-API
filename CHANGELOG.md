@@ -81,13 +81,6 @@ Objects related to client access control:
 - MI_TimeWindowAclExtended
 - MI_TimeWindowRuleExtended
 - MI_ClientAuthMetadata
-- MI_CATAuth
-- MI_CATTokenLocator
-- MI_CATTokenConfiguration
-- MI_CATTokenVerificationAction
-- MI_CATTokenDefinedResponse
-- MI_CATIF
-- MI_CATTokenObject
 
 Objects related to NamedPrivateFeatures:
 - MI.NamedPrivateFeatureType
