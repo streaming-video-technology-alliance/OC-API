@@ -19,7 +19,7 @@ paths:
       operationId: oc_bs_get_bootstrap
       responses:
         '200':
-          description: 'Open Caching API version.'
+          description: 'Open Caching API supported interfaces versions.'
           content:
             jason:
               schema:

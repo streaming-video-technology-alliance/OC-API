@@ -12,18 +12,18 @@ components:
   schemas:
     BSI_versions:
       type: object
-      description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>"'
+      description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>".'
       properties:
         open-caching:
-          description: 'SVA Open Caching API version.'
+          description: 'SVA Open Caching API version description.'
           type: string
         fci: 
-          description: 'Footprint and Capabilities Interface API version'
+          description: 'Footprint and Capabilities Interface API version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         coi: 
-          description: 'COnfiguration interface API version'
+          description: 'COnfiguration interface API version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
@@ -33,12 +33,12 @@ components:
           items:
             $ref: '#/components/schemas/BSI_version'
         cmi:
-          description: 'Content Management Interface API version'
+          description: 'Content Management Interface API version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         loi: 
-          description: 'Logging Interface API version'
+          description: 'Logging Interface API version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
@@ -54,7 +54,7 @@ components:
           description: 'It must be compliant with the following form: "<Major>.<minor>.<patch>".'
         url:  
           type: string
-          description: 'The Interface API end point URL exposed by the dCND correeponding to the version number. The URL'
+          description: 'The Interface API end point URL exposed by the dCDN correeponding to the version number.'
     FCI_capabilities:
       type: object
       description: 'The list of capabilities supported by the dCDN.'
