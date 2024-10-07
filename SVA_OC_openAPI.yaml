@@ -11,6 +11,25 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
+  /OC/bootstrap/bootstrap:
+    get:
+      tags:
+        - OC_BSB
+      summary: 'The boostrap API entry point. Expose the bootstrap API versions and their respective entry points.'
+      operationId: oc_bs_get_bootstrap
+      responses:
+        '200':
+          description: 'Open Caching boostrap API entry point.'
+          content:
+            jason:
+              schema:
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI.Bootstrap'
+        '400':
+          description: 'Bad request.'
+        '403':
+          description: 'Forbidden.'
+        '404':
+          description: 'No bootstrap'
   /OC/bootstrap/version:
     get:
       tags:
@@ -23,13 +42,13 @@ paths:
           content:
             jason:
               schema:
-                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI_versions'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI.OpenCachingVersions'
         '400':
           description: 'Bad request.'
         '403':
           description: 'Forbidden.'
         '404':
-          description: 'No bootstrap'
+          description: 'No bootstrap version API'
   /OC/FCI/advertisement:
     get:
       tags:
@@ -79,10 +98,10 @@ paths:
               summary: 'The ISP OC/dCDN to post a FCI advertisement update.'
               description: 'This callback is used by the ISP OC/dCDN to put an FCI advertisement update.'
               tags:
-              - OC_FCI
+                - OC_FCI
               operationId: oc_fci_push_notification
               requestBody:
-                description: Callback payload.
+                description: 'Callback payload.'
                 content: 
                   'application/cdni':
                     schema:
@@ -104,7 +123,7 @@ paths:
         403:
           description: 'Forbidden.'
         404:
-          description: 'No FCI advertisement.'     
+          description: 'No suche API.'     
   /OC/FCI/subscription/{subscriptionId}:
     get:
       tags:
@@ -164,7 +183,7 @@ paths:
           content: {}    
         404:
           description: 'Not found.' 
-  /OC/CI/configuration:
+  /OC/COI/configuration:
     put:
       tags:
         - OC_COI_simple
@@ -176,7 +195,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostIndex:
             schema:
-              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+              $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.HostIndex'
         required: true
       responses:
         202:
@@ -184,7 +203,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currently under processing. The response gathers in the Location header that contains the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
+                description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currently under processing. The response gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
                 $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration file has been modified.
@@ -225,7 +244,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostIndex:
               schema:
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.HostIndex'
         400:
           description: Command is invalid.
           content: {}
@@ -253,7 +272,7 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/CI/configuration/{host}:
+  /OC/COI/configuration/{host}:
     put:
       tags:
         - OC_COI_simple_host
@@ -272,7 +291,7 @@ paths:
         content:
           application/cdni;ptype=MI.HostMetadata:
             schema:
-              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+              $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.HostMetadata'
         required: true
       responses:
         200:
@@ -328,7 +347,7 @@ paths:
           content:
             application/cdni;ptype=MI.HostMetadata:
               schema:
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostMetadata'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.HostMetadata'
         400:
           description: Command is invalid.
           content: {}
@@ -363,7 +382,7 @@ paths:
         404:
           description: Not found.
           content: {}
-  /OC/CI/configuration/{host}/{pathPattern}:
+  /OC/COI/configuration/{host}/{pathPattern}:
     put:
       tags:
         - OC_COI_simple_pathPattern
@@ -389,7 +408,7 @@ paths:
         content:
           application/cdni;ptype=MI.PathMetadata:
             schema:
-              $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
+              $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.PathMetadata'
         required: true
       responses:
         200:
@@ -451,7 +470,7 @@ paths:
           content:
             application/cdni;ptype=MI.PathMetadata:
               schema:
-                $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.PathMetadata'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.PathMetadata'
         400:
           description: Command is invalid.
           content: {}
@@ -492,12 +511,124 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/CI/trigger:
+  /OC/COI/subscription:
     post:
       tags:
-        - OC_CI_trigger
+        - OC_COI_notif
+      summary: 'Subscribes to OCI status update notifications.'
+      operationId: oc_oci_post_subscribe
+      description: 'A subscription ID is returned in the Location header of the response in case of successful creation.'
+      requestBody:
+        description: ''
+        content:
+          application/cdni:
+            schema:
+              type: object
+              required:
+                - notificationOciTarget
+              properties:
+                notificationOciTarget:
+                  type: string
+                notificationType:
+                  type: string
+                  enum: [status]
+        required: true
+      callbacks:
+        OciNotification:
+          '{$request.body#/notificationOciTarget}':
+            put:
+              summary: 'The ISP OC/dCDN to post an OCI configuration status update.'
+              description: 'This callback is used by the ISP OC/dCDN to put an OCI configuration status update.'
+              tags:
+                - OC_COI_notif
+              operationId: oc_oci_push_notification
+              requestBody:
+                description: 'Callback payload.'
+                content: 
+                  'application/cdni;ptype=ci-trigger-status':
+                    schema:
+                      $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/ci-trigger-status'
+              responses:
+                '200':
+                  description: 'Configuration status updated.'
+                '400':
+                  description: 'Bad request.'
+                '403':
+                  description: 'Forbidden.'
+      responses:
+        201:
+          description: 'Subscription created. The "Location" header gathers the subscription ID (the URI) of the newly created resource.'
+        400:
+          description: 'Bad request.'
+        403:
+          description: 'Forbidden.'
+        404:
+          description: 'No such API.' 
+  /OC/COI/subscription/{subscriptionId}:
+    get:
+      tags:
+        - OC_COI_notif
+      summary: get the OCI notification subscription 
+      operationId: oc_oci_get_notificationSubscription
+      description: ''
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'OCI notification subscription.'
+          content:
+            application/cdni:
+              schema:
+                type: object
+                required:
+                  - notificationOciTarget
+                properties:
+                  notificationOciTarget:
+                   type: string
+                  notificationType:
+                    type: string
+                    enum: [status]
+        400:
+          description: 'Bad request'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+    delete:
+      tags:
+        - OC_COI_notif
+      summary: 'delete the notification subscription'
+      operationId: OC_oci_delete_notificationSubscription
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
+          schema:
+            type: string 
+      responses:
+        200:
+          description: 'Notification subscription deleted'
+          content: {}
+        400:
+          description: Command is invalid
+          content: {}
+        403:
+          description: Forbidden
+          content: {}    
+        404:
+          description: 'Not found' 
+  /OC/OCI/trigger:
+    post:
+      tags:
+        - OC_OCI_trigger
       summary: Communicates the metadata, configuration and/or content to the ISP with the CI/trigger API (RFC 8007).
-      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006 (+ RFC8804) for the metadata structure.'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
       operationId: OC_CI_provision
       requestBody:
         description: The metadataset or a link to the set to be considered/processed by the ISP.
@@ -509,7 +640,7 @@ paths:
         required: true
       callbacks:
         requestMetadata:
-          /OC/CI/metadata/{pathName}:
+          /OC/OCI/metadata/{pathName}:
             get:
               summary: ''
               description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata/configuration elements referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006/RFC8007.'
@@ -530,12 +661,12 @@ paths:
                   content:
                     application/cdni:
                       schema:
-                        $ref: './SVA_OC_CDNI_openapi.yaml#/components/schemas/MI.HostIndex'
+                        $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/MI.HostIndex'
                 404:
                   description: Not found
                   content: {}
         requestContent:
-          /OC/CI/content/{pathName}:
+          /OC/CMI/content/{pathName}:
             get:
               summary: ''
               description: 'This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command.'
@@ -580,12 +711,12 @@ paths:
         403:
           description: Forbidden.
           content: {}
-  /OC/CI/status/{triggerId}:
+  /OC/OCI/status/{triggerId}:
     get: 
       summary: 'Check the CI trigger status.'
       description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006.'
       tags:
-        - OC_CI_trigger
+        - OC_OCI_trigger
       operationId: OC_CI_status
       parameters:
         - in: path
@@ -611,13 +742,13 @@ paths:
         403:
           description: Forbidden.
           content: {} 
-  /OC/RI/routing_request:
+  /OC/RRI/routing_request:
     post:
       tags:
         - OC_RRI
       summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975).
       description: 'Simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP.'
-      operationId: OC_RI_routingrequest
+      operationId: OC_RRI_routingrequest
       requestBody:
         description: 'The request according to RFC 7975.'
         content:
