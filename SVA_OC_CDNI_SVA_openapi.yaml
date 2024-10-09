@@ -67,7 +67,7 @@ components:
           description: 'It must be compliant with the following form: "<Major>.<minor>.<patch>".'
         url:  
           type: string
-          description: 'The Interface API end point URL exposed by the dCND correeponding to the version number. The URL may be used as is or may be completed with a path prefix depending on interface.'
+          description: 'The Interface API end point URL exposed by the dCDN corresponding to the version number. The URL may be used as is or may be completed with a path prefix depending on interface.'
     FCI_capabilities:
       type: object
       description: 'The list of capabilities supported by the dCDN.'
