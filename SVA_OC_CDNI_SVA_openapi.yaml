@@ -795,10 +795,8 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CachePolicy'
     MI_cachepolicy_iors:
-      oneOf:
-        - type: integer
-        - type: string
-          enum: [as-is, no-cache, no-store]
+      type: string
+      pattern: '^as-is|no-cache|no-store|\d+$'
     MI.CachePolicy:
       type: object
       properties:
