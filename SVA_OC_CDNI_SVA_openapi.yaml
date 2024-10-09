@@ -10,41 +10,54 @@ externalDocs:
     url: 'https://www.streamingvideoalliance.org/'
 components:
   schemas:
-    BSI_versions:
+    BSI.Bootstrap:
       type: object
-      description: 'version numbering must be compliant with the following form: "<Major>.<minor>.<patch>".'
+      description: 'Describe the version number attached with the bootstrap API; it must be compliant with the following form: "<Major>.<minor>.<patch>".'
+      required:
+        - bsi
+      properties:
+        bsi: 
+          description: 'Boostrap API version(s)'
+          type: array
+          items:
+            $ref: '#/components/schemas/BSI_version'
+    BSI.OpenCachingVersions:
+      type: object
+      description: 'Describe the version number attached with each implemented and exposed Open Caching interface. A version number  must be compliant with the following form: "<Major>.<minor>.<patch>".'
+      required: 
+        - fci
       properties:
         open-caching:
-          description: 'SVA Open Caching API version description.'
+          description: 'SVA Open Caching API version description. This is for information purpose. The format is not constraint and should not follow the "<Major>.<minor>.<patch>" pattern.'
           type: string
         fci: 
-          description: 'Footprint and Capabilities Interface API version.'
+          description: 'Footprint and Capabilities Interface version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         coi: 
-          description: 'COnfiguration interface API version.'
+          description: 'Configuration interface version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         rri: 
-          description: 'Request Routing Interface API version'
+          description: 'Request Routing Interface version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         cmi:
-          description: 'Content Management Interface API version.'
+          description: 'Content Management Interface version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
         loi: 
-          description: 'Logging Interface API version.'
+          description: 'Logging Interface version.'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'
     BSI_version:
       type: object
-      description: 'For each version published, the number and the corresponding URL must be provided.'
+      description: 'An object that gathers a version number and the corresponding URL.'
       required:
         - number
         - url
@@ -54,7 +67,7 @@ components:
           description: 'It must be compliant with the following form: "<Major>.<minor>.<patch>".'
         url:  
           type: string
-          description: 'The Interface API end point URL exposed by the dCDN correeponding to the version number.'
+          description: 'The Interface API end point URL exposed by the dCDN corresponding to the version number. The URL may be used as is or may be completed with a path prefix depending on interface.'
     FCI_capabilities:
       type: object
       description: 'The list of capabilities supported by the dCDN.'

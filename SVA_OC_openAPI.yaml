@@ -11,6 +11,25 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
+  /OC/bootstrap/bootstrap:
+    get:
+      tags:
+        - OC_BSB
+      summary: 'The boostrap API entry point. Expose the bootstrap API versions and their respective entry points.'
+      operationId: oc_bs_get_bootstrap
+      responses:
+        '200':
+          description: 'Open Caching boostrap API entry point.'
+          content:
+            jason:
+              schema:
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI.Bootstrap'
+        '400':
+          description: 'Bad request.'
+        '403':
+          description: 'Forbidden.'
+        '404':
+          description: 'No bootstrap'
   /OC/bootstrap/version:
     get:
       tags:
@@ -19,17 +38,17 @@ paths:
       operationId: oc_bs_get_bootstrap
       responses:
         '200':
-          description: 'Open Caching API supported interfaces versions.'
+          description: 'Open Caching API version.'
           content:
             jason:
               schema:
-                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI_versions'
+                $ref: './SVA_OC_CDNI_SVA_openapi.yaml#/components/schemas/BSI.OpenCachingVersions'
         '400':
           description: 'Bad request.'
         '403':
           description: 'Forbidden.'
         '404':
-          description: 'No bootstrap'
+          description: 'No bootstrap version API'
   /OC/FCI/advertisement:
     get:
       tags:
