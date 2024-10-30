@@ -40,12 +40,13 @@ components:
         capability-type:
           $ref: '#/components/schemas/FCI_capabilitytype'
         capability-value:
-          $ref: '#/components/schemas/FCI_capabilityvalue'         
+          $ref: '#/components/schemas/FCI_capabilityvalue'
         footprints:
           type: array
+          minItems: 1
           description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006])'
           items:
-             $ref: '#/components/schemas/MI.Footprint'
+            $ref: '#/components/schemas/MI.Footprint'
     FCI.DeliveryProtocol:
       type: object
       description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
@@ -54,6 +55,7 @@ components:
       properties:
         delivery-protocols:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_protocol'
     FCI.AcquisitionProtocol:
@@ -64,6 +66,7 @@ components:
       properties:
         acquisition-protocols:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_protocol'
     FCI.RedirectionMode:
@@ -74,17 +77,21 @@ components:
       properties:
         redirection-modes:
           type: array
-          items: 
+          minItems: 1
+          items:
             $ref: '#/components/schemas/FCI_redirectionmode'
     FCI.RedirectTarget:
       type: object
       description: 'FCI extension per RFC8804'
+      required:
+        - redirecting-hosts
       properties:
         redirecting-hosts:
           description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
           type: array
+          minItems: 1
           items:
-             $ref: '#/components/schemas/MI_endpoint'
+            $ref: '#/components/schemas/MI_endpoint'
         dns-target:
           description: 'An FQDN used as an alias in a CNAME record response (see [RFC1034]) of the uCDN DNS router'
           $ref: '#/components/schemas/FCI_dnstarget'
@@ -93,11 +100,11 @@ components:
           $ref: '#/components/schemas/FCI_httptarget'
     FCI_httptarget:
       type: object
-      description: 'FCI extension per RFC8004: the HttpTarget object gives the necessary information to construct the target Location URI for HTTP redirection.'    
+      description: 'FCI extension per RFC8004: the HttpTarget object gives the necessary information to construct the target Location URI for HTTP redirection.'
       required:
         - host
       properties:
-        host: 
+        host:
           description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
           $ref: '#/components/schemas/MI_endpoint'
         scheme:
@@ -113,26 +120,27 @@ components:
           default: false
     FCI_dnstarget:
       type: object
-      description: 'FCI extension per RFC8004: the DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'    
+      description: 'FCI extension per RFC8004: the DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'
       required:
         - host
       properties:
         host:
           description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that it SHOULD NOT include  a port number and, in case a port number is present, the uCDN MUST ignore it.'
-          $ref: '#/components/schemas/MI_endpoint' 
+          $ref: '#/components/schemas/MI_endpoint'
     FCI.Logging:
       type: object
       description: 'The CDNi Logging capability object is used to indicate support for CDNi Logging record-types, as well as CDNi Logging fields that are marked as optional for the specified record-types [RFC7937].'
       required:
         - record-type
       properties:
-        record-type: 
+        record-type:
           type: string
           enum: [cdni_http_request_v1]
         fields:
           description: 'List of supported CDNi Logging fields that are optional for the specified record-type. Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported". An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, the fields in that list MUST be interpreted as "the only optional fields that are supported".'
-          type: array 
-          items: 
+          type: array
+          minItems: 1
+          items:
             $ref: '#/components/schemas/FCI_loggingfieldname'
     FCI.Metadata:
       type: object
@@ -143,7 +151,8 @@ components:
         metadata:
           description: 'List of supported CDNi GenericMetadata types. List of strings corresponding to entries from the "CDNi Payload Types" registry [RFC7736] that correspond to CDNi GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
           type: array
-          items: 
+          minItems: 1
+          items:
             $ref: '#/components/schemas/MI_payloadtype'
     FCI_loggingfieldname:
       type: string
@@ -151,7 +160,7 @@ components:
     FCI_redirectionmode:
       type: string
       enum: [DNS-I, DNS-R, HTTP-I, HTTP-R]
-# MI (Metatadata) Interface: RFC 8006    
+# MI (Metatadata) Interface: RFC 8006
     MI.HostIndex:
       type: object
       description: 'The HostIndex object is the entry point into the CDNi Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
@@ -160,6 +169,7 @@ components:
       properties:
         hosts:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_HostMatch'
           description: 'Array of HostMatch objects.  Hosts (HostMatch objects) MUST be evaluated in the order they appear, and the first HostMatch object that matches the content request being processed MUST be used.'
@@ -189,7 +199,7 @@ components:
       required:
         - metadata
       properties:
-        metadata: 
+        metadata:
           type: array
           items:
             $ref: '#/components/schemas/MI.GenericMetadata'
@@ -201,7 +211,7 @@ components:
     MI_PathMatch:
       oneOf:
         - $ref: '#/components/schemas/MI.PathMatch'
-        - $ref: '#/components/schemas/MI_link'    
+        - $ref: '#/components/schemas/MI_link'
     MI.PathMatch:
       type: object
       description: 'A PathMatch object contains a PatternMatch object with a path to match against a resource URI path, as well as how to handle URI query parameters.  The PathMatch object also contains a PathMetadata object with GenericMetadata to apply if the resource URI matches the pattern within the PatternMatch object.'
@@ -251,19 +261,22 @@ components:
     MI_SourceMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.SourceMetadata'  
+        - $ref: '#/components/schemas/MI.SourceMetadata'
     MI.SourceMetadata:
       type: object
       description: 'Source metadata provides the dCDN with information about content acquisition, i.e., how to contact a uCDN Surrogate or an origin server to obtain the content to be served.  The sources are not necessarily the actual origin servers operated by the Content Service Provider (CSP)  but might be a set of Surrogates in the uCDN.'
+      required:
+        - sources
       properties:
         sources:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_Source'
     MI_Source:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.Source'    
+        - $ref: '#/components/schemas/MI.Source'
     MI.Source:
       type: object
       description: 'A Source object describes the source to be used by the dCDN for content acquisition (e.g., a Surrogate within the uCDN or an alternate origin server), the protocol to be used, and any authentication method to be used when contacting that source. Endpoints within a Source object MUST be treated as equivalent/equal. A uCDN can specify an array of MI.Source, ordered by preference, within a SourceMetadata object.  Then, for each Source object ranked by preference, a uCDN can specify an array of endpoints that are equivalent (e.g., a pool of servers that are not behind a load balancer).'
@@ -271,10 +284,11 @@ components:
         - endpoints
         - protocol
       properties:
-        acquisition-auth: 
+        acquisition-auth:
           $ref: '#/components/schemas/MI_Auth'
         endpoints:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_endpoint'
         protocol:
@@ -282,13 +296,16 @@ components:
     MI_LocationACL:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.LocationACL'  
+        - $ref: '#/components/schemas/MI.LocationACL'
     MI.LocationACL:
       type: object
       description: 'LocationACL metadata defines which locations a User Agent needs to be in, in order to be able to receive the associated content. A LocationACL that does not include a "locations" property results in an action of "allow all", meaning that delivery can be performed regardless of the User Agent location; otherwise, a CDN MUST take the action from the first footprint to match against the User Agent location. If two or more footprints overlap, the first footprint that matches against the User Agent location determines the action a CDN MUST take. If the "locations" property is included but is empty or if none of the listed footprints match the User Agent location, then the result is a action of "deny". Although the LocationACL, TimeWindowACL (see Section 4.2.3), and ProtocolACL (see Section 4.2.4) are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the LocationACL and denied based on the TimeWindowACL.  The dCDN MUST use  the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
+      required:
+        - locations
       properties:
         locations:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_LocationRule'
     MI_LocationRule:
@@ -303,6 +320,7 @@ components:
       properties:
         footprints:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_Footprint'
         action:
@@ -310,9 +328,9 @@ components:
           enum: [allow, deny]
           default: deny
     MI_Footprint:
-        oneOf:
-          - $ref: '#/components/schemas/MI_link'
-          - $ref: '#/components/schemas/MI.Footprint'  
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.Footprint'
     MI.Footprint:
       type: object
       description: 'A Footprint object describes the footprint to which a LocationRule can be applied, e.g., an IPv4 address range or a geographic location.'
@@ -321,9 +339,10 @@ components:
         - footprint-value
       properties:
         footprint-type:
-           $ref: '#/components/schemas/MI_footprinttype'
+          $ref: '#/components/schemas/MI_footprinttype'
         footprint-value:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_footprintvalue'
     MI_footprinttype:
@@ -342,9 +361,12 @@ components:
     MI.TimeWindowACL:
       description: 'A TimeWindowACL that does not include a "times" property results in an action of "allow all", meaning that delivery can be performed regardless of the time of the User Agent request; otherwise, a CDN MUST take the action from the first window to match against the current time. If two or more windows overlap, the first window that matches against the current time determines the action a CDN MUST take. If the "times" property is included but is empty or if none of the listed windows match the current time, then the result is an action of "deny".'
       type: object
+      required:
+        - times
       properties:
         times:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_TimeWindowRule'
     MI_TimeWindowRule:
@@ -354,9 +376,12 @@ components:
     MI.TimeWindowRule:
       type: object
       description: ' A TimeWindowRule contains or references an array of TimeWindow objects and the corresponding action.'
+      required:
+        - windows
       properties:
         windows:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_TimeWindow'
         action:
@@ -384,9 +409,12 @@ components:
     MI.ProtocolACL:
       type: object
       description: 'ProtocolACL metadata defines delivery protocol restrictions. A ProtocolACL that does not include a protocol-acl property results in an action of "allow all", meaning that delivery can be performed regardless of the protocol in the User Agent request; otherwise, a CDN MUST take the action from the first protocol to match against the request protocol. If two or more request protocols overlap, the first protocol that matches the request protocol determines the action a CDN MUST take. If the protocol-acl property is included but is empty or if none of the listed protocols match the request protocol, then the result is an action of "deny". Although the LocationACL (see Section 4.2.2), TimeWindowACL (see Section 4.2.3), and ProtocolACL are independent GenericMetadata objects, they can provide conflicting information to a dCDN, e.g., a content request that is simultaneously allowed based on the ProtocolACL and denied based on the TimeWindowACL.  The dCDN MUST use the logical AND of all ACLs (where "allow" is true and "deny" is false) to determine whether or not a request should be allowed.'
+      required:
+          - protocol-acl
       properties:
         protocol-acl:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_ProtocolRule'
     MI_ProtocolRule:
@@ -401,6 +429,7 @@ components:
       properties:
         protocols:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/MI_protocol'
         action:
@@ -410,10 +439,12 @@ components:
     MI_Cache:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.Cache'    
+        - $ref: '#/components/schemas/MI.Cache'
     MI.Cache:
       type: object
       description: ' A Cache object describes the cache control parameters to be applied to the content by intermediate caches. Cache keys are generated from the URI of the content request [RFC7234]. In some cases, a CDN or content provider might want certain path segments or query parameters to be excluded from the cache key generation. The Cache object provides guidance on what parts of the path and query string to include.'
+      required:
+          - include-query-strings
       properties:
         exclude-path-pattern:
           description: 'A pattern for matching against the URI path, i.e., against the path-absolute [RFC3986]. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of pchar [RFC3986] or "/" characters (including the empty string) and "?" matches exactly one pchar character.  The three literals "$", "*", and "?"  MUST be escaped as "$$", "$*", and "$?" (where "$" is the designated escape character).  All other characters are treated as literals. Cache key generation MUST only include the portion of the path-absolute that matches the wildcard portions of the pattern. Note: Inconsistency between the PatternMatch pattern and the exclude-path-pattern can result in inefficient caching.'
@@ -421,7 +452,8 @@ components:
         include-query-strings:
           description: 'Allows a Surrogate to specify the URI query string parameters [RFC3986] to include when comparing the requested URI against the URIs in its cache for equivalence.  Matching query parameters MUST be case insensitive. If all query parameters should be ignored, then the list MUST be specified and MUST be empty.  If a query parameter appears multiple times in the query string, each instance value MUST be aggregated prior to comparison.  For consistent cache key generation, query parameters SHOULD be evaluated in the order specified in this array.'
           type: array
-          items: 
+          minItems: 1
+          items:
             type: string
     MI_DeliveryAuthorizatione:
       oneOf:
@@ -430,10 +462,13 @@ components:
     MI.DeliveryAuthorization:
       type: object
       description: 'Delivery authorization defines authorization methods for the delivery of content to User Agents.'
+      required:
+        - delivery-auth-methods
       properties:
         delivery-auth-methods:
           description: 'Options for authorizing content requests. Delivery for a content request is authorized if any one of the authorization methods in the list is satisfied for that request.'
           type: array
+          minItems: 1
           items:
             oneOf:
               - $ref: '#/components/schemas/MI_link'
@@ -445,31 +480,35 @@ components:
     MI.Auth:
       type: object
       description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively'
+      required:
+        - auth-method
+        - auth_value
       properties:
         auth-type:
           $ref: '#/components/schemas/MI_authtype'
         auth_value:
           oneOf:
             - $ref: '#/components/schemas/MI.UriSigning'
-          discriminator: 
-            propertyName: auth-type 
+          discriminator:
+            propertyName: auth-type
     MI_authtype:
       type: string
       enum: [MI.UriSigning]
     MI_UriSigning:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.UriSigning'  
+        - $ref: '#/components/schemas/MI.UriSigning'
     MI.UriSigning:
       type: object
       description: 'The UriSigning Metadata object contains information to enable URI signing and verification by a dCDN. According to section 4.4 of "URI Signing for CDN Interconnection (CDNi) https://datatracker.ietf.org/doc/html/draft-ietf-cdni-uri-signing  '
       properties:
-        enforce: 
+        enforce:
           type: boolean
           default: true
           description: 'URI Signing enforcement flag.  Specifically, this flag indicates if the access to content is subject to URI Signing. URI Signing requires the dCDN to ensure that the URI is signed and verified before delivering content.  Otherwise, the dCDN does not perform verification, regardless of whether or not the URI is signed.'
         issuers:
           type: array
+          minItems: 1
           items:
             type: string
           description: 'A list of valid Issuers against which the Issuer claim in the signed JWT may be verified.'
@@ -482,19 +521,21 @@ components:
     MI_Grouping:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.Grouping'      
+        - $ref: '#/components/schemas/MI.Grouping'
     MI.Grouping:
       type: object
       description: 'A Grouping object identifies a group of content to which a given asset belongs.'
+      required:
+        - ccid
       properties:
-        ccid: 
+        ccid:
           type: string
           description: 'Content Collection IDentifier for an application-specific purpose such as logging aggregation.'
     MI_FallbackTarget:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.FallbackTarget'  
-    MI.FallbackTarget: 
+        - $ref: '#/components/schemas/MI.FallbackTarget'
+    MI.FallbackTarget:
       type: object
       description: 'Extension from RFC 8804: Open Caching requires that the uCDN provides a fallback target server to the dCDN to be used in cases where the dCDN cannot properly handle the request.  To avoid redirect loops, the fallback target server address at the uCDN MUST be different  from the original uCDN address from which the client was redirected to the dCDN.  The uCDN MUST avoid further redirection when receiving the client request at the fallback target.  The Fallback Target is defined as a metadata object (see Section 3.3 of [RFC8006]).'
       required:
@@ -537,7 +578,7 @@ components:
     MI_asn:
       description: 'An ASN value encoded as a string consisting of the characters "as" (in lowercase) followed by the ASN [RFC6793].'
       type: string
-    MI_countrycode: 
+    MI_countrycode:
       description: ' An ISO 3166-1 alpha-2 code [ISO3166-1] in lowercase.'
       type: string
     MI_payloadtype:
@@ -565,7 +606,7 @@ components:
         - $ref: '#/components/schemas/MI.Cache'
         - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.Grouping'
-        - $ref: '#/components/schemas/MI.FallbackTarget'        
+        - $ref: '#/components/schemas/MI.FallbackTarget'
     MI_GenericMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -580,7 +621,7 @@ components:
         generic-metadata-type:
           $ref: '#/components/schemas/MI_metadatatype'
         generic-metadata-value:
-           $ref: '#/components/schemas/MI_metadatavalue'
+          $ref: '#/components/schemas/MI_metadatavalue'
         mandatory-to-enforce:
           type: boolean
           description: 'Flag identifying whether or not the enforcement of the property metadata is required.'
@@ -592,13 +633,13 @@ components:
         incomprehensible:
           type: boolean
           description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform  this metadata object. Note: This flag only applies to metadata objects whose safe-to-redistribute property has a value of False.'
-          default: false 
-# CI (Control) interface (RFC 8007) 
-# Regsitered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml
+          default: false
+    # CI (Control) interface (RFC 8007)
+    # Regsitered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml
     ci-trigger-command:
       type: object
       required:
-        - cdn-path 
+        - cdn-path
       properties:
         cdn-path:
           $ref: '#/components/schemas/CI_cdn-path'
@@ -615,7 +656,7 @@ components:
       required:
         - trigger
         - ctime
-        - mtime 
+        - mtime
         - status
       properties:
         trigger:
@@ -626,7 +667,7 @@ components:
           description: 'Time at which the CI/T Command was received by the dCDN. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         mtime:
           $ref: '#/components/schemas/CI_time'
-          description: 'Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
+          description: 'Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
         etime:
           $ref: '#/components/schemas/CI_time'
           description: 'Estimate of the time at which the dCDN expects to complete the activity. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
@@ -634,6 +675,7 @@ components:
           $ref: '#/components/schemas/CI_status'
         errors:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/CI_error'
     CI_status:
@@ -668,9 +710,9 @@ components:
       items:
         type: string
     CI_cancel:
-       type: array
-       items:
-          type: string
+      type: array
+      items:
+        type: string
     CI_patterns:
       type: array
       items:
@@ -679,42 +721,42 @@ components:
           pattern:
             type: string
           case-sensitive:
-              type: boolean
-              default: false
+            type: boolean
+            default: false
           match-query-string:
             type: boolean
             default: false
-            description: 'Flag indicating whether to include the query part of the URI when comparing against the pattern.'    
+            description: 'Flag indicating whether to include the query part of the URI when comparing against the pattern.'
     CI_urls:
       type: array
       items:
         type: string
       description: 'The URLs of content the CI Trigger Command applies to.'
     CI_trigger:
-        type: object
-        required:
-          - type
-        properties:
-          type:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [preposition, invalidate, purge]
+        metadata.urls:
+          $ref: '#/components/schemas/CI_urls'
+          description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
+        content.urls:
+          $ref: '#/components/schemas/CI_urls'
+          description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
+        content.ccid:
+          type: array
+          items:
             type: string
-            enum: [preposition, invalidate, purge]
-          metadata.urls:
-            $ref: '#/components/schemas/CI_urls'
-            description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
-          content.urls:
-            $ref: '#/components/schemas/CI_urls'
-            description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
-          content.ccid:
-            type: array
-            items:
-              type: string
-            description: 'The Content Collection IDentifier of content the trigger applies to. The "ccid" is a grouping of content, as defined by [RFC8006]'
-          metadata.patterns:
-            $ref: '#/components/schemas/CI_patterns'
-            description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
-          content.patterns:
-            $ref: '#/components/schemas/CI_patterns'
-            description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
+          description: 'The Content Collection IDentifier of content the trigger applies to. The "ccid" is a grouping of content, as defined by [RFC8006]'
+        metadata.patterns:
+          $ref: '#/components/schemas/CI_patterns'
+          description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
+        content.patterns:
+          $ref: '#/components/schemas/CI_patterns'
+          description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
       description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
