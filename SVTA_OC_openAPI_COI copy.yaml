@@ -766,7 +766,7 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
-    MI_SourceMetadata:
+        MI_SourceMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.SourceMetadata'  

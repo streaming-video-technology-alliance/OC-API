@@ -9,7 +9,6 @@ externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'
 components:
-  securitySchemes:
   schemas:
     FCI_CII_capabilitytype:
       type: string
