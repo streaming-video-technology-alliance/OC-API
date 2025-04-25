@@ -1,0 +1,303 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - Footprint and Capabilities Interface (FCI)
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 1.1.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+security: 
+  - bearerToken: []
+paths:
+  /OC/FCI/advertisement:
+    get:
+      tags:
+        - OC_FCI
+      summary: Gets the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
+      operationId: oc_fci_get_advertisement
+      description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained).'
+      responses:
+        '200':
+          description: 'FCI advertisement'
+          content:
+            application/cdni:
+              schema:
+                $ref: '#/components/schemas/FCI_capabilities'
+        '400':
+          description: 'Bad request.'
+        '403':
+          description: 'Forbidden.'
+        '404':
+          description: 'No FCI advertisement.'
+  /OC/FCI/subscription:
+    post:
+      tags:
+        - OC_FCI
+      summary: 'Subscribes to FCI updates notifications.'
+      operationId: oc_fci_post_subscribe
+      description: 'A subscription ID is returned in the Location header of the response in case of successful creation.'
+      requestBody:
+        description: ''
+        content:
+          application/cdni:
+            schema:
+              type: object
+              required:
+                - notificationTarget
+              properties:
+                notificationTarget:
+                  type: string
+                notificationType:
+                  type: string
+                  enum: [fci]
+        required: true
+      callbacks:
+        FciNotification:
+          '{$request.body#/notificationTarget}':
+            put:
+              summary: 'The ISP OC/dCDN to post a FCI advertisement update.'
+              description: 'This callback is used by the ISP OC/dCDN to put an FCI advertisement update.'
+              tags:
+                - OC_FCI
+              operationId: oc_fci_push_notification
+              requestBody:
+                description: 'Callback payload.'
+                content: 
+                  'application/cdni':
+                    schema:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FCI_capabilities'
+              responses:
+                '200':
+                  description: 'FCI updated.'
+                '400':
+                  description: 'Bad request.'
+                '403':
+                  description: 'Forbidden.'
+      responses:
+        201:
+          description: 'Subscription created. The "Location" header gathers the subscription ID (the URI) of the newly created resource.'
+        400:
+          description: 'Bad request.'
+        403:
+          description: 'Forbidden.'
+        404:
+          description: 'No suche API.'     
+  /OC/FCI/subscription/{subscriptionId}:
+    get:
+      tags:
+        - OC_FCI
+      summary: Gets the FCI notification subscription. 
+      operationId: oc_fci_get_notificationSubscription
+      description: ''
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'FCI notification subscription'
+          content:
+            application/cdni:
+              schema:
+                type: object
+                required:
+                  - notificationTarget
+                properties:
+                  notificationTarget:
+                   type: string
+                  notificationType:
+                    type: string
+                    enum: [fci]
+        400:
+          description: 'Bad request'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+    delete:
+      tags:
+        - OC_FCI
+      summary: 'Deletes the notification subscription.'
+      operationId: OC_fci_delete_notificationSubscription
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
+          schema:
+            type: string 
+      responses:
+        200:
+          description: 'Notification subscription deleted.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}    
+        404:
+          description: 'Not found.' 
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    FCI_capabilities:
+      type: object
+      description: 'The list of capabilities supported by the dCDN per IETF CDNi RFC 8006/8804.'
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_genericbase'
+    FCI_capabilitytype:
+      type: string
+      enum: [FCI.DeliveryProtocol, FCI.AcquisitionProtocol, FCI.RedirectionMode, FCI.Logging, FCI.Metadata, FCI.RedirectTarget]
+    FCI_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.DeliveryProtocol'
+        - $ref: '#/components/schemas/FCI.AcquisitionProtocol'
+        - $ref: '#/components/schemas/FCI.RedirectionMode'
+        - $ref: '#/components/schemas/FCI.Logging'
+        - $ref: '#/components/schemas/FCI.RedirectTarget'
+        - $ref: '#/components/schemas/FCI.Metadata'
+    FCI_genericbase:
+      type: object
+      description: 'Adding properties to the FCI_genericbase object.'
+      required:
+        - capability-type
+        - capability-value
+      properties:
+        capability-type:
+          oneOf:
+            - $ref: '#/components/schemas/FCI_capabilitytype'
+            - $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CII_capabilitytype'
+#          - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_capabilitytype'
+#          - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_capabilitytype'
+        capability-value:
+#         oneOf:
+          $ref: '#/components/schemas/FCI_capabilityvalue'
+#          - $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_capabilityvalue'
+#          - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_capabilityvalue'
+#          - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_capabilityvalue'      
+        footprints:
+          type: array
+          description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006]).'
+          items:
+            type: string
+#            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint'
+    FCI.DeliveryProtocol:
+      type: object
+      description: 'The Delivery Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
+      required:
+        - delivery-protocols
+      properties:
+        delivery-protocols:
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_protocol'
+    FCI.AcquisitionProtocol:
+      type: object
+      description: 'The Acquisition Protocol capability object is used to indicate support for one or more of the protocols listed in the "CDNi Metadata Protocol Types" registry (defined in [RFC8006]).'
+      required:
+        - acquisition-protocols
+      properties:
+        acquisition-protocols:
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_protocol'
+    FCI.RedirectionMode:
+      type: object
+      description: 'List of supported CDNi redirection modes'
+      required:
+        - redirection-modes
+      properties:
+        redirection-modes:
+          type: array
+          items: 
+            $ref: '#/components/schemas/FCI_redirectionmode'
+    FCI_redirectionmode:
+      type: string
+      enum: [DNS-I, DNS-R, HTTP-I, HTTP-R]
+    FCI.RedirectTarget:
+      type: object
+      description: 'FCI extension per RFC8804'
+      properties:
+        redirecting-hosts:
+          description: 'One or more uCDN hosts to which this redirect target is attached.  A redirecting host SHOULD be a host that was published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
+          type: array
+          items:
+             $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_endpoint'
+        dns-target:
+          description: 'An FQDN used as an alias in a CNAME record response (see [RFC1034]) of the uCDN DNS router'
+          $ref: '#/components/schemas/FCI_dnstarget'
+        http-target:
+          description: 'Target URI for an HTTP redirect.'
+          $ref: '#/components/schemas/FCI_httptarget'
+    FCI_httptarget:
+      type: object
+      description: 'FCI extension per RFC8004: the HttpTarget object gives the necessary information to construct the target Location URI for HTTP redirection.'    
+      required:
+        - host
+      properties:
+        host: 
+          description: 'Hostname or IP address and an optional port, i.e., the host and port of the authority component of the URI as described in Section 3.2 of [RFC3986].'
+          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_endpoint'
+        scheme:
+          description: 'A URI scheme to be used in the redirect response location construction.  When present, the uCDN MUST use the provided scheme in for HTTP redirection to the dCDN.'
+          type: string
+          enum: [http, https]
+        path-prefix:
+          description: 'A path prefix for the HTTP redirect Location header. The original path is appended after this prefix.'
+          type: string
+        include-redirecting-host:
+          description: 'A flag indicating whether or not to include the redirecting host as the first path segment after the path-prefix. If set to true and a "path-prefix" is used, the uCDN redirecting host MUST be added as a separate path segment after the path-prefix and before the original URL path.  If set to true and there is no path-prefix, the uCDN redirecting host MUST be prepended as the first path segment in the redirect URL.'
+          type: boolean
+          default: false
+    FCI_dnstarget:
+      type: object
+      description: 'FCI extension per RFC8004: the DnsTarget object gives the target address for the DNS response to delegate from the uCDN to the dCDN.'    
+      required:
+        - host
+      properties:
+        host:
+          description: 'Endpoint object as defined in Section 4.3.3 of [RFC8006], with the limitation that it SHOULD NOT include  a port number and, in case a port number is present, the uCDN MUST ignore it.'
+          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_endpoint' 
+    FCI.Logging:
+      type: object
+      description: 'The CDNi Logging capability object is used to indicate support for CDNi Logging record-types, as well as CDNi Logging fields that are marked as optional for the specified record-types [RFC7937].'
+      required:
+        - record-type
+      properties:
+        record-type: 
+          type: string
+          enum: [cdni_http_request_v1]
+        fields:
+          description: 'List of supported CDNi Logging fields that are optional for the specified record-type. Default is that all optional fields are supported.  Omission of this field MUST be interpreted as "all optional fields are supported". An empty list MUST be interpreted as "no optional fields are supported".  Otherwise, if a list of fields is provided, the fields in that list MUST be interpreted as "the only optional fields that are supported".'
+          type: array 
+          items: 
+            $ref: '#/components/schemas/FCI_loggingfieldname'
+    FCI_loggingfieldname:
+      type: string
+      enum: [date, time, time-taken, c-groupid, s-ip, s-hostname, s-port, cs-uri, u-uri, protocol, sc-status, sc-total-bytes, sc-entity-bytes, cs(insert_HTTP_header_name_here), sc(insert_HTTP_header_name_here), s-ccid, s-sid, s-cached ]
+    FCI.Metadata:
+      type: object
+      description: 'Extension of CDNi FCI.Metadata.'
+      required:
+        - metadata
+      properties:
+        metadata:
+          description: 'List of supported CDNi GenericMetadata types. List of strings corresponding to entries from the "CDNi Payload Types" registry [RFC7736] that correspond to CDNi GenericMetadata objects. An empty list MUST be interpreted as "no GenericMetadata types are supported", i.e., "only structural metadata and simple types are supported"; otherwise, the list must be interpreted as containing "the only GenericMetadata types that are supported" (in addition to structural metadata and simple types) [RFC8006].'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'

@@ -1,0 +1,134 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - Capacity Insight Interface (CII)
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 1.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  securitySchemes:
+  schemas:
+    FCI_CII_capabilitytype:
+      type: string
+      enum: [FCI.Telemetry, FCI.CapacityLimits]
+    FCI_CII_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.Telemetry'
+        - $ref: '#/components/schemas/FCI.CapacityLimits'
+    FCI.Telemetry:
+      type: object
+      description: 'An array of telemetry source objects'
+      required:
+        - sources
+      properties: 
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_TelemetrySource'
+    FCI_TelemetrySource:
+      type: object
+      description: ''
+      required:
+        - id
+        - type
+        - metrics
+      properties:
+        id:
+          description: 'The ID of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          type: string
+        type:
+          description: 'The telemetry source type'
+          type: string
+          enum: [generic]
+        metrics:
+          description: 'The metrics exposed by the source'
+          type: array
+          items: 
+            $ref: '#/components/schemas/FCI_TelemetrySourceMetric'
+    FCI_TelemetrySourceMetric:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        name:
+          description: ' A unique (for the telemetry source) identifier for that metric. '
+          type: string
+        time-granularity:
+          description: 'Represents the time frame that the data represents in seconds, i.e., this is a data set of over 5 minutes, one hour, etc'
+          type: integer
+        data-percentile:
+          description: 'Represents what percentile calculation the data represents, i.e., 50 percentile would equate to the average over the time-granularity'
+          type: integer
+        latency:
+          description: 'Defines, in seconds, how far behind the data is from real time, i.e., the data aggregation 15 minutes behind or 5 minutes behind real time.'
+          type: integer
+    FCI.CapacityLimits:
+      description: 'The uCDN dedicated top-level limits and possibly the per-host name limits  '
+      type: object
+      required:
+        - limits
+      properties:
+        limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI_CapacityLimit'
+    FCI_CapacityLimit:
+      type: object
+      description: 'Capacity metric limits'
+      required:
+        - limit-type
+        - maximum-hard
+      properties:
+        Id:
+          description: 'Specifies a unique identifier associated with a limit.  This CAN be used as a relational identifier to a specific FCI.CapacityLimit object'
+          type: string
+        limit-type:
+          description: 'The following types and their associated unit type are allowed: egress = Bits per second / requests = Requests per second / storage-size = Total bytes / storage-objects = Count / sessions = Count / cache-size = Total bytes'
+          $ref: '#/components/schemas/FCI_capacitylimittype'
+        maximum-hard:
+          description: 'Defines the maximum unit of capacity that is available for use.'
+          type: integer 
+        maximum-soft:
+          description: 'Defines a soft limit at which an upstream should consider reducing traffic to prevent hitting the hard limit.'
+          type: integer
+        current: 
+          description: 'Specifies the current usage value of the limit.  It is not recommended to specify the current usage value inline with the FCI.CapacityLimits advertisements as it will reduce the ability to cache the response.  The intended method is to reference a telemetry-source to poll for the current usage.'
+          type: integer
+        telemetry-source: 
+          description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
+          $ref: '#/components/schemas/FCI_TelemetryMetricRef'
+    FCI_capacitylimittype:
+      type: string
+      enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
+    FCI.CapacityLimitScope:
+      type: object
+      description: 'An FCI.CapacityLimitScope object is used to define a more granular scope for a limit within the encompassing footprint.  The object will define what type of scope is being declared (published host, service ids, etc..) and will then contain an array of items of the type defined (publishedhostA.cdn.com, publishedhostB.cdn.com,etc..).  The scope types are meant to be extendible and reference already established identifiers as used in the SVA Configuration API framework.  The scope types MUST be mutually understood between the uCDN and dCDN. '
+      required:
+        - type 
+        - values
+      properties:
+        type:
+          description: 'Defines the type of scope definition. published-host is the host name that corresponds to one of the configured host names as part of the host index. service-id and property-id are properties of the MI.ServiceIDs.'
+          $ref: '#/components/schemas/FCI_capacitylimitscopetype'
+        values:
+          description: 'An array of strings of identifiers of the scope type'
+          type: array
+          items:
+            type: string
+    FCI_capacitylimitscopetype:
+      type: string
+      enum: [published-host, service-id, property-id]
+    FCI_TelemetryMetricRef:
+      type: object
+      description: 'Defines a specific metric of a specific telemetry source.'
+      properties:
+        id:
+          description: 'The ID of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          type: string
+        metric:
+          description: ' A unique (for the telemetry source) identifier for that metric. '
+          type: string
