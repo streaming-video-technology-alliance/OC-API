@@ -1,0 +1,476 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2d - Source Access Control 
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# MI objects
+    MI_COI2d_payloadtype:
+      type: string
+      enum: [MI.SourceMetadataExtended, MI.SourceExtended, MI.SourceConnectionControl, MI.SourceByteReadTimeoutActions, MI.SourceTimeoutActions, MI.SourceConnectionRetries, MI.HTTPCodeFailover, MI.HTTPCodeFailoverActions, MI.HTTPCodeReforwards, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.HTTPErrorCodeTrigger, MI.EndpointRepeatingFailures, MI.SourceDetention,MI.DetentionFullBehavior,MI.DetentionResetBehavior,MI.LoadBalanceMetadata, MI.HeaderAuth, MI.AWSv4Auth]
+    MI_COI2d_payloadvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.AWSv4Auth'
+        - $ref: '#/components/schemas/MI.HeaderAuth'   
+        - $ref: '#/components/schemas/MI.SourceMetadataExtended'        
+        - $ref: '#/components/schemas/MI.SourceExtended'
+        - $ref: '#/components/schemas/MI.SourceConnectionControl'
+        - $ref: '#/components/schemas/MI.SourceByteReadTimeoutActions'
+        - $ref: '#/components/schemas/MI.SourceTimeoutActions'
+        - $ref: '#/components/schemas/MI.SourceConnectionRetries'
+        - $ref: '#/components/schemas/MI.LoadBalanceMetadata'             
+        - $ref: '#/components/schemas/MI.EndpointDetentionTrigger'
+        - $ref: '#/components/schemas/MI.EndpointDetention'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailover'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailoverActions'
+        - $ref: '#/components/schemas/MI.HTTPCodeReforwards'
+        - $ref: '#/components/schemas/MI.HTTPErrorCodeTrigger'
+        - $ref: '#/components/schemas/MI.EndpointRepeatingFailures'
+        - $ref: '#/components/schemas/MI.SourceDetention'
+        - $ref: '#/components/schemas/MI.DetentionFullBehavior'
+        - $ref: '#/components/schemas/MI.DetentionResetBehavior'
+    MI_SourceMetadataExtended:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceMetadataExtended'
+    MI.SourceMetadataExtended:
+      type: object
+      description: 'An alternative to the CDNi standard SourceMetadata object, which adds a property to specify load balancing across multiple sources, as well as a SourceExtended sub-object with additional attributes to the CDNi standard Source object. While both SourceMetadataExtended and SourceMetadata can be provided for backward compatibility, a dCDN that advertises capability for SourceMetadataExtended will ignore SourceMetadata if both are provided for a given host or path match.'
+      properties:
+        sources:
+          description: 'Sources from which the dCDN can acquire content, listed in order of preference.'
+          type: array 
+          items:
+              $ref: '#/components/schemas/MI_SourceExtended'
+        source-detention:
+          description: 'Specifies rules for handling detention at the set of sources.'
+          $ref: '#/components/schemas/MI_SourceDetention'
+        load-balance:
+          description:  'Specifies load balancing rules for the set of sources.' 
+          $ref: '#/components/schemas/MI_LoadBalanceMetadata'
+      example:
+        value: {
+                "sources": [{ 
+                    "endpoints": ["a.service123.ucdn.example","b.service123.ucdn.example"],
+                    "protocol": "http/1.1"},
+                  {
+                    "endpoints": ["origin.service123.example"],
+                    "protocol": "http/1.1"
+                  }],
+                "load-balance":{
+                      "balance-algorithm": "content-hash",
+                      "balance-path-pattern": "^/prod/(.*)/.*\\.ts$"
+                      }
+                }
+    MI_SourceExtended:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceExtended'
+    MI.SourceExtended:
+      description: 'An alternative to the CDNi standard MI.Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
+      allOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Source'
+        - $ref: '#/components/schemas/MI_SourceExt'
+      example:
+        value: {
+                "endpoints": [
+                        "a.service123.ucdn.example",
+                        "b.service123.ucdn.example:8443"
+                        ],
+                "protocol": "https/1.1",
+                "origin-host": "internal.example.com",
+                "webroot": "/prod",
+                "follow-redirects": false,
+                "timeout-ms": 4000,
+                "failover-errors": [ "502", "503", "504" ]
+                }
+    MI_SourceExt:
+      type: object
+      properties:
+        origin-host:
+          description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
+          type: string
+        sni-host:
+          description: 'The Server Name Indication (SNI) to be used during the TLS handshake when establishing a secure connection with an endpoint. The sni-host MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]'
+          type: string
+        endpoint-is-expression:
+          description: 'If the endpoint-is-expression property is set to “True”,  the value of the endpoint will be evaluated as a MEL expression'
+          type: boolean
+        origin-host-is-expression:
+          description: 'If the origin-host-is-expression property is set to “True”,  the value of the origin-host will be evaluated as a MEL expression'
+          type: boolean
+        sni-host-is-expression:
+          description: 'If the sni-host-is-expression property is set to “True”,  the value of the sni-host will be evaluated as a MEL expression'
+          type: boolean
+        webroot:  
+          description: The path element that is prepended to a resource's URI before retrieving content from the source. 
+          type: string
+        follow-redirects:
+          description: 'If the follow-redirects property is set to True, HTTP redirect responses returned from the source will be followed when retrieving content.  Otherwise, the HTTP redirect response is returned to the client.'
+          type: boolean
+          default: true
+        timeout-ms: 
+          description: 'A timeout (in milliseconds) to apply when connecting to the source server.  If the connection is not established within timeout-ms, this source is abandoned and the next source in the MI.SourceMetadataExtended sources array is tried.  Once a connection is established, timeout-ms is used on subsequent reads of data from the uCDN.'
+          type: integer
+        failover-errors: 
+          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/RFC-7231, page-47), that if returned from the uCDN, will trigger a failover to the next source in the MI.SourceMetadataExtended sources array.  If the uCDN returns an HTTP error code that is not in the failover-errors array, that error code is returned to the client of the dCDN.'
+          type: array
+          items:
+            type: string
+            description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99. Note that use of 4xx would specify that 416 responses are cached.
+        connection-control:
+          description: 'Specifies how connection related errors and timeouts are handled. When specified, overrides the timeout-ms property'
+          $ref: '#/components/schemas/MI_SourceConnectionControl'
+        http-code-failover:
+          description: 'Specifies how HTTP response error codes are handled. When specified, overrides the failover-errors property'
+          $ref: '#/components/schemas/MI_HTTPCodeFailover'
+        endpoint-detention:
+          description: 'Defines error-based triggers for which an endpoint is put in detention (excluded from future use) for a given duration of time'
+          $ref: '#/components/schemas/MI_EndpointDetention'
+    MI_EndpointDetention:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointDetention'
+    MI.EndpointDetention:
+      type: object
+      description: 'EndpointDetention is a subobject of SourceExtended that is used to track the health of an Endpoint (see [RFC8006] Section 4.3.3) and place in detention, if deemed unhealthy. Unhealthy EndPoints are not used for future HTTP requests until a set cool-off time is met. Error-based triggers are defined for which an endpoint can be put in detention for a given duration of time.'
+      required:
+        - detention-seconds
+      properties:
+        connection-setup-fail-trigger:
+          description: 'A trigger for the connection setup error, including timeouts for connection establishment, that is fired for a given threshold of such errors.  If not specified, then no health check and detention is done for connection errors or connection timeout'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        read-timeout-trigger:
+          description: 'A trigger for the byte read timeout error that is fired for a given threshold of such errors.  If not specified, then no health check and detention is done for both first byte and byte read timeout errors.'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        http-error-code-trigger:
+          description: 'A list of error HTTP codes for which a trigger is fired for a given threshold of such error codes received from an Endpoint. If not specified, then no health check and detention is done upon receiving HTTP error codes.'
+          $ref: '#/components/schemas/MI_HTTPErrorCodeTrigger'
+        detention-seconds:
+          description: 'The time in seconds for which an endpoint is put in detention (not used) after any of the error-based trigger fires. Values: A value greater than 0 to define a time in seconds for which an endpoint is put in detention (not used).'
+          type: integer
+    MI_EndpointDetentionTrigger:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointDetentionTrigger'
+    MI.EndpointDetentionTrigger:
+      type: object
+      description: 'HttpErrorCodeTrigger is a subobject of EndpointDetention that defines a trigger for detention based on HTTP error codes. Any HTTP code received from an EndPoint that matches against the list of defined HTTP error codes counts against a single EndPointTrigger for detention.'
+      required:
+        - trigger-value
+      properties:
+        trigger-value:
+          description: 'The threshold at which an Endpoint is triggered to unhealthy state and put in detention.'
+          $ref: '#/components/schemas/MI_EndpointRepeatingFailures'
+    MI_EndpointRepeatingFailures:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EndpointRepeatingFailures'
+    MI.EndpointRepeatingFailures:
+      type: object
+      description: 'EndpointRepeatingFailures is a subobject of EndpointDetentionTrigger that triggers an Endpoint to failure state if “event-count” of errors takes place during “time-window-millisec” while accounting for at least “fail-event-percent-threshold”% of the transactions to this endpoint during this period.'
+      required:
+        - event-count
+        - time-window-millsec
+      properties:
+        event-count:
+          description: 'The number of errors against an Endpoint within a duration of time-window-millsec.'
+          type: integer
+        time-window-millsec:
+          description: 'The duration in milliseconds for which error statistics of event-count and fail-event-percent-threshold are tracked against an Endpoint.'
+          type: integer
+        fail-event-percent-threshold:
+          description: 'The minimum percentage of errors against an Endpoint within a duration of time-window-millsec.  If not specified, then an EndPoint is triggered to an unhealthy state after encountering event-count errors without regards to the overall percentage of such errors.'
+          type: integer
+    MI_HTTPErrorCodeTrigger:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPErrorCodeTrigger'
+    MI.HTTPErrorCodeTrigger:
+      type: object
+      description: 'HttpErrorCodeTrigger is a subobject of EndpointDetention that defines a trigger for detention based on HTTP error codes. Any HTTP code received from an EndPoint that matches against the list of defined HTTP error codes counts against a single EndPointTrigger for detention.'
+      required:
+        - trigger
+        - error-codes
+      properties:
+        trigger:
+          description: 'A trigger for HTTP error codes that is fired for a given threshold of such error codes received in HTTP responses.'
+          $ref: '#/components/schemas/MI_EndpointDetentionTrigger'
+        error-codes:
+          description: 'Array of error HTTP response codes that when returned from an Endpoint can cause the Endpoint to be triggered into an unhealthy state. The error codes are from 400 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99.'
+          type: array
+          items:
+            type: string
+    MI_SourceDetention:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceDetention'
+    MI.SourceDetention:
+      type: object
+      description: 'SourceDetention is a subobject of SourceMetadataExtended that defines detention rules at the set of sources.'
+      properties:
+        detention-full-behavior:
+          description: 'Defines how a response is constructed when every Endpoint of each SourceMetadata has been put in detention. '
+          $ref: '#/components/schemas/MI_DetentionFullBehavior'
+        detention-reset-behavior:
+          description: 'After every Endpoint of each SourceMetadata is put in detention, defines early removal of an EndPoint from detention without having served the full duration of detention. If not specified, then an Endpoint is removed from detention only upon the completion of the detention duration.'
+          $ref: '#/components/schemas/MI_DetentionResetBehavior'
+    MI_DetentionFullBehavior:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DetentionFullBehavior'
+    MI.DetentionFullBehavior:
+      type: object
+      description: 'A uCDN can configure how a response is constructed when all Endpoints are in detention.'
+      properties:
+        serve-if-stale-available:
+          description: 'A stale version of the requested object is served back to the client. If no stale object exists, then other properties of DetentionFullBehavior apply.'
+          type: boolean
+          default: false
+        synthetic-response:
+          description: 'The synthetic response to return back to the client. If not specified, then the dCDN specific error response is used.'
+          $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
+    MI_DetentionResetBehavior:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.DetentionResetBehavior'
+    MI.DetentionResetBehavior:
+      type: object
+      description: 'When all Endpoints of a SourceMetadata are put in detention, this object allows a uCDN to define the early removal of an Endpoint from detention. Endpoints removed from detention through this behavior are available for immediate use for all subsequent client requests.'
+      properties:
+        reset-endpoints:
+          description: 'The list of Endpoints to be removed from detention after no healthy Endpoints are available across all SourceExtended objects.  The default value is an empty array indicating that no Endpoints can be removed early from detention.'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_endpoint'
+        reset-all-endpoints:
+          description: 'All Endpoints are removed from detention after no healthy Endpoints are available across all SourceExtended objects. The default value is False indicating that no Endpoints can be removed early from detention.'
+          type: boolean
+          default: false
+    MI_SourceConnectionControl:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceConnectionControl'
+    MI.SourceConnectionControl:
+      type: object
+      description: 'SourceConnectionControl is a subobject of SourceExtended that allows for the dCDN to specify how it will handle connection timeouts and errors against the origin/uCDN. The mere use of this object overrides the timeout-ms property of SourceExtended, even if any timeout properties of this object are not configured.'
+      properties:
+        connection-setup-timeout-ms:
+          description: 'The time in milliseconds within which a connection must be established against an endpoint of a MI.SourceExtended object.'
+          type: integer
+        connection-setup-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the connection couldn’t be established within a given timeout, as specified by the connection-setup-timeout-ms property. It is an error to specify this property without the corresponding connection-setup-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceTimeoutActions'
+        first-byte-read-timeout-ms:
+          description: 'The time in milliseconds within which the first byte must be received/read on a new network connection.'
+          type: integer
+        first-byte-read-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the first byte on a new connection couldn’t be read within a given timeout, as specified by the first-byte-read-timeout-ms property. It is an error to specify this property without the corresponding first-byte-read-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceTimeoutActions'
+        byte-read-timeout-ms:
+          description: 'A value greater than 0 to define a timeout in milliseconds for reading the next byte on an established network connection.'
+          type: integer
+        byte-read-timeout-ms-actions:
+          description: 'Specifies error handling actions to take when the next byte on a connection couldn’t be read within a given timeout, as specified by the byte-read-timeout-ms property. It is an error to specify this property without the corresponding byte-read-timeout-ms property.'
+          $ref: '#/components/schemas/MI_SourceByteReadTimeoutActions'
+        connection-keep-alive-time-ms:
+          description: 'Specifies the time in milliseconds to keep an idle connection open.'
+          type: integer
+        max-connection-retries-per-source:
+          description: 'Specifies the upper bound of retries allowed across all endpoints of a MI.SourceExtended object for all timeout errors. A value greater than or equal to 0 indicating the maximum number of retries against all endpoints of the current MI.SourceExtended object for connection establishment, first-byte-read and byte-read timeout errors. A value of 0 indicates that no retries are to be performed against this source.'
+          type: integer
+        resume-from-last-byte-of-previous-source:
+          description: 'Upon establishing a new connection to the Origin/uCDN, specifies whether the next byte to read will start from the last byte read from a previous MI.SourceExtended object. This is only applicable when the content length of the object being downloaded is known. If True, the next byte read will resume from the last successful byte downloaded from a previous MI.SourceExtended object. Default value is False.'
+          type: boolean
+          default: false
+        resume-from-last-byte-of-previous-endpoint:
+          description: 'Upon establishing a new connection to the Origin/uCDN, specifies whether the next byte read will start from the last byte read from a previous endpoint of the current MI.SourceExtended. This is only applicable when the content length of the object being downloaded is known.  If True, the next byte read will resume from the last successful byte downloaded from a previous endpoint of the current MI.SourceExtended object. Default value is False.'
+          type: boolean
+          default: false
+    MI_SourceByteReadTimeoutActions:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceByteReadTimeoutActions'
+    MI.SourceByteReadTimeoutActions:
+      type: object
+      description: 'SourceByteReadTimeoutActions is a subobject of MI.SourceConnectionControl that allows for specifying the actions to be taken when a timeout happens when reading the next byte on an existing network connection against an endpoint of an Origin/uCDN.'
+      properties:
+        retries:
+          description: 'Specifies the number of retries that MUST happen against a given endpoint when an error happens.'
+          $ref: '#/components/schemas/MI_SourceConnectionRetries'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
+        resume-from-last-byte:
+          description: 'Specifies whether to resume reading from the last byte of the current endpoint only if the content length of the object being downloaded is known.'
+          type: boolean
+          default: false
+    MI_SourceTimeoutActions:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceTimeoutActions'
+    MI.SourceTimeoutActions:
+      type: object
+      description: 'SourceTimeoutActions is a subobject of MI.SourceConnectionControl that allows for specifying the actions to be taken when a timeout happens against an endpoint of an Origin/uCDN.'
+      properties:
+        retries:
+          description: 'Specifies the number of retries that MUST happen against a given endpoint when an error happens.'
+          $ref: '#/components/schemas/MI_SourceConnectionRetries'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
+    MI_SourceConnectionRetries:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SourceConnectionRetries'
+    MI.SourceConnectionRetries:
+      type: object
+      description: 'SourceConnectionRetries is a subobject that  allows for specifying retries to be performed against endpoints of a MI.SourceExtended object.'
+      properties:
+        max-retries-per-source:
+          description: 'Specifies the maximum number of retries against all endpoints of the MI.SourceExtended object for a given class of error. Accepted values: A value of greater than or equal to 0 indicating the number of retries. Example: If the value of max-retries-per-source of the retries property of connection-setup-timeout-ms-actions is set to 5, then a maximum of 5 retries are allowed for connection-setup timeout errors across all endpoints of the current MI.SourceExtended object. If this value is set to 0, then no retries will be done.'
+          type: integer
+        retries-per-endpoint:
+          description: 'Specifies the number of retries against the current endpoint of the MI.SourceExtended object for a given class of error. Values: A value of greater than equal to 0 indicating the number of retries. Example: If the value of retries-per-endpoint of the retries property of connection-setup-timeout-ms-actions is set to 5, then 5 retries will be done for connection-setup timeout errors on the current endpoint of the current MI.SourceExtended object. If this value is set to 0, then no retries will be done.'
+          type: integer
+    MI_HTTPCodeFailover:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailover'
+    MI.HTTPCodeFailover:
+      type: object
+      description: 'HttpCodeFailover is a new GenericMetadata subobject of SourceExtended that allows for the dCDN to specify how it will handle error HTTP codes against the origin/uCDN.'
+      required:
+        - http-code-failover-actions
+      properties:
+        max-reforwards-per-source:
+          description: 'Specifies the upper bound of reforwards allowed across all endpoints of a MI.SourceExtended object for all configured HTTP error codes. A value greater than or equal to 0 indicating the maximum number of retries against all endpoints of the current MI.SourceExtended object for all configured HTTP error codes.'
+          type: integer
+        http-code-failover-actions:
+          description: 'Specifies the different HTTP codes for which failover actions against the Origin/uCDN must be done.'
+          $ref: '#/components/schemas/MI_HTTPCodeFailoverActions'
+    MI_HTTPCodeFailoverActions:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeFailoverActions'
+    MI.HTTPCodeFailoverActions:
+      type: object
+      description: 'HttpCodeFailoverActions is a subobject of HttpCodeFailover. It defines one or more error HTTP codes against which some failover action must be performed.'
+      required:
+        - reforwards
+        - http-codes
+      properties:
+        http-codes:
+          description: 'Specifies the list of error HTTP codes received from Origin/uCDN for which a failover must be performed. The value is an array of error (4xx and above) HTTP codes.'
+          type: array
+          items:
+            type: string
+        reforwards:
+          description: 'Specifies how the reforwards must be done.'
+          $ref: '#/components/schemas/MI_HTTPCodeReforwards'
+        error-state:
+          description: 'Specifies whether to capture any error message for the current error condition.'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
+    MI_HTTPCodeReforwards:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HTTPCodeReforwards'
+    MI.HTTPCodeReforwards:
+      type: object
+      description: 'HttpCodeReforwards is a subobject of MI.HttpCodeFailoverActions that allows for specifying the reforwards that must happen against endpoints of a MI.SourceExtended object.'
+      properties:
+        max-reforwards-per-source:
+          description: 'Specifies the maximum number of reforwards that can be performed across all endpoints of the MI.SourceExtended object for a given set of error HTTP codes. A value greater than or equal to 0 indicates the maximum number of reforwards against a MI.SourceExtended object. A value of 0 indicates that no reforwards will be done against this source for the given set of error HTTP codes.'
+          type: integer
+        reforwards-per-endpoint:
+          description: 'Specifies the number of reforwards to be performed across the current endpoint of the MI.SourceExtended object for a given set of error HTTP codes. A value of greater than or equal to 0 indicates the number of reforwards against the current endpoint. A value of 0 indicates that no reforwards will be performed against the current endpoint for the given set of error HTTP codes.'
+          type: integer
+          default: 0
+    MI_LoadBalanceMetadata:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LoadBalanceMetadata'
+    MI.LoadBalanceMetadata:
+      type: object
+      description: 'Defines how content acquisition requests are distributed over the SourceExtended objects listed in the SourceMetadataExtended object.'
+      properties:
+        balance-algorithm:
+          description: 'This property specifies the algorithm to be used when distributing content acquisition requests over the sources in a SourceMetadataExtended object. The available algorithms are: round-robin, content-hash, and ip-hash. round-robin: Requests are distributed over the sources in proportion to their associated weights. content-hash: Requests are distributed over the sources in a consistent fashion, based on the balance-path-pattern property.ip-hash: Requests are distributed over the sources in a consistent fashion based on the IP address of the client requestor.'
+          type: string
+          enum: [round-robin, content-hash, ip-hash]
+        balance-weights:
+          description:  This property specifies the relative frequency that a source is used when distributing requests. For example, if there are three SourceExtended objects in a SourceMetadataExtended object with balance-weights [1, 2, 1], source 1 will receive 1/4 of the requests; source 2 will receive 2/4 of the requests; source 3 will receive 1/4 of the requests.
+          type: array
+          items:
+            type: integer
+        balance-path-pattern:
+          description: 'This property specifies a regular expression pattern to apply to the URI when calculating the content hash used by the balance-algorithm. For example, "balance-path-pattern":"^/prod/(.*)/.*\.ts$" would distribute requests based on the URI but excluding the prod prefix and the .ts segment file.'
+          type: string
+    MI_COI2d_authtype:
+      type: string
+      enum: [MI.HeaderAuth, MI.AWSv4Auth]
+    MI_COI2d_authvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI_HeaderAuth'
+        - $ref: '#/components/schemas/MI_AWSv4Auth'
+    MI_HeaderAuth:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.HeaderAuth'
+    MI.HeaderAuth:
+      type: object
+      description: '"Header based" authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
+      required:
+        - header-name
+        - header-value
+      properties: 
+        header-name:
+          type: string
+          description: 'Name of the authentication header.'
+        header-value:
+          description: 'Value of the authentication header (typically a pre-shared key).'
+          $ref: '#/components/schemas/MI_SecretValue'
+      example:
+        value: {
+          "auth-type": "headerauth",
+          "auth-value":
+          {
+           "header-name": "X-Origin-Auth",
+           "header-value": "SECRETKEYJKSDHFSIUHKWRGHFUI4UFH78HW4NF7"
+           }
+          }
+    MI_AWSv4Auth:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AWSv4Auth'
+    MI.AWSv4Auth:
+      type: object
+      description: 'Allows for the specification of a set of headers to be added to requests that are forwarded to an origin to enable Amazon Web Services (AWS) authentication, as documented by AWS (See Specifications & Standards References).'
+      required:
+        - access-key-id
+        - secret-access-key
+        - aws-region
+        - aws-service
+        - host-name
+      properties: 
+        access-key-id:
+          description: 'The preconfigured ID of the pre-shared authorization secret.'
+          type: string
+        secret-access-key:
+          description: 'The pre-shared authorization secret, which is the basis of building the signature. This is a secret key that should not be disclosed; it should be protected by some mechanism while resident in configuration objects.'
+          $ref: '#/components/schemas/MI_SecretValue'
+        aws-region:
+          description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
+          type: string
+        aws-service:
+          description: 'The AWS service name that is serving the upstream requests.'
+          type: string
+        host-name:
+          description: 'The host name to use as part of the signature calculation.'
+          type: string

@@ -9,7 +9,7 @@ externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'
 security: 
-  - bearerToken
+  - bearerToken: []
 paths:
   /OC/CI/configuration:
     put:
@@ -580,11 +580,10 @@ components:
 # FCI objects
     FCI_COI_capabilitytype:
       type: string
-      enum: [FCI.AuthTypes, FCI.ProcessingStages, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection]
+      enum: [FCI.AuthTypes, FCI.SourceMetadataExtended, FCI.RequestRouting, FCI.PrivateFeatures, FCI.OcnSelection]
     FCI_COI_capabilityvalue:
       oneOf:
         - $ref: '#/components/schemas/FCI.AuthTypes'
-        - $ref: '#/components/schemas/FCI.ProcessingStages'
         - $ref: '#/components/schemas/FCI.SourceMetadataExtended'
         - $ref: '#/components/schemas/FCI.RequestRouting'
         - $ref: '#/components/schemas/FCI.PrivateFeatures'
@@ -600,16 +599,7 @@ components:
           type: array
           items: 
             $ref: '#/components/schemas/MI_authtype'
-    FCI.ProcessingStages:
-      type: object
-      description: 'To signal the set of features that are supported in relation with the ProcessingStages configuration object (see GenericMetadata: ProcessingStages). Those optional features depend on the CDNI-MEL language support.'
-      properties: 
-        features:
-          description: 'List of supported optional processing stages features. Note that these features all have some dependencies on support of the CDNi MEL expression language. by default those features are not supported.'
-          type: array 
-          items:
-            type: string
-            enum: [ExpressionMatch, RequestTransform,  ResponseTransform]
+
     FCI.SourceMetadataExtended:
       type: object
       description: 'To signal the supported features related to the SourceMetadataExtended configuration object. If the FCI.SourceMetadtaExtended object is not exposed/advertised or if the “load-balance” array is empty, then the dCDN does not support the usage of the load-balance property attached to the SourceMetadataExtended configuration object (see  GenericMetadata: SourceMetadataExtended).'
@@ -1047,72 +1037,18 @@ components:
       description: 'An Auth object defines authentication and authorization methods to be used during content acquisition and content delivery respectively.'
       properties:
         auth-type:
-          $ref: '#/components/schemas/MI_authtype'
+          oneOf:
+            - $ref: '#/components/schemas/MI_authtype'
+            - $ref: './SVTA_OC_openAPI_COI2d.yaml#/components/schemas/MI_COI2d_authtype'
         auth_value:
-          $ref: '#/components/schemas/MI_authvalue'
+          oneOf:
+            - $ref: '#/components/schemas/MI_authvalue'
+            - $ref: './SVTA_OC_openAPI_COI2d.yaml#/components/schemas/MI_COI2d_authvalue'
     MI_authtype:
-      type: string
-      enum: [MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning]
+        type: string
+        enum: [MI.HeaderAuth]
     MI_authvalue:
-      oneOf:
-        - $ref: '#/components/schemas/MI_UriSigning'
-        - $ref: '#/components/schemas/MI_HeaderAuth'
-        - $ref: '#/components/schemas/MI_AWSv4Auth'
-    MI_HeaderAuth:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.HeaderAuth'
-    MI.HeaderAuth:
-      type: object
-      description: '"Header based" authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
-      required:
-        - header-name
-        - header-value
-      properties: 
-        header-name:
-          type: string
-          description: 'Name of the authentication header.'
-        header-value:
-          description: 'Value of the authentication header (typically a pre-shared key).'
-          $ref: '#/components/schemas/MI_SecretValue'
-      example:
-        value: {
-          "auth-type": "headerauth",
-          "auth-value":
-          {
-           "header-name": "X-Origin-Auth",
-           "header-value": "SECRETKEYJKSDHFSIUHKWRGHFUI4UFH78HW4NF7"
-           }
-          }
-    MI_AWSv4Auth:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.AWSv4Auth'
-    MI.AWSv4Auth:
-      type: object
-      description: 'Allows for the specification of a set of headers to be added to requests that are forwarded to an origin to enable Amazon Web Services (AWS) authentication, as documented by AWS (See Specifications & Standards References).'
-      required:
-        - access-key-id
-        - secret-access-key
-        - aws-region
-        - aws-service
-        - host-name
-      properties: 
-        access-key-id:
-          description: 'The preconfigured ID of the pre-shared authorization secret.'
-          type: string
-        secret-access-key:
-          description: 'The pre-shared authorization secret, which is the basis of building the signature. This is a secret key that should not be disclosed; it should be protected by some mechanism while resident in configuration objects.'
-          $ref: '#/components/schemas/MI_SecretValue'
-        aws-region:
-          description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
-          type: string
-        aws-service:
-          description: 'The AWS service name that is serving the upstream requests.'
-          type: string
-        host-name:
-          description: 'The host name to use as part of the signature calculation.'
-          type: string
+      $ref: '#/components/schemas/MI_UriSigning'
     MI_SecretStore:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1248,13 +1184,23 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI_payloadtype'
         - $ref: '#/components/schemas/MI.NamedPrivateFeatureType'
+        - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/MI_LOI_payloadtype'
+        - $ref: './SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_COI2a_payloadtype'
+        - $ref: './SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_COI2b_payloadtype'
+        - $ref: './SVTA_OC_openAPI_COI_2c.yaml#/components/schemas/MI_COI2c_payloadtype'
+        - $ref: './SVTA_OC_openAPI_COI_2d.yaml#/components/schemas/MI_COI2d_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CachePolicy,MI.ComputedCacheKey, MI.CrossoriginPolicy, MI.NegativeCachePolicy, MI.CacheBypassPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.ProcessingStages, MI.ClientRequestStage, MI.OriginRequestStage, MI.OriginResponseStage, MI.ClientResponseStage, MI.MatchGroup, MI.StageRules, MI.ExpressionMatch, MI.StageMetadata, MI.RequestTransform, MI.ResponseTransform, MI.SyntheticResponse, MI.HeaderTransform, MI.HTTPHeader, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.SourceConnectionControl, MI.SourceByteReadTimeoutActions, MI.SourceTimeoutActions MI.SourceConnectionRetries, MI.LoadBalanceMetadata, MI.StaleContentCachePolicy, MI.TrafficType, MI.SetVariable, MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata, MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.EndpointDetention, MI.ClientConnectionControl, MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore, MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault, MI.HTTPCodeFailover, MI.HTTPCodeFailoverActions, MI.HTTPCodeReforwards, MI.HTTPErrorCodeTrigger, MI.EndpointRepeatingFailures, MI.SourceDetention,MI.DetentionFullBehavior,MI.DetentionResetBehavior, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
+      enum: [MI.SourceMetadata, MI.Source, MI.LocationACL, MI.LocationRule, MI.Footprint, MI.TimeWindowACL, MI.TimeWindowRule, MI.TimeWindow, MI.ProtocolACL, MI.ProtocolRule, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.FallbackTarget, MI.HeaderAuth, MI.AWSv4Auth, MI.UriSigning, MI.AllowCompress, MI.CrossoriginPolicy, MI.OcnSelection, MI.PrivateFeatureList, MI.RequestedCapacityLimits, MI.RequestRouting, MI.ServiceIDs, MI.SourceMetadataExtended, MI.SourceExtended, MI.SourceConnectionControl, MI.SourceByteReadTimeoutActions, MI.SourceTimeoutActions MI.SourceConnectionRetries, MI.LoadBalanceMetadata, MI.TrafficType, MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata, MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.EndpointDetention, MI.EndpointDetentionTrigger, MI.EndpointDetention, MI.ClientConnectionControl, MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore, MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault, MI.HTTPCodeFailover, MI.HTTPCodeFailoverActions, MI.HTTPCodeReforwards, MI.HTTPErrorCodeTrigger, MI.EndpointRepeatingFailures, MI.SourceDetention,MI.DetentionFullBehavior,MI.DetentionResetBehavior, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/MI_LOI_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_COI2a_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_COI2b_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_COI_2c.yaml#/components/schemas/MI_COI2c_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_COI_2d.yaml#/components/schemas/MI_COI2d_payloadvalue'
     MI_payloadvalue:
       oneOf:
         - $ref: '#/components/schemas/MI.SourceMetadata'
@@ -1272,32 +1218,12 @@ components:
         - $ref: '#/components/schemas/MI.FallbackTarget'                     
         - $ref: '#/components/schemas/MI.DeliveryAuthorization'
         - $ref: '#/components/schemas/MI.Auth'
-        - $ref: '#/components/schemas/MI.AWSv4Auth'
-        - $ref: '#/components/schemas/MI.HeaderAuth'
         - $ref: '#/components/schemas/MI.UriSigning'
         - $ref: '#/components/schemas/MI.AllowCompress'
-        - $ref: '#/components/schemas/MI.CachePolicy'
-        - $ref: '#/components/schemas/MI.ComputedCacheKey'
         - $ref: '#/components/schemas/MI.CrossoriginPolicy'
-        - $ref: '#/components/schemas/MI.NegativeCachePolicy'
-        - $ref: '#/components/schemas/MI.CacheBypassPolicy'
         - $ref: '#/components/schemas/MI.OcnSelection'
         - $ref: '#/components/schemas/MI.PrivateFeatureList'
         - $ref: '#/components/schemas/MI.NamedPrivateFeatureValue'
-        - $ref: '#/components/schemas/MI.ProcessingStages'
-        - $ref: '#/components/schemas/MI.ClientRequestStage'
-        - $ref: '#/components/schemas/MI.OriginRequestStage'
-        - $ref: '#/components/schemas/MI.OriginResponseStage'
-        - $ref: '#/components/schemas/MI.ClientResponseStage'
-        - $ref: '#/components/schemas/MI.MatchGroup'
-        - $ref: '#/components/schemas/MI.StageRules'
-        - $ref: '#/components/schemas/MI.ExpressionMatch'
-        - $ref: '#/components/schemas/MI.StageMetadata'
-        - $ref: '#/components/schemas/MI.RequestTransform'
-        - $ref: '#/components/schemas/MI.ResponseTransform'
-        - $ref: '#/components/schemas/MI.SyntheticResponse'
-        - $ref: '#/components/schemas/MI.HeaderTransform'        
-        - $ref: '#/components/schemas/MI.HTTPHeader'        
         - $ref: '#/components/schemas/MI.RequestedCapacityLimits'        
         - $ref: '#/components/schemas/MI.RequestRouting'        
         - $ref: '#/components/schemas/MI.ServiceIDs'        
@@ -1307,10 +1233,8 @@ components:
         - $ref: '#/components/schemas/MI.SourceByteReadTimeoutActions'
         - $ref: '#/components/schemas/MI.SourceTimeoutActions'
         - $ref: '#/components/schemas/MI.SourceConnectionRetries'
-        - $ref: '#/components/schemas/MI.LoadBalanceMetadata'        
-        - $ref: '#/components/schemas/MI.StaleContentCachePolicy'        
+        - $ref: '#/components/schemas/MI.LoadBalanceMetadata'             
         - $ref: '#/components/schemas/MI.TrafficType'        
-        - $ref: '#/components/schemas/MI.SetVariable'
         - $ref: '#/components/schemas/MI.CertificateMetadata'
         - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
         - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
@@ -1353,7 +1277,7 @@ components:
         generic-metadata-type:
           $ref: '#/components/schemas/MI_metadatatype'
         generic-metadata-value:
-           $ref: '#/components/schemas/MI_metadatavalue'
+          $ref: '#/components/schemas/MI_metadatavalue'
         mandatory-to-enforce:
           type: boolean
           description: 'Flag identifying whether or not the enforcement of the property metadata is required.'
@@ -1499,7 +1423,7 @@ components:
           description:  In the case of a request that has no Origin field, return this set of headers with the response.
           type: array
           items:
-            $ref: '#/components/schemas/MI_HTTPHeader'
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_HTTPHeader'
         preflight-only:
           description: Setting this flag to “True” the dCDN will only generate synthetic responses to OPTIONS requests with proper CORS response headers.
           type: boolean
@@ -1639,296 +1563,6 @@ components:
         feature-value:
           description: 'Format/Type is defined by the value of the  feature-type property above'
           type: object
-    MI_ProcessingStages:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ProcessingStages'
-    MI.ProcessingStages:
-      type: object
-      description: 'Describes the matching rules, metadata, and transformations to be applied at specific stages in the request processing pipeline.'
-      properties:
-        client-request:
-          description: 'Allows for the specification of conditional metadata to be applied at client request processing stages. The StageRules in the array are evaluated in order.'
-          type: array
-          items: 
-            $ref: '#/components/schemas/MI_StageRules'
-        origin-request:
-          description: 'Allows for the specification of conditional metadata to be applied at origin request processing stages. The StageRules in the array are evaluated in order.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageRules'
-        origin-response:
-          description: 'Allows for the specification of conditional metadata to be applied at origin response processing stages. The StageRules in the array are evaluated in order.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageRules'
-        client-response:
-          description: 'Allows for the specification of conditional metadata to be applied at client response processing stages. The StageRules in the array are evaluated in order.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageRules'
-    MI_ClientRequestStage:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ClientRequestStage'
-    MI.ClientRequestStage:
-      type: object
-      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN upon receiving an inbound HTTP request from a client prior to further processing.'
-      required:
-        - match-groups
-      properties:
-        match-groups:
-          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_MatchGroup'
-    MI_OriginRequestStage:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.OriginRequestStage'
-    MI.OriginRequestStage:
-      type: object
-      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN prior to making an HTTP request to the origin upon a cache miss.'
-      required:
-        - match-groups
-      properties:
-        match-groups:
-          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_MatchGroup'
-    MI_OriginResponseStage:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.OriginResponseStage'
-    MI.OriginResponseStage:
-      type: object
-      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN after an HTTP response is received from the origin and before being placed in the cache or forwarded to the client.'
-      required:
-        - match-groups
-      properties:
-        match-groups:
-          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_MatchGroup'
-    MI_ClientResponseStage:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ClientResponseStage'
-    MI.ClientResponseStage:
-      type: object
-      description: 'Describes the matching rules, metadata, and transformations to be applied by the dCDN prior to sending the HTTP response to the client. If the response is from the cache, rules are applied to the response retrieved from the cache prior to sending to the client.'
-      required:
-        - match-groups
-      properties:
-        match-groups:
-          description: 'An array of if/else match groups that are processed in order, allowing for the specification of conditional metadata to be applied at this processing stage. Note that all  MI.MatchGroup objects in the array are evaluated and processed in order,  with processing only halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_MatchGroup'
-    MI_MatchGroup:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.MatchGroup'
-    MI.MatchGroup:
-      type: object
-      description: 'MI.MatchGroup is a subobject of MI.ClientRequestStage, MI.ClientResponseStage,  MI.OriginRequestStage, and MI.OriginResposeStage, allowing for a structured set of if/else rules to be applied based on an OPTIONAL match of an expression.'
-      required:
-        - if-rule
-      properties:
-        if-rule:
-          description: 'An MI.StageRules object that is always processed. If it contains a match expression that evaluates to "True" (or is an unconditional rule with no match expression), the metadata defined within the stage rule is applied and any else-if-rules are ignored.'
-          $ref: '#/components/schemas/MI_StageRules'    
-        else-if-rules:
-          description: 'An array of  MI.StageRules objects that are processed in order whenever the if-rule does not terminate processing. If a stage rule expression match  evaluates to "True" (or is an unconditional rule with no match expression), the metadata defined within the stage rule is applied and all subsequent entries in the  else-if-rules are ignored. Processing is halted if the stage metadata generates a synthetic response or denies access via an ACL restriction.'
-          type: array
-          items:
-             $ref: '#/components/schemas/MI_StageRules'        
-    MI_StageRules:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.StageRules'
-    MI.StageRules:
-      type: object
-      description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transformations that should be applied conditionally on a rich expression match.'
-      properties:
-        match:
-          description: 'A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided.'
-          $ref: '#/components/schemas/MI_ExpressionMatch'
-        stage-metadata:
-          description: 'The set of StageMetadata to be applied at the processing stage if the match expression evaluates to true or is not present. '
-          $ref: '#/components/schemas/MI_StageMetadata'
-    MI_ExpressionMatch:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ExpressionMatch'
-    MI.ExpressionMatch:
-      type: object
-      description: 'A rich expression using CDNI-MEL to evaluate aspects of the HTTP request and/or response. See documentation on the Metadata Expression Language for details on the expression of matching variables and syntax.'
-      required:
-        - expression
-      properties:
-        expression:
-          type: string
-    MI_StageMetadata:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.StageMetadata'
-    MI.StageMetadata:
-      type: object
-      description: 'Contains GenericMetadata and HTTP request/response transformations that should be applied for a StageRules. All of the properties (capabilities) are optional and can be advertised via feature-flags in the FCI interface.'
-      properties:
-        generic-metadata:
-          description: 'Specifies the set of GenericMetadata to be applied (in order) for a StageRules match. Note that not all GenericMetadata object types may be applicable at all processing stages. A typical use case would be the application of a CachePolicy or TimeWindowACL conditionally on matching HTTP headers. The generic-metadata property would not be needed when StageMetadata is used to only specify request or response transformations, such as modifications of HTTP headers.'
-          type: array 
-          items:
-            $ref: '#/components/schemas/MI_GenericMetadata'
-        request-transform:
-          description: 'Specifies a transformation to be applied to the HTTP request for a StageRules match. The transformation can be the modification of any request header and/or the modification of the URI. Modifications are applied such that downstream processing stages receive the modified HTTP request as their input'
-          $ref: '#/components/schemas/MI_RequestTransform'
-        response-transform:
-          description: 'Specifies a transformation to be applied to the HTTP response for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
-          $ref: '#/components/schemas/MI_ResponseTransform'
-    MI_RequestTransform:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.RequestTransform'
-    MI.RequestTransform:
-      type: object
-      description: 'Metadata for transforming the HTTP request for a specific StageRules. The transformation can be the modification of any request header and/or the modification of the URI. Modifications are applied such that downstream processing stages receive the modified HTTP request as their input.'
-      properties:
-        header-transform:
-          description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
-          $ref: '#/components/schemas/MI_HeaderTransform'
-        uri:
-          description: 'Replacement value for the HTTP request; either a literal (static string) or an expression using CDNI-MEL to dynamically construct a URI value from elements of the HTTP request and/or response.'
-          type: string 
-        uri-is-expression:
-          description: 'Flag to signal whether the URI is a static string literal or a CDNI-MEL expression that needs to be dynamically evaluated.'
-          type: boolean
-          default: false
-    MI_ResponseTransform:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ResponseTransform'
-    MI.ResponseTransform:
-      type: object
-      description: 'Metadata for transforming the HTTP response for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
-      properties:
-        header-transform:
-          description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
-          $ref: '#/components/schemas/MI_HeaderTransform'
-        response-status:
-          description: 'Replacement value for the HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in no override of origin-provided response status. '
-          $ref: '#/components/schemas/MI_sori'
-        status-is-expression:
-          description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code.'
-          type: boolean
-          default: false
-        synthetic:
-          description: 'Specification of a complete replacement of any HTTP response that may have been generated in an earlier processing stage with a synthetic response. Use of this property to specify a synthetic response would override any response transformations or status codes specified by other properties.'
-          $ref: '#/components/schemas/MI_SyntheticResponse'
-    MI_sori:
-      oneOf:
-        - type: string
-        - type: integer
-    MI_SyntheticResponse:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.SyntheticResponse'
-    MI.SyntheticResponse:
-      type: object
-      description: 'Specification of a synthetic response to be generated in response to the HTTP request being processed. The synthetic response can contain a set of response headers, a status code, and a response body, and is a complete replacement for any HTTP response elements generated in an earlier processing stage. A dynamically generated Content-Length HTTP response header is generated based on the length of the generated response body.'
-      required:
-        - response-status
-      properties:
-        headers:
-          description: 'An array of HTTP header objects that specify the full set of headers to be applied to the synthetic response. The property is not mandatory, although it would be unusual to not specify minimal standard response headers, such as Content-Type.'
-          type: array 
-          items:
-            $ref: '#/components/schemas/MI_HTTPHeader'
-        response-status:
-          description: 'HTTP response status code; either a static integer or an expression using CDNI-MEL that evaluates to an integer to dynamically generate an HTTP status code based on elements of the upstream HTTP request and/or response. Expressions that do not evaluate to an integer shall be considered invalid and result in a 500 status for the synthetic response.'
-          $ref: '#/components/schemas/MI_sori'
-        status-is-expression:
-          description: 'Flag to signal whether the response-status is a static integer or a CDNI-MEL expression that needs to be dynamically evaluated to generate an HTTP response status code.'
-          type: boolean
-          default: false
-        body:
-          description: 'Body for the synthetic HTTP response. The response body can either be static or dynamically constructed from a rich expression; either a literal (static string) or an expression using CDNI-MEL to dynamically construct a response body from elements of the HTTP request and/or response. If this property is absent, an empty HTTP response with a zero-value Content-Length header is generated.'
-          type: string
-        body-is-expression:
-          description: 'Flag to signal whether the synthetic response body is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'
-          type: boolean
-          default: false
-      example:
-        value: {
-                  "headers" : [
-                  {"name" : "content-type", "value" : "text/plain"},
-                  {"name" : "X-custom-response-header", "value" : "some static value"},
-                  ],
-                  "response-status" : 405,
-                  "response-body" : "'Sorry, Access to resource ' . req.uri . ' is not allowed'",
-                  "body-is-expression": true
-                }
-    MI_HeaderTransform:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.HeaderTransform'
-    MI.HeaderTransform:
-      type: object
-      description: 'Specifies how HTTP headers should be added, replaced, or deleted from HTTP requests and responses.'
-      properties:
-        add:
-          description: 'List of HTTP headers (name/value pairs) that should be added to the HTTP request or response. Note that any existing headers in the request or response with the same names of those added are not affected (resulting in multiple headers with the same name).'
-          type: array 
-          items:
-            $ref: '#/components/schemas/MI_HTTPHeader'
-        replace:
-          description: 'List of HTTP headers (name/value pairs) that should be added to the HTTP request or response, replacing any previous headers with the same name. Matching is not case sensitive. Both key and value are replaced wtih the provided case.'
-          type: array 
-          items:
-            $ref: '#/components/schemas/MI_HTTPHeader'
-        delete:
-          description: 'List of names of HTTP headers that should be deleted from the HTTP request or response. If a named header appears multiple times, all occurrences are deleted. Matching is not case sensitive.'
-          type: array 
-          items:
-            type: string 
-      example:
-        value: { "add" : [
-                    {"name" : "X-custom-header1", "value" : "header-value 1"},
-                    {"name" : "X-custom-header2", "value" : "header-value 2"}, ],
-                  "replace" : [{"name" : "Accept-Encoding", "value" : "gzip, deflate, br"} ],
-                  "delete" : ["Authorization", "Accept-Language"]
-                }
-    MI_HTTPHeader:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.HTTPHeader'
-    MI.HTTPHeader:
-      type: object
-      description: 'Contains a name/value pair for an HTTP header to add or replace in a request or response. The CDNI-MEL expression language can be used to dynamically generate response values.'
-      required:
-        - name
-        - value
-      properties:
-        name:
-          type: string
-          description: 'name of the HTTP header'
-        value:
-          type: string
-          description: 'Either a literal (static string) or an expression using CDNI-MEL to dynamically construct a header value from elements of the HTTP request and/or response.'
-        value-is-expression:
-          description: 'Flag to signal whether the value is a static string literal, or a CDNI-MEL expression that needs to be dynamically evaluated.'
-          type: boolean
-          default: false
-      example:
-        value: {
-                "name" : "X-custom-response-header",
-                "value" : “$req.uri.query.session",
-                “value-is-expression” : true
-              }
     MI_RequestedCapacityLimits:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -2230,7 +1864,7 @@ components:
           default: false
         synthetic-response:
           description: 'The synthetic response to return back to the client. If not specified, then the dCDN specific error response is used.'
-          $ref: '#/components/schemas/MI_SyntheticResponse'
+          $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
     MI_DetentionResetBehavior:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -2301,7 +1935,7 @@ components:
           $ref: '#/components/schemas/MI_SourceConnectionRetries'
         error-state:
           description: 'Specifies whether to capture any error message for the current error condition.'
-          $ref: '#/components/schemas/MI_SetVariable'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
         resume-from-last-byte:
           description: 'Specifies whether to resume reading from the last byte of the current endpoint only if the content length of the object being downloaded is known.'
           type: boolean
@@ -2319,7 +1953,7 @@ components:
           $ref: '#/components/schemas/MI_SourceConnectionRetries'
         error-state:
           description: 'Specifies whether to capture any error message for the current error condition.'
-          $ref: '#/components/schemas/MI_SetVariable'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
     MI_SourceConnectionRetries:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -2371,7 +2005,7 @@ components:
           $ref: '#/components/schemas/MI_HTTPCodeReforwards'
         error-state:
           description: 'Specifies whether to capture any error message for the current error condition.'
-          $ref: '#/components/schemas/MI_SetVariable'
+          $ref: 'SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_SetVariable'
     MI_HTTPCodeReforwards:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -2478,27 +2112,6 @@ components:
             "manifestURL": "/live/channelXYZ/index.mpd",
             "mediaServiceName": "ChannelXYZ",
             }
-    MI_SetVariable:
-      oneOf:
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.SetVariable'
-    MI.SetVariable:
-        type: object
-        description: 'Allows to set user-defined variables that can be accessed from the Metadata Expression Language.'
-        required:
-          - variable-name
-          - variable-value
-        properties:
-          variable-name:
-            description: 'Name of the variable to be set. The value of the variable-name is an alphanumeric string with both upper and lower case and must start with an alphabet.'
-            type: string
-          variable-value:
-            description: 'Specifies the string value to set for the user-defined variable.'
-            type: string
-          value-is-expression:
-            description: 'Flag to signal whether the value is a static string literal or a [CDNI-MEL] expression that needs to be dynamically evaluated.'
-            type: boolean
-            default: false
     MI_LocationACLExtended:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -2540,7 +2153,7 @@ components:
             type: string
           deny-response:
             description: 'configuration of the 	entire response to the client in case of deny action.'
-            $ref: '#/components/schemas/MI_SyntheticResponse'
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
             default: { "response-status" : "403" }
           match-all-locations:
             description: 'The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode'
@@ -2586,7 +2199,7 @@ components:
             type: string
           deny-response:
             description: 'configuration of the 	entire response to the client in case of deny action.'
-            $ref: '#/components/schemas/MI_SyntheticResponse'
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
             default: { "response-status" : "403" }
     MI_CertificateMetadata:
       oneOf:

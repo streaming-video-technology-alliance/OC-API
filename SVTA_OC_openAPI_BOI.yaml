@@ -50,6 +50,11 @@ paths:
         '404':
           description: 'No bootstrap version API'
 components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     BSI.Bootstrap:
       type: object
@@ -109,8 +114,3 @@ components:
         url:  
           type: string
           description: 'The Interface API end point URL exposed by the dCDN corresponding to the version number. The URL may be used as is or may be completed with a path prefix depending on interface.'
-  securitySchemes:
-    bearerToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT

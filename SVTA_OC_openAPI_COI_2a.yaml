@@ -1,0 +1,75 @@
+openapi: 3.0.1
+info:
+  title: 'Open Caching API - CONfiguration Interface (COI) - 2a - Metadata Expression Language (MEL)'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# FCI objects
+    FCI_COI_capabilitytype:
+      type: string
+      enum: [FCI.SupportedMELFeatures]
+    FCI_COI_capabilityvalue:
+      $ref: '#/components/schemas/FCI.SupportedMELFeatures'
+    FCI.SupportedMELFeatures:
+      type: object
+      description: 'The FCI.SupportedMELFeatures object is contained in FCI Capabilities advertisements and allows a dCDN to advertise the portions of the MEL specification that it supports. If a capabilities advertisement does not contain a FCI.SupportedMELFeatures or a  FCI.MetadataExtended object with an embedded FCI.SupportedMELFeatures object, the upstream content delivery network (uCDN) MUST assume that the dCDN has support for the full MEL specification.'
+      properties:
+        keywords:
+          description: A list of supported keywords.
+          type: array
+          items:
+            type: string
+            enum: ["and", "or", "not", "nil", "true", "false"]
+        operators:
+          description: A list of supported operators.
+          type: array
+          items:
+            type: string
+            enum: ["==", "!=", "!", ">", "<", ">=", "<=", "*=", "~=", "+", "-", "*", "/", "%", " . ", "()", "?:", "ipmatch"]
+        variables:
+          description: A list of supported variables.
+          type: array
+          items:
+            type: string
+            enum: ["req.h.<name>", "req.uri", "req.uri.path", "req.uri.pathquery", "req.uri.query", "req.uri.query.<key>", "req.uri.querykv.<key>", "req.method", "req.scheme", "resp.h.<name>", "resp.status", "req.clientip", "req.clientport", "var.<user-variable>" ]
+        built-in-functions:
+          description: A list of supported built-in function names.
+          type: array
+          items: 
+            type: string
+            enum: ["integer", real", "string", "boolean", upper", "lower", "match", "match_replace", "add_query", "remove_query", "path_element", "path_elements", "add_query_multi", "remove_query_multi", "keep_query_multi"]
+
+# MI objects
+    MI_COI2a_payloadtype:
+      type: string
+      enum: [MI.SetVariable]
+    MI_COI2a_payloadvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.SetVariable'
+    MI_SetVariable:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SetVariable'
+    MI.SetVariable:
+        type: object
+        description: 'Allows to set user-defined variables that can be accessed from the Metadata Expression Language.'
+        required:
+          - variable-name
+          - variable-value
+        properties:
+          variable-name:
+            description: 'Name of the variable to be set. The value of the variable-name is an alphanumeric string with both upper and lower case and must start with an alphabet.'
+            type: string
+          variable-value:
+            description: 'Specifies the string value to set for the user-defined variable.'
+            type: string
+          value-is-expression:
+            description: 'Flag to signal whether the value is a static string literal or a [CDNI-MEL] expression that needs to be dynamically evaluated.'
+            type: boolean
+            default: false    

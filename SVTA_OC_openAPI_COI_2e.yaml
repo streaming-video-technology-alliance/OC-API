@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2e - Client Access Control
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# MI objects
+    MI_payloadtype:
+      type: string
+      enum: [ MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata,MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
+    MI_payloadvalue:
+      oneOf:  
+        - $ref: '#/components/schemas/MI.CertificateMetadata'
+        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
+        - $ref: '#/components/schemas/MI.LocationACLExtended'
+        - $ref: '#/components/schemas/MI.LocationRuleExtended'
+        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
+        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
+
+    MI_LocationACLExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationACLExtended'
+    MI.LocationACLExtended:
+        type: object
+        description: 'MI.LocationAclExtended is an alternative to the CDNI standard MI.LocationAcl object that defines which locations a User Agent needs to be in, in order to be able to receive the associated content. MI.LocationAclExtended uses ACL rules of type MI.LocationRuleExtended, providing rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.LocationAcl and the two are mutually exclusive.'
+        required:
+          - rules
+        properties:
+          rules:
+            description: 'An array of MI.LocationRuleExtended objects.'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_LocationRuleExtended'
+    MI_LocationRuleExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.LocationRuleExtended'
+    MI.LocationRuleExtended:
+        type: object
+        description: ''
+        required:
+          - locations
+        properties:
+          locations:
+            description: 'An array of footprints to match against. These footprints, defined by pairs of MI_footprinttype_ex and 	MI_footprintvalue_ex respectively extend the CDNI MI_footprinttype and MI_footprintvalue. On top of the 4 footprint types defined by CDNI in rfc8006 [ipv4cidr,ipv6cidr,asn,countrycode], 3 new types are added: [ipv4range, ipv6range, subdivisioncode]'
+            type: array
+            items:
+              type: string
+              enum: [ipv4cidr, ipv6cidr, asn, countrycode, ipv4range, ipv6range, subdivisioncode]
+          action:
+            description: 'The action to take place upon location match'
+            type: string
+            enum: [allow, deny]
+            default: deny
+          comment:
+            description: 'An optional text comment for user readability and for  incorporating in logging '
+            type: string
+          deny-response:
+            description: 'configuration of the 	entire response to the client in case of deny action.'
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
+            default: { "response-status" : "403" }
+          match-all-locations:
+            description: 'The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode'
+            type: boolean
+            default: false
+    MI_TimeWindowAclExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
+    MI.TimeWindowAclExtended:
+        type: object
+        description: 'MI.TimeWindowAclExtended is an alternative to the CDNI standard MI.TimeWindow object for implementing time-based access restrictions. It uses ACL rules of type MI.TimeWindowRuleExtended to provide rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.TimeWindowAcl and the two are mutually exclusive'
+        required:
+          - rules
+        properties:
+          rules:
+            description: 'An array of MI.TimeWindowRuleExtended objects.'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_TimeWindowRuleExtended'
+    MI_TimeWindowRuleExtended:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+    MI.TimeWindowRuleExtended:
+        type: object
+        description: ''
+        required:
+          - windows
+        properties:
+          windows:
+            description: 'An array of MI.TimeWindow objects to match against'
+            type: array
+            items:
+              $ref: '#/components/schemas/MI_TimeWindow'
+          action:
+            description: 'The action to take place upon time window match'
+            type: string
+            enum: [allow, deny]
+            default: deny
+          comment:
+            description: 'An optional text comment for user readability and for  incorporating in logging '
+            type: string
+          deny-response:
+            description: 'configuration of the 	entire response to the client in case of deny action.'
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
+            default: { "response-status" : "403" }
+    MI_CertificateMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CertificateMetadata'
+    MI.CertificateMetadata:
+        type: object
+        description: 'To allow for secure delivery of content, a dCDN must be configured to support HTTPs.  The MI.CertificateMetadata object is used to configure the dCDN’s HTTPs attributes such as TLS certificate credentials, encryption levels, protocols, and ciphers.'
+        required:
+          - encryption-level
+          - delegated-credentials
+        properties:
+          encryption-level:
+            description: 'A reference to a MI.EncryptionLevelMetadata object that specifies the TLS protocols and ciphers to use.'
+            $ref: '#/components/schemas/MI_EncryptionLevelMetadata'
+          delegated-credentials:
+            description: 'A reference to the certificate delegated credentials to use when establishing a TLS session with the client.'
+            $ref: '#/components/schemas/MI_CertificateCredentialsMetadata'
+          ocsp-enabled:
+            description: 'When ocsp-enabled is set to True, the dCDN will check the revocation status of the configured certificate and include that information with the  response to the client.  See https://datatracker.ietf.org/doc/html/rfc6066#section-8'
+            type: boolean
+            default: false
+          prefer-server-ciphers:
+            description: 'When prefer-server-ciphers is set to False (the default), the dCDN will prefer to use cipher suites in the order presented by the client when negotiating the TLS handshake.   When prefer-server-ciphers is set to True, cipher suites will be selected in the order preferred by the dCDN server.'
+            type: boolean
+            default: false
+    MI_EncryptionLevelMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+    MI.EncryptionLevelMetadata:
+        type: object
+        description: 'MI.EncryptionLevelMetadata is a subobject of MI.CertificateMetadata to support HTTPs content delivery.  MI.EncryptionLevelMetadata specifies the protocols and ciphers to be used by the associated MI.CertificateMetadata object.  Externalizing MI.EncryptionLevelMetadata from MI.CertificateMetadata allows security policy (TLS protocols and ciphers) to be defined once and referenced by many configurations.'
+        required:
+          - encryption-level-name
+          - protocols
+          - ciphers
+        properties:
+          encryption-level-name:
+            description: 'A descriptive name for the MI.EncryptionLevelMetadata object.  This name is expected to be used by operators to reference the MI.EncryptionLevelMetadata configuration.'
+            type: string
+          protocols:
+            description: 'An array that lists the allowed protocols for the TLS session.'
+            type: array
+            items:
+              type: string
+              enum: [TLSv1.0,TLSv1.1,TLSv1.2,TLSv1.3,SSLv3]
+          ciphers:
+            description: 'An array that lists the allowed ciphers for the TLS session.'
+            type: array
+            items:
+              type: string
+    MI_CertificateCredentialsMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
+    MI.CertificateCredentialsMetadata:
+        type: object
+        description: 'MI.CertificateCredentialsMetadata is a subobject of MI.CertificateMetadata  that defines the credentials to use when establishing a TLS session between a dCDN and client.'
+        required:
+          - delegated-credentials-type
+          - delegated-credentials-value
+        properties:
+          delegated-credentials-type:
+            description: 'DelegatedCredentials type (The CDNI Payload Type [RFC7736]  of the GenericMetadata object contained in the delegated-credentials-value property).'
+            type: string
+          delegated-credentials-value:
+            description: 'An object conforming to the specification associated with the DelegatedCredentials type.'
+            $ref: '#/components/schemas/MI_GenericMetadata'
+    MI_ClientAuthMetadata:
+      oneOf:
+        - $ref: '#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
+    MI.ClientAuthMetadata:
+        type: object
+        description: 'The MI.ClientAuthMetadata defines how a dCDN authenticates client requests.'
+        required:
+          - delivery-auth
+        properties:
+          delivery-auth:
+            description: 'Authentication method to use when granting access to a resource requested by a client.'
+            $ref: '#/components/schemas/MI_Auth'

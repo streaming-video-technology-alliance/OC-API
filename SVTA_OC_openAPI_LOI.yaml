@@ -10,6 +10,7 @@ externalDocs:
     url: 'https://opencaching.svta.org/'
 components:
   schemas:
+#FCI
     FCI_LOI_capabilitytype:
       type: string
       enum: [FCI.LoggingPush, FCI.LoggingSource, FCI.LoggingPullTransport]
@@ -133,6 +134,15 @@ components:
     FCI_containerformat:
       type: string
       enum: [cdni_v1, json_v1, carriage_return_v1, linefeed_v1, tar_v1]
+# MI
+    MI_LOI_payloadtype:
+      type: string
+      enum: [MI.LoggingPullTransportMetadata, MI.LoggingTransport, MI.LoggingTransforms]
+    MI_LOI_payloadvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.LoggingPullTransportMetadata'
+        - $ref: '#/components/schemas/MI.LoggingTransport'
+        - $ref: '#/components/schemas/MI.LoggingTransforms'
     MI.LoggingMetadata:
       properties:
         transports:
