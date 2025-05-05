@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2i - Protected Secrets
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# FCI objects
+    FCI_COI2i_capabilitytype:
+      type: string
+      enum: [FCI.SecretStore, FCI.SecretCertificate]
+    FCI_COI2i_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.SecretStore'
+        - $ref: '#/components/schemas/FCI.SecretCertificate'
+    FCI.SecretStore:
+      description: 'Instructs the uCDN how to dereference the value of any MI.SecretValue objects linked to the store from other FCI objects via an embedded MI.SecretValue object. For further details, see the MI.SecretStore section.'
+      $ref: '#/components/schemas/MI.SecretStore'
+      example:
+        {
+          "capabilities":
+          [
+            {
+              "capability-type": "FCI.SecretStore",
+              "capability-value": 
+              {
+                "secret-store-id": "store-1",
+                "secret-store-type": "MI.SecretStoreTypeEmbedded",
+                "secret-store-config": 
+                {
+                  "format": "cms"
+                }
+              }
+            }
+         ]
+        }
+    FCI.SecretCertificate:
+      description: 'Is used to share an [X.509] certificate to be utilized for encrypting embedded secret messages via an embedded MI.SecretCertificate object. For further details, see the  MI.SecretCertificate section.'
+      $ref: '#/components/schemas/MI.SecretCertificate'
+# MI objects
+    MI_COI2i_payloadtype:
+      type: string
+      enum: [MI.SecretCertificate, MI.SecretValue, MI.SecretStore, MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault]
+    MI_COI2i_payloadvalue:
+      oneOf: 
+        - $ref: '#/components/schemas/MI.SecretCertificate'
+        - $ref: '#/components/schemas/MI.SecretValue'
+        - $ref: '#/components/schemas/MI.SecretStore'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
+        - $ref: '#/components/schemas/MI.SecretStoreTypeHashiCorpVault' 
+    MI_SecretStore:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretStore'    
+    MI.SecretStore:
+      description: 'MI.SecretStore instructs the counterparty how to dereference the value of any MI.SecretValue objects linked to the store. For embedded stores, MI.SecretStore identifies the certificate used for encrypting the values. For external stores (e.g., HashiCorp Vault), MI.SecretStore specifies the service endpoint that should be used in conjunction with the MI.SecretValue key path to obtain the secure data.'
+      required:
+        - secret-store-id
+        - secret-store-type
+      properties:
+        secret-store-id:
+          description: 'A unique identifier for this store configuration that is referenced from linked MI.SecretValue objects.'
+          type: string
+        secret-store-type:
+          description: 'A type discriminator for the configuration object, this property specifies whether the linked MI.SecretValue objects contain embedded secret objects or reference an external store.'
+          type: string
+          enum: [MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault]
+        secret-store-config:
+          description: 'The appropriate configuration object for the specified store type.'
+          oneOf:
+            - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
+            - $ref: '#/components/schemas/MI.SecretStoreTypeHashiCorpVault'
+      example: 
+        {
+        "secret-store-id": "store-2-vaultv1",
+        "secret-store-type": "MI.SecretStoreTypeHashiCorpVault",
+        "secret-store-config": 
+          {
+          "endpoint": "https://vault.example.com/v1/secret",
+          "namespace": "customer-1",
+          "version": 1
+          }
+       }
+    MI.SecretStoreTypeEmbedded:
+      description: 'MI.SecretStoreTypeEmbedded contains the configuration necessary to decrypt embedded secrets in MI.SecretValue. The only currently supported encrypted message format is Cryptographic Message Syntax (CMS) as defined in [RFC5652]. Messages MUST be CMS type "EnvelopedData" and Base64 encoded.A cleartext format is also defined for testing purposes. In this case, the value of an MI.SecretValue object secret-value property is the cleartext secret. It is NOT RECOMMENDED to use the cleartext format in production environments.'
+      required: 
+        - format
+      properties:
+        format:
+          description: 'The format of the embedded encrypted message.'
+          type: string 
+          enum: [cms, cleartext]
+        secret-certificate-id:
+          description: 'The ID of the MI.SecretStoreCertificate used to encrypt secret messages linked with this store configuration.'
+          type: string
+    MI.SecretStoreTypeHashiCorpVault:
+      description: 'MI.SecretStoreTypeHashiCorpVault contains the configuration necessary to reference secrets stored in an external instance of a HashiCorp Vault KV store [HCVAULT]. MI.SecretValue objects reference secrets stored in the Vault using the secret-path property to identify the path and property key. See the MI.SecretValue section for details.'
+      required:
+        - endpoint
+        - namespace
+        - version
+      properties:
+        endpoint:
+          description: 'The base URL of the Vault instance.'
+          type: string
+        namespace:
+          description: 'The Vault namespace in which secret lookups should be performed.'
+          type: string
+        version:
+          description: 'The Vault KV version.'
+          type: integer
+          enum: [1, 2]
+    MI.SecretValue:
+      description: 'May be used in any FCI or MI object where sensitive data must be transmitted only to intended recipients.'
+      required:
+        - secret-store-id
+      properties: 
+        secret-store-id:
+          description: 'The ID of MI.SecretStore that contains the configuration defining how to decrypt or access the referenced secret.'
+          type: string
+        secret-value:
+          description: 'Used only for embedded secrets, the Base64 encoded value of a CMS message or the cleartext string, depending on the defined MI.SecretStore configuration.'
+          type: string
+        secret-path:
+          description: 'Used only for HashiCorp Vault secrets, the path, not including namespace, to the secret, including the key of the particular property to access as the last path parameter.'
+          type: string
+        timeout:
+          description: 'Duration in seconds. If this property is present and the elapsed time since last retrieving the secret value has exceeded this timeout, any cached instance of this secret value MUST be discarded and fetched again from the associated secret store.'
+          type: integer 
+      example:
+        {
+          "secret-store-id": "store-1-cms",
+          "seret-value": "MIIBiQYJKoZIhvcNAQcDoIIBejCCAXYCAQAxggEhMIIBHQIBADAFMAACAQEwDQYJKoZIhvcNAQEBBQAEggEApJeXzsUS1jbAyNtQiJ9um9IMIHW5B2g+gHnXdNSTyd33OEfTR6yLSZihBlFbHpY3qSzK1CX7RF5Oz3SqLDW+r3i1D/aHbVXwQbviWHEvHterql8l9VDm2FCNaDx5vihdbtvng3+/vdJNNMMhmovwZL5uhPsK81DkKwZCvznMMWt8YdNSFGT62f73ash7Eg/mS54IUyYOJHYrXEkRLSjvl0j+JqcIR8hCOCA78+5bS4MgfdsS9xxSwQTrPru6EdTivMDKE/jlKg7li8lWdirWqtv0za5gLmH5T+zslXIoklwERAE50Jj8FxZD98EikKH8DAa+JeFsBm6Z1+yVFsWucTBMBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBws1riXA6m336zRbsiKtrVgCA267133v2zD/wjFQHXrKSJfd/2YJaxPskgdmQaVlgWCw=="
+        }
+    MI.SecretCertificate:
+      description: 'It is used to share an [X.509] certificate to be utilized for encrypting embedded secret messages. In lab and testing environments, this certificate MAY be self-signed, depending on participant agreement. In production environments, this SHOULD be a certificate signed by an appropriate certificate authority (CA) and validated by the counterparty.'
+      required:
+        - certificate-id
+        - certificate-value
+      properties:
+        certificate-id:
+          description: 'A unique ID for this certificate that can be referenced from a corresponding MI.SecretStore configuration defined by a counterparty.'
+          type: string
+        certificate-value:
+          description: 'The Base64 encoded certificate.'
+          type: string

@@ -1,0 +1,149 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2g - Delivery
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# FCI objects
+    FCI_COI2g_capabilitytype:
+      type: string
+      enum: [FCI.RequestRouting, FCI.OcnSelection]
+    FCI_COI2g_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.RequestRouting'
+        - $ref: '#/components/schemas/FCI.OcnSelection'
+    FCI.RequestRouting:
+      type: object
+      description: 'To signal/announce the supported request routing modes. This can be optionally used by the uCDN to further select a subset of those modes when operating one of the iterative delegation modes. See the section  GenericMetadata: RequestRouting.'
+      properties: 
+        request-routing-modes: 
+          description: 'List of supported request routing modes by the dCDN. This information is useful when the uCDN decides to perform a delegation in iterative mode. If the dCDN does not advertise the supported request routing modes, they are all supported by default.'
+          type: array
+          items: 
+            type: string
+            enum: [DNS, HTTP, MANIFEST_REWRITE]
+    FCI.OcnSelection:
+      type: object
+      description: 'To signal/announce the supported OCN types and/or their transport arrangement and/or medium supported by OCNs.'
+      properties:
+        ocn-delivery-list:
+          description: 'List of supported medium and/or transport arrangements.'
+          type: object
+          properties:
+            ocn-medium:
+              type: array
+              items:
+                $ref: '#/components/schemas/MI.OcnDelivery'
+        ocn-type-list:
+          description: 'List of supported OCN types. An example could be: “HOME” or “EDGE”.'
+          type: array
+          items: 
+            type: string
+# MI objects
+    MI_COI2g_payloadtype:
+      type: string
+      enum: [MI.OcnSelection, MI.OcnDelivery, MI.RequestRouting, MI.TrafficType, MI.MediaServiceDescription]
+    MI_COI2g_payloadvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.OcnSelection'
+        - $ref: '#/components/schemas/MI.OcnDelivery'
+        - $ref: '#/components/schemas/MI.RequestRouting'        
+        - $ref: '#/components/schemas/MI.TrafficType'       
+        - $ref: '#/components/schemas/MI.MediaServiceDescription'
+    MI_OcnSelection:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.OcnSelection'
+    MI.OcnSelection:
+      type: object
+      description: 'Allows the uCDN to indicate to the dCDN a preference in terms of OCN selection.'
+      properties:
+        ocn-delivery:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
+          $ref: '#/components/schemas/MI_OcnDelivery'
+        ocn-type:
+          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
+          type: string
+        ocn-selection:
+          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through a best effort procedure . Last, “besteffort” means that the dCDN tries its best to fulfill the requested ocn-selection policy.'
+          type: string
+          enum: [attempt-or-failed, attempt-or-besteffort, besteffort]
+    MI_OcnDelivery:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.OcnDelivery'
+    MI.OcnDelivery:
+      description: 'This nested of object MI.OcnSelection is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
+      type: object
+      properties:
+        ocn-medium:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium. The following values are specified: “SATELLITE”, "CELLULAR", "BROADBAND", "TERRESTRIAL". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          type: string
+          enum: [SATELLITE,CELLULAR,BROADBAND,TERRESTRIAL]
+        ocn-transport:
+          description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR", "HAS". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
+          type: string
+          enum: [MABR,HAS]
+    MI_RequestRouting:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.RequestRouting'
+    MI.RequestRouting:
+      type: object
+      description: 'Allows the uCDN to force the dCDN request routing mode(s) to be applied when working in iterative redirection mode. The list of redirection modes supported by the dCDN is advertised through the  FCI.RedirectionMode object. The list of request routing modes supported by the dCDN is advertised through the FCI.RequestRoutingMode object.'
+      properties:
+        request-routing-modes:
+          description: 'This property is used to instruct the dCDN to perform request routing according to one or more preferred modes among those supported and advertised by the dCDN through the FCI.RequestRouting object. One must understand that forcing (instead of letting the dCDN request router select) one particular request routing mode may trigger some inefficiency in the request routing process. By default all request routing modes supported by the dCDN can be used by the dCDN as part of its request routing process.'
+          type: array
+          items: 
+            type: string
+            enum: [DNS, HTTP, MANIFEST_REWRITE]
+    MI_TrafficType:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.TrafficType'
+    MI.TrafficType:
+      type: object
+      description: 'Defines a set of descriptors that characterize either the type or usage of the traffic, enabling CDNs and OCNs to apply any internal configuration rules without exposing an unnecessary amount of internal details.'
+      required:
+        - traffic-type
+      properties:
+        traffic-type:
+          description: 'A literal that defines the traffic type. uCDN will use the literal that is most representative of the traffic being delegated. The following literals are specified: vod, live, object-download.'
+          type: string
+          enum: [vod, live, object-download]
+        hints:
+          description: 'Other traffic characteristics that uCDN can indicate to the dCDN as suggestions for service optimization. Accepts free-form unconstrained values.'
+          type: array 
+          items:
+            type: string
+      example:
+        value: {
+                "traffic-type": "vod",
+                "hints": [ "low-latency", "catch-up" ]
+                }
+    MI_MediaServiceDescription:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.MediaServiceDescription'
+    MI.MediaServiceDescription:
+      type: object
+      description: 'MI.MediaServiceDescription metadata defines a set of descriptors associated with a media service delegated to the dCDN. This metadata can be used by the CDN or OCN provider to implement specific strategies that will maximize performance. Note that these strategies are implementation specific and not specified by SVTA. For instance,  by knowing the location of the manifest, the dCDN is able to implement some segment prefetching strategies. Further, indicating the notion of media service allows the CDN or OCN provider to track and monitor streaming sessions in a more comprehensive manner.'
+      properties:
+        manifestURL:
+          description: 'Path of the manifest (mpd or m3u8) file related to this media service.'
+          type: string
+        mediaServiceName:
+          description: 'String describing or identifying the media service.'
+          type: string 
+      example:
+        value: {
+            "manifestURL": "/live/channelXYZ/index.mpd",
+            "mediaServiceName": "ChannelXYZ",
+            }

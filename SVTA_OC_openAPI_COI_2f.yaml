@@ -1,0 +1,125 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2f - Edge Control
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# MI objects
+    MI_COI2f_payloadtype:
+      type: string
+      enum: [MI.CrossoriginPolicy, MI.AccessControlAllowOrigin, MI.AllowCompress, MI.ClientConnectionControl]
+    MI_COI2f_payloadvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.CrossoriginPolicy'
+        - $ref: '#/components/schemas/MI.AccessControlAllowOrigin'
+        - $ref: '#/components/schemas/MI.AllowCompress'
+        - $ref: '#/components/schemas/MI.ClientConnectionControl'
+    MI_AllowCompress:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AllowCompress'
+    MI.AllowCompress:
+      type: object
+      description: 'AllowCompress is a new GenericMetadata object that allows the dCDN to compress content before sending to the client.'
+      properties:
+        allow-compress:
+          description: 'If set to true, then the dCDN will try to compress the response to the client based on the Accept-Encoding request header.'
+          type: boolean
+          default: false
+      example:
+        value: {
+                    "allow-compress": true
+                }
+    MI_ClientConnectionControl:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.ClientConnectionControl'
+    MI.ClientConnectionControl:
+      type: object
+      description: 'ClientConnectionControl is a new GenericMetadata object that specifies how a dCDN manages its connections to clients/players. When not specified, a default value selected by the dCDN will be used.'
+      properties:
+        connection-keep-alive-time-ms:
+          description: 'Specifies the time in milliseconds to keep an idle connection open.'
+          type: integer
+    MI_AccessControlAllowOrigin:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.AccessControlAllowOrigin'
+    MI.AccessControlAllowOrigin:
+        type: object
+        description: 'Validation of simple CORS requests. Nested object of CrossoriginPolicy. '
+        required:
+          - allow-list
+          - wildcard-return
+        properties:
+          allow-list:
+            description: 'List of valid URLs that will be used to match the request origin header. The Origin header is a HTTP extension. Its value is a version of the Referer header in some specific requests, and used for Cross Origin requests. Permitted values are schema://hostname[:port] '
+            type: array
+            items: 
+              $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_PatternMatch'
+          wildcard-return:
+            description: 'If true, the OCN will include a wildcard (*) in the Access-Control-Allow-Origin response header. If false, the OCN will reflect back the request Origin header in the Access-Control-Allow-Origin response header.'
+            type: boolean
+    MI_CrossoriginPolicy:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.CrossoriginPolicy'
+    MI.CrossoriginPolicy:
+      type: object
+      description: 'Controls the dynamically generated CORS headers.'
+      required:
+        - allow-origin
+      properties:
+        allow-origin:
+          description: 'Validation of simple CORS requests.' 
+          $ref: '#/components/schemas/MI_AccessControlAllowOrigin'
+        expose-headers:
+          description: 'A list of values the OCN will include in the Access-Control-Expose-Headers response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-methods:
+          description: 'A list of values the OCN will include in the Access-Control-Allow-Methods response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-headers:
+          description: 'A list of values the OCN will include in the Access-Control-Allow-Headers response header to a preflight request.'
+          type: array
+          items:
+            type: string
+        allow-credentials:
+          description: 'The value the OCN will include in the Access-Control-Allow-Credentials response header to a preflight request.'
+          type: boolean
+        max-age:
+          description: 'The value the OCN will include in the Access-Control-Max-Age response header to a preflight request.'
+          type: integer
+        no-origin-response-headers:
+          description:  In the case of a request that has no Origin field, return this set of headers with the response.
+          type: array
+          items:
+            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_HTTPHeader'
+        preflight-only:
+          description: Setting this flag to “True” the dCDN will only generate synthetic responses to OPTIONS requests with proper CORS response headers.
+          type: boolean
+          default: false
+      example:
+        value: {
+              "allow-origin": {
+              "allow-list": {
+                "pattern": "*://sourcepage.example.com"},
+                "wildcard-return": false
+                },
+              "allow-methods": ["GET","POST"],
+              "allow-credentials": true,
+              "allow-headers": ["X-PINGOTHER","Content-Type"],
+              "expose-headers": ["X-User","Authorization"],
+              "max-age": 3600
+            }
+ 

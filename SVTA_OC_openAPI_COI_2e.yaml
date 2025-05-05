@@ -11,23 +11,23 @@ externalDocs:
 components:
   schemas:
 # MI objects
-    MI_payloadtype:
+    MI_COI2e_payloadtype:
       type: string
       enum: [ MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata,MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
-    MI_payloadvalue:
+    MI__COI2e_payloadvalue:
       oneOf:  
-        - $ref: '#/components/schemas/MI.CertificateMetadata'
-        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
-        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
         - $ref: '#/components/schemas/MI.LocationACLExtended'
         - $ref: '#/components/schemas/MI.LocationRuleExtended'
         - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
         - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+        - $ref: '#/components/schemas/MI.CertificateMetadata'
+        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'        
         - $ref: '#/components/schemas/MI.ClientAuthMetadata'
 
     MI_LocationACLExtended:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.LocationACLExtended'
     MI.LocationACLExtended:
         type: object
@@ -42,7 +42,7 @@ components:
               $ref: '#/components/schemas/MI_LocationRuleExtended'
     MI_LocationRuleExtended:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.LocationRuleExtended'
     MI.LocationRuleExtended:
         type: object
@@ -74,7 +74,7 @@ components:
             default: false
     MI_TimeWindowAclExtended:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
     MI.TimeWindowAclExtended:
         type: object
@@ -89,7 +89,7 @@ components:
               $ref: '#/components/schemas/MI_TimeWindowRuleExtended'
     MI_TimeWindowRuleExtended:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
     MI.TimeWindowRuleExtended:
         type: object
@@ -116,7 +116,7 @@ components:
             default: { "response-status" : "403" }
     MI_CertificateMetadata:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CertificateMetadata'
     MI.CertificateMetadata:
         type: object
@@ -141,7 +141,7 @@ components:
             default: false
     MI_EncryptionLevelMetadata:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
     MI.EncryptionLevelMetadata:
         type: object
@@ -167,7 +167,7 @@ components:
               type: string
     MI_CertificateCredentialsMetadata:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
     MI.CertificateCredentialsMetadata:
         type: object
@@ -178,13 +178,66 @@ components:
         properties:
           delegated-credentials-type:
             description: 'DelegatedCredentials type (The CDNI Payload Type [RFC7736]  of the GenericMetadata object contained in the delegated-credentials-value property).'
-            type: string
+            $ref: '#/components/schemas/MI_delegationtype'
           delegated-credentials-value:
             description: 'An object conforming to the specification associated with the DelegatedCredentials type.'
-            $ref: '#/components/schemas/MI_GenericMetadata'
+            $ref: '#/components/schemas/MI_delegationvalue'
+    MI_delegationtype:
+      type: string
+      enum: [MI.DelegatedCredentials, MI.ACMEDelegationMethod]
+    MI_delegationvalue:
+     oneOf:
+        - $ref: '#/components/schemas/MI.DelegatedCredentials'
+        - $ref: '#/components/schemas/MI.ACMEDelegationMethod'
+    MI.DelegatedCredentials:
+      type: object    
+      description: 'As expressed in [RFC9345], when an uCDN has delegated to a dCDN, the dCDN presents the "delegated_credential" (rather than its own certificate) during the TLS handshake [RFC8446] to the User Agent. This implies that the dCDN is also in the possession of the private key corresponding to the public key in DelegatedCredential.cred [RFC9345]. This allows the User Agent to verify the signature in a CertificateVerify message (Section 4.4.3 of [RFC8446]) sent and signed by the dCDN.\n This section defines the MI.DelegatedCredentials object containing an array of delegated credentials and optionally the corresponding private keys. The CDNI MI [RFC8006] describes the CDNI metadata distribution mechanisms according to which a dCDN can retrieve the MI.DelegatedCredentials object from the uCDN.'
+      required:
+        - delegated-credentials
+      properties:
+        delegated-credentials:
+          description: 'Array of delegated credentials'
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_DelegatedCredentialObject'
+    MI_DelegatedCredentialObject:
+      type: object
+      required:
+        - delegated-credential
+      properties:
+        delegated-credential:
+          description: 'Base64-encoded (as defined in Section 4 of [RFC4648]) version of a CertificateEntry as defined in Section 4.4.2 of [RFC8446]. The CertificateEntry MUST contain a DelegatedCredential structure (as defined in [RFC9345]) using the extension in the CertificateEntry of its end-entity certificate (see Section 4.1.1 of [RFC9345]).'
+          type:
+            string
+        private-key:
+          description: 'Encrypted private key corresponding to the public key contained in the DelegatedCredential. The envelope format for this property is JSON Web Encryption (JWE) [RFC7516] using the base64 compact serialization (Section 7.1 of [RFC7516]).'
+          type:
+            string
+    MI.ACMEDelegationMethod:
+      type: object    
+      description: 'The ACMEDelegationMethod object allows a uCDN to define both STAR and non-STAR delegations. The dCDN, the consumer of the delegation, can determine the type of delegation by the presence (or absence) of the "lifetime" property. That is, the presence of the "lifetime" property explicitly means a short-term delegation with lifetime of the certificate based on that property (and the optional "lifetime-adjust" attribute). A non-STAR delegation will not have the "lifetime" property in the delegation.'
+      required:
+        - acme-delegation
+        - time-window
+      properties:
+        acme-delegation:
+          description: A URL pointing at an ACME delegation object, either STAR or non-STAR, associated with the dCDN account on the uCDN ACME server (see Section 2.3.1.3 of [RFC9115] for the details). The URL MUST use the https scheme.
+          type: string
+        time-window:
+          description: Validity period of the certificate. According to Section 4.3.4 of [RFC8006], a TimeWindow object is defined by a window "start" time and a window "end" time. In the case of a STAR method, the "start" and "end" properties of the window MUST be understood respectively as the start-date and end-date of the certificate validity. In the case of a non-STAR method, the "start" and "end" properties of the window MUST be understood, respectively, as the notBefore and notAfter fields of the certificate. Mandatory only if a STAR delegation method is specified.
+          $ref: '#/components/schemas/MI_TimeWindow'
+        lifetime:
+          description: See lifetime in Section 3.1.1 of [RFC8739]
+          type: integer
+        lifetime-adjust:
+          description: See lifetime-adjust in Section 3.1.1 of [RFC8739]
+          type: integer
+    MI_TimeWindow:
+      type: object
+
     MI_ClientAuthMetadata:
       oneOf:
-        - $ref: '#/components/schemas/MI_link'
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.ClientAuthMetadata'
     MI.ClientAuthMetadata:
         type: object
@@ -194,4 +247,4 @@ components:
         properties:
           delivery-auth:
             description: 'Authentication method to use when granting access to a resource requested by a client.'
-            $ref: '#/components/schemas/MI_Auth'
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_Auth'

@@ -303,34 +303,3 @@ components:
           type: array
           items:
             $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'
-    FCI.MetadataExtended:
-      properties: 
-        external-profile:
-          description: Uniform Resource Locator (URL) to an externally defined FCI.MetadataExtended JavaScript Object Notation (JSON) definition. If not specified, the capabilities advertisement is self-contained within the supported-objects and supported-mel-features  properties. When specified, any of the properties that are also specified will take precedence over its counterparts in the external profile.
-          type:  string
-        supported-objects:
-          description: A list of FCI.SupportedMIObject objects to advertise all of the MI objects supported by the dCDN. A dCDN MUST provide an entry for each top-level MI object that it supports. An MI object MAY appear multiple times with different support for different contexts. The same context MUST NOT be specified for more than one variant of the same MI object, where variants are distinct based on their checksum. A top-level MI object MUST be included per a given list of contexts. The top-level MI object either describes support for an explicit properties tree or refers to one with a matching checksum that is listed in an externally referenced file. Subobjects (objects that are defined wholly within the context of a top-level object) are NOT specified independently as FCI.SupportedMIObject objects, but rather as part of the unrolled properties of a top-level object, per the specified contexts of that object. When specified, it takes precedence over the external profile (if specified). If external-profile is not used, and supported-objects is either not present or an empty list, the dCDN supports only structural metadata, (i.e., it can parse metadata as a transit CDN but cannot enforce security policies or deliver content).
-          type: array
-          items: 
-            $ref: '#/components/schemas/FCI.SupportedMIObject'
-        supported-mel-features:
-          description: An FCI.SupportedMELFeatures object as defined in the Metadata Expression Language (MEL) Specification [SVTA2031]. It enables a dCDN to advertise which MEL features are supported. If not present here nor in an external profile, it is assumed that the dCDN has no support for the MEL.
-          $ref: './SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/FCI.SupportedMELFeatures'
-    FCI.SupportedMIObject:
-      required:
-        - object-name
-      properties:
-        object-name:
-          description: Name of the top-level MI object for which support is being advertised. When added, it can be used as a quick indication for the human eye that two objects are identical.
-          type:  string
-        object-checksum:
-          description: MD5 checksum string applied on a canonical string representation of this object concatenating its properties sorted keys and values. 
-          type:  string
-        allowed-contexts:
-            description: A list of usage contexts (parent objects and properties) within which this MI object can be used. A context can be defined as a path of properties from a top-level object, allowing a dCDN to advertise, for example, that it supports a particular MI object only within some, but not all, processing stages [SVTA2032].  If unspecified, it is assumed that the MI object can be used within any context (bounded by any restrictions defined within the specification of the parent and child MI objects).
-            type: string
-            enum: [HostMetadata.metadata, PathMetadata.metadata, CDNProperty.property-metadata, ClientRequestStage, ProcessingStages.client-request, stage-metadata, generic-metadata, ClientResponseStage, OriginRequestStage, OriginResponseStage]
-        supported-properties:
-          description: An unwound properties tree representation of the MI object properties and their possible values. The content of this object is assumed to be uniquely represented by the object-checksum field.
-          type:  object 
-          additionalProperties: {}

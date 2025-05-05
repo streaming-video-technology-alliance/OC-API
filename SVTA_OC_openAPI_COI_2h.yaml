@@ -1,0 +1,94 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CONfiguration Interface (COI) - 2h - Private Features
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 2.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+# FCI objects
+    FCI_COI2h_capabilitytype:
+      type: string
+      enum: [FCI.PrivateFeatures]
+    FCI_COI2h_capabilityvalue:
+      $ref: '#/components/schemas/FCI.PrivateFeatures'
+    FCI.PrivateFeatures:
+      type: object
+      description: 'To signal/announce the list of supported private features. See the section GenericMetadata: PrivateFeatureList.'
+      properties:
+        features:
+          description: 'The list of supported private features.'
+          type: array
+          items:
+            $ref: '#/components/schemas/FCI.PrivateFeature'
+    FCI.PrivateFeature:
+      description: 'Description of one private feature'
+      type: object
+      required:
+        - feature-oid
+        - feature-type
+      properties:
+        feature-oid:
+          description: 'The owner/organisation that has specified that feature.'
+          type: string
+        feature-type:
+          description: 'Used to indicate the type/name of the private feature configuration object.'
+          type: string
+# MI objects
+    MI_COI2h_payloadtype:
+      type: string
+      enum: [MI.SecretCertificate, MI.SecretValue, MI.SecretStoreTypeVault, MI.SecretStore, MI.SecretStoreTypeEmbedded, MI.SecretStoreTypeHashiCorpVault]
+    MI_COI2h_payloadvalue:
+      oneOf: 
+        - $ref: '#/components/schemas/MI.PrivateFeatureList'
+        - $ref: '#/components/schemas/MI.NamedPrivateFeatureValue'
+    MI.NamedPrivateFeatureType:
+      type: string
+      description: 'A string in the form of MI.PrivateFeature.<org id>.<feature id> where org-id consists of alphanumeric characters, and feature-id may also contain dots for additional internal namespacing within the feature name'
+      pattern: '^MI\.PrivateFeature\.[a-z0-9A-Z]+(?:\.[a-z0-9A-Z]+){1,}$'
+    MI_NamedPrivateFeatureValue:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.NamedPrivateFeatureValue'
+    MI.NamedPrivateFeatureValue:
+      type: object
+      description: 'The actual structure of the MI.NamedPrivateFeatureValue object would be the one defined in the property feature-value of the object MI.PrivateFeature'
+    MI_PrivateFeatureList:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PrivateFeatureList'
+    MI.PrivateFeatureList:
+      type: object
+      description: 'A base generic object for controlling private features.'
+      required:
+        - features
+      properties:
+        features:
+          description: 'The list of feature configuration objects.'
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_PrivateFeature'
+    MI_PrivateFeature:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.PrivateFeature'
+    MI.PrivateFeature:
+      type: object
+      description: 'A base generic object for controlling private features'
+      required:
+        - feature-oid
+        - feature-type
+      properties:
+        feature-oid:
+          description: 'The owner/organisation that has specified that feature.'
+          type: string
+        feature-type:
+          description: This property is used to indicate the type/name of the private feature configuration object.
+          type: string
+        feature-value:
+          description: 'Format/Type is defined by the value of the  feature-type property above'
+          type: object

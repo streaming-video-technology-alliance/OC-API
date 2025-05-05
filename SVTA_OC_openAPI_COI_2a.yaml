@@ -11,10 +11,10 @@ externalDocs:
 components:
   schemas:
 # FCI objects
-    FCI_COI_capabilitytype:
+    FCI_COI2a_capabilitytype:
       type: string
       enum: [FCI.SupportedMELFeatures]
-    FCI_COI_capabilityvalue:
+    FCI_COI2a_capabilityvalue:
       $ref: '#/components/schemas/FCI.SupportedMELFeatures'
     FCI.SupportedMELFeatures:
       type: object
