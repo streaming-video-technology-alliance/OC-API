@@ -14,7 +14,7 @@ components:
     MI_COI2e_payloadtype:
       type: string
       enum: [ MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata,MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
-    MI__COI2e_payloadvalue:
+    MI_COI2e_payloadvalue:
       oneOf:  
         - $ref: '#/components/schemas/MI.LocationACLExtended'
         - $ref: '#/components/schemas/MI.LocationRuleExtended'

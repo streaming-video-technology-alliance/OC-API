@@ -435,7 +435,7 @@ components:
           description: 'Name of the authentication header.'
         header-value:
           description: 'Value of the authentication header (typically a pre-shared key).'
-          $ref: '#/components/schemas/MI_SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI_SecretValue'
       example:
         value: {
           "auth-type": "headerauth",
@@ -464,7 +464,7 @@ components:
           type: string
         secret-access-key:
           description: 'The pre-shared authorization secret, which is the basis of building the signature. This is a secret key that should not be disclosed; it should be protected by some mechanism while resident in configuration objects.'
-          $ref: '#/components/schemas/MI_SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI_SecretValue'
         aws-region:
           description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
           type: string

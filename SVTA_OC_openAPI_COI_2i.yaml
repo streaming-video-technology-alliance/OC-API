@@ -22,9 +22,9 @@ components:
       description: 'Instructs the uCDN how to dereference the value of any MI.SecretValue objects linked to the store from other FCI objects via an embedded MI.SecretValue object. For further details, see the MI.SecretStore section.'
       $ref: '#/components/schemas/MI.SecretStore'
       example:
-        {
-          "capabilities":
-          [
+        value:
+          {
+          "capabilities": [
             {
               "capability-type": "FCI.SecretStore",
               "capability-value": 
@@ -37,8 +37,8 @@ components:
                 }
               }
             }
-         ]
-        }
+          ]
+          }
     FCI.SecretCertificate:
       description: 'Is used to share an [X.509] certificate to be utilized for encrypting embedded secret messages via an embedded MI.SecretCertificate object. For further details, see the  MI.SecretCertificate section.'
       $ref: '#/components/schemas/MI.SecretCertificate'
@@ -76,16 +76,17 @@ components:
             - $ref: '#/components/schemas/MI.SecretStoreTypeEmbedded'
             - $ref: '#/components/schemas/MI.SecretStoreTypeHashiCorpVault'
       example: 
-        {
-        "secret-store-id": "store-2-vaultv1",
-        "secret-store-type": "MI.SecretStoreTypeHashiCorpVault",
-        "secret-store-config": 
+        value:
           {
-          "endpoint": "https://vault.example.com/v1/secret",
-          "namespace": "customer-1",
-          "version": 1
+          "secret-store-id": "store-2-vaultv1",
+          "secret-store-type": "MI.SecretStoreTypeHashiCorpVault",
+          "secret-store-config": 
+            {
+            "endpoint": "https://vault.example.com/v1/secret",
+            "namespace": "customer-1",
+            "version": 1
+            }
           }
-       }
     MI.SecretStoreTypeEmbedded:
       description: 'MI.SecretStoreTypeEmbedded contains the configuration necessary to decrypt embedded secrets in MI.SecretValue. The only currently supported encrypted message format is Cryptographic Message Syntax (CMS) as defined in [RFC5652]. Messages MUST be CMS type "EnvelopedData" and Base64 encoded.A cleartext format is also defined for testing purposes. In this case, the value of an MI.SecretValue object secret-value property is the cleartext secret. It is NOT RECOMMENDED to use the cleartext format in production environments.'
       required: 
@@ -115,6 +116,10 @@ components:
           description: 'The Vault KV version.'
           type: integer
           enum: [1, 2]
+    MI_SecretValue:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretValue'
     MI.SecretValue:
       description: 'May be used in any FCI or MI object where sensitive data must be transmitted only to intended recipients.'
       required:
@@ -133,10 +138,15 @@ components:
           description: 'Duration in seconds. If this property is present and the elapsed time since last retrieving the secret value has exceeded this timeout, any cached instance of this secret value MUST be discarded and fetched again from the associated secret store.'
           type: integer 
       example:
-        {
+        value:
+          {
           "secret-store-id": "store-1-cms",
           "seret-value": "MIIBiQYJKoZIhvcNAQcDoIIBejCCAXYCAQAxggEhMIIBHQIBADAFMAACAQEwDQYJKoZIhvcNAQEBBQAEggEApJeXzsUS1jbAyNtQiJ9um9IMIHW5B2g+gHnXdNSTyd33OEfTR6yLSZihBlFbHpY3qSzK1CX7RF5Oz3SqLDW+r3i1D/aHbVXwQbviWHEvHterql8l9VDm2FCNaDx5vihdbtvng3+/vdJNNMMhmovwZL5uhPsK81DkKwZCvznMMWt8YdNSFGT62f73ash7Eg/mS54IUyYOJHYrXEkRLSjvl0j+JqcIR8hCOCA78+5bS4MgfdsS9xxSwQTrPru6EdTivMDKE/jlKg7li8lWdirWqtv0za5gLmH5T+zslXIoklwERAE50Jj8FxZD98EikKH8DAa+JeFsBm6Z1+yVFsWucTBMBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBws1riXA6m336zRbsiKtrVgCA267133v2zD/wjFQHXrKSJfd/2YJaxPskgdmQaVlgWCw=="
-        }
+          }
+    MI_SecretCertificate:
+      oneOf:
+        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
+        - $ref: '#/components/schemas/MI.SecretCertificate'    
     MI.SecretCertificate:
       description: 'It is used to share an [X.509] certificate to be utilized for encrypting embedded secret messages. In lab and testing environments, this certificate MAY be self-signed, depending on participant agreement. In production environments, this SHOULD be a certificate signed by an appropriate certificate authority (CA) and validated by the counterparty.'
       required:
