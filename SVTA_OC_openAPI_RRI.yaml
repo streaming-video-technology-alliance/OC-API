@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - CONfiguration Interface (COI) 
+  title: Open Caching API - Request Routing Interface (COI) 
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
