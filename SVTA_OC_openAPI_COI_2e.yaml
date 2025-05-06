@@ -248,3 +248,11 @@ components:
           delivery-auth:
             description: 'Authentication method to use when granting access to a resource requested by a client.'
             $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_Auth'
+    MI.CATAuth: 
+      description: 'The MI.CATAuth object defines the configuration for a dCDN to authenticate client requests using the Common Access Token standard. The MI.CATAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to to client requests by including it under the MI.ClientAuthMetadata.delivery-auth property.'
+      properties: 
+        version:  
+          description: 'Specifies the version of the CAT token. dCDN must reject a token for an unsupported version number. A rejected token results in the client response being defined by the ‘verification-action’ property. A value greater than 0 is required: default value is 1.'
+          type: number
+        
+

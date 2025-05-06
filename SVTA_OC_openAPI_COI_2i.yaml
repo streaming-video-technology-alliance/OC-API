@@ -4,7 +4,7 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 2.0.0
+  version: 2.1.0
 externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'
@@ -129,19 +129,19 @@ components:
           description: 'The ID of MI.SecretStore that contains the configuration defining how to decrypt or access the referenced secret.'
           type: string
         secret-value:
-          description: 'Used only for embedded secrets, the Base64 encoded value of a CMS message or the cleartext string, depending on the defined MI.SecretStore configuration.'
+          description: 'Used only for embedded secrets, the PEM encoded or Base64 encoded value of a CMS message or the cleartext string, depending on the defined MI.SecretStore configuration. If the message begins with an [RFC7468] pre-encapsulation boundary of "---BEGIN CMS---", the message MUST be decoded according to [RFC7468]. If no pre-encapsulation boundary is present, the message MUST be decoded as per section 4 of [RFC4648]. Future versions of this specification will deprecate support for plain [RFC4648] encoding. MAndatory to specify if secret-path is not specified'
           type: string
         secret-path:
-          description: 'Used only for HashiCorp Vault secrets, the path, not including namespace, to the secret, including the key of the particular property to access as the last path parameter.'
+          description: 'Used only for HashiCorp Vault secrets, the path, not including namespace, to the secret, including the key of the particular property to access as the last path parameter. Mandatory to specify if secret-value is not specified.'
           type: string
         timeout:
-          description: 'Duration in seconds. If this property is present and the elapsed time since last retrieving the secret value has exceeded this timeout, any cached instance of this secret value MUST be discarded and fetched again from the associated secret store.'
+          description: 'Duration in seconds. If this property is present and the elapsed time since last retrieving the secret value has exceeded this timeout, any cached instance of this secret value MUST be discarded and fetched again from the associated secret store. This value has no effect when using an embedded store.'
           type: integer 
       example:
         value:
           {
           "secret-store-id": "store-1-cms",
-          "seret-value": "MIIBiQYJKoZIhvcNAQcDoIIBejCCAXYCAQAxggEhMIIBHQIBADAFMAACAQEwDQYJKoZIhvcNAQEBBQAEggEApJeXzsUS1jbAyNtQiJ9um9IMIHW5B2g+gHnXdNSTyd33OEfTR6yLSZihBlFbHpY3qSzK1CX7RF5Oz3SqLDW+r3i1D/aHbVXwQbviWHEvHterql8l9VDm2FCNaDx5vihdbtvng3+/vdJNNMMhmovwZL5uhPsK81DkKwZCvznMMWt8YdNSFGT62f73ash7Eg/mS54IUyYOJHYrXEkRLSjvl0j+JqcIR8hCOCA78+5bS4MgfdsS9xxSwQTrPru6EdTivMDKE/jlKg7li8lWdirWqtv0za5gLmH5T+zslXIoklwERAE50Jj8FxZD98EikKH8DAa+JeFsBm6Z1+yVFsWucTBMBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBws1riXA6m336zRbsiKtrVgCA267133v2zD/wjFQHXrKSJfd/2YJaxPskgdmQaVlgWCw=="
+          "seret-value": "---BEGIN CMS—MIIBiQYJKoZIhvcNAQcDoIIBejCCAXYCAQAxggEhMIIBHQIBADAFMAACAQEwDQYJKoZIhvcNAQEBBQAEggEApJeXzsUS1jbAyNtQiJ9um9IMIHW5B2g+gHnXdNSTyd33OEfTR6yLSZihBlFbHpY3qSzK1CX7RF5Oz3SqLDW+r3i1D/aHbVXwQbviWHEvHterql8l9VDm2FCNaDx5vihdbtvng3+/vdJNNMMhmovwZL5uhPsK81DkKwZCvznMMWt8YdNSFGT62f73ash7Eg/mS54IUyYOJHYrXEkRLSjvl0j+JqcIR8hCOCA78+5bS4MgfdsS9xxSwQTrPru6EdTivMDKE/jlKg7li8lWdirWqtv0za5gLmH5T+zslXIoklwERAE50Jj8FxZD98EikKH8DAa+JeFsBm6Z1+yVFsWucTBMBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBws1riXA6m336zRbsiKtrVgCA267133v2zD/wjFQHXrKSJfd/2YJaxPskgdmQaVlgWCw==–--END CMS–--"
           }
     MI_SecretCertificate:
       oneOf:
@@ -157,5 +157,11 @@ components:
           description: 'A unique ID for this certificate that can be referenced from a corresponding MI.SecretStore configuration defined by a counterparty.'
           type: string
         certificate-value:
-          description: 'The Base64 encoded certificate.'
+          description: 'PEM encoded OR Base64 encoded certificate. If the value begins with an [RFC7468] pre-encapsulation boundary of "---BEGIN CERTIFICATE---", the message MUST be decoded according to [RFC7468]. If no pre-encapsulation boundary is present, the message MUST be decoded as per section 4 of [RFC4648]. Future versions of this specification will deprecate support for plain [RFC4648] encoding'
           type: string
+      example:
+        value:
+          {
+          "certificate-id": "store-1-cms",
+          "certificate-value": "---BEGIN CERTIFICATE---MIIDZTCCAk2gAwIBAgIUFJokJzAxDgUGsBd8uhSblpMwSLAwDQYJKoZIhvcNAQELBQAwQjELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0dlb3JnaWExITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMzAxMjMyMDM2MDNaFw0yMzAyMjIyMDM2MDNaMEIxCzAJBgNVBAYTAlVTMRAwDgYDVQQIDAdHZW9yZ2lhMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCT11o9yebJmjiq7mXbLtnr5THpTnyahNpKECI+N8YZSl5+cS9hGa06zKQV3MNxbjJ15smmeWbgynYGwqhs5ZXGUjzd8S1/M1A08z1VFhEJiODQ00f3BOocpIn25RQzFz/BOLREW7sLkrhuz/WVBR3bzp6T1gu3nKcRSNuNxO1p9490gS1LhsZYQKfNvncuxBCP0GTNbUOXd6xkQEX5cEKoODUYWzOMdMAMlEEFb4jUjxYbbJoygwTMHpG2yGAQ2IXpB2/wrrawivxDHlMHGpMLIe8o6YBR4PDiOJmlCg9uIsirf65R1zhfcCxmNQ7z/IggC0WNQjZwymeZT9cFDdAgMBAAGjUzBRMB0GA1UdDgQWBBQb5eJeYLEpErJetb1eid5BgsS3uTAfBgNVHSMEGDAWgBQb5eJeYLEpErJetb1eid5BgsS3uTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBURnrjVbHVwfV/u/xjzK8p4dTke0xb0oKt0J5YeH95sRa66m3tQJYf0jbMNQ8InfXK0IzGM/uUOJX3daeOMQxMbJvaUDZV64kuU6IgkEQuLwkOP5k0Rc9+SuRMlvWOB2exiyQkd2iHJtURuEtvB39LIr4pPDsicBAYxsm5ybIWCmqNMPkVl8Qks3lAXeF+xvH11tmciTJSYP0Ud2psbV3lduD76UT2bzDGkr690KqroNS57WbQrHxEhtMbdq0cPfzqFlxyhckqNYrcw2v1igQDhplQ2eUc4ye0Mvimj1Me2mWjPvilhvS3vDGhrmcx9mlishlI/RFy6yDI1gtkF7eS---END CERTIFICATE---"
+          }

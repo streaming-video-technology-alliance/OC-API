@@ -4,7 +4,7 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 2.0.0
+  version: 2.1.0
 externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'

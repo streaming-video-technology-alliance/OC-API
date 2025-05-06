@@ -4,7 +4,7 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 2.0.0
+  version: 2.1.0
 externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'
@@ -96,6 +96,18 @@ components:
         origin-host:
           description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
           type: string
+        sni-host:
+          description: 'The Server Name Indication (SNI) to be used during the TLS handshake when establishing a secure connection with an endpoint. The sni-host MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]'
+          type: string
+        endpoint-is-expression:
+          description: 'If the endpoint-is-expression property is set to “True”,  the value of the endpoint will be evaluated as a MEL expression'
+          type: boolean
+        origin-host-is-expression:
+          description: 'If the origin-host-is-expression property is set to “True”,  the value of the origin-host will be evaluated as a MEL expression'
+          type: boolean
+        sni-host-is-expression:
+          description: 'If the sni-host-is-expression property is set to “True”,  the value of the sni-host will be evaluated as a MEL expression'
+          type: boolean
         webroot:  
           description: The path element that is prepended to a resource's URI before retrieving content from the source. 
           type: string

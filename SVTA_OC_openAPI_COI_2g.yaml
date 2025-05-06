@@ -4,7 +4,7 @@ info:
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 2.0.0
+  version: 2.1.0
 externalDocs:
     description: Find out more
     url: 'https://opencaching.svta.org/'
@@ -68,12 +68,30 @@ components:
           description: 'This property is used to instruct the dCDN to perform delegation operating a particular medium and/or a transport arrangement. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
           $ref: '#/components/schemas/MI_OcnDelivery'
         ocn-type:
-          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the Open Caching node types announced by the dCDN through the FCI interface. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
+          description: 'This property is used to instruct the dCDN to perform delegation operating the type of Open Caching nodes corresponding to one of the downstream node types announced by the dCDN through the FCI interface. At least one of the two properties, ocn-type and ocn-delivery, must be present.'
           type: string
+          enum: [HOME, EDGE]
         ocn-selection:
-          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through a best effort procedure . Last, “besteffort” means that the dCDN tries its best to fulfill the requested ocn-selection policy.'
+          description: '“attempt-or-failed”  and  “attempt-or-besteffort” mean that the delegation must be attempted considering the ocn-type and/or the  ocn-acquisition properties. If not possible then it is considered as an error and either fails (configuration failure) or the dCDN continues through a best effort procedure . Last, “besteffort” means that the dCDN tries its best to fulfill the requested ocn-selection policy. See the Open Casting specification [SVTA2065] for more explanation related to the multicast delivery scenario. The value “best-effort” is the default OCN selection policy. This property makes sense only when using multicast delivery:MI.OcnDelivery.ocn-medium=”SATELLITE” and/or (MI.OcnDelivery.ocn-transport”=”MULTICAST” or MI.OcnDelivery.ocn-transport”=”MABR”)'
           type: string
           enum: [attempt-or-failed, attempt-or-besteffort, besteffort]
+        multicast-mode:
+          description: 'Permits the enforcement of the dCDN operation mode when using multicast delivery in addition to unicast delivery (ocn-selection = “attempt-or-besteffort”). “automatic-popular” is (default) mode that makes the dCDN always try to multicast the most popular content. “on-demand” is the mode that enable the uCDN to control the selection of live content events for multicasting through a dedicated API. For more insights, please read the Open Casting specification [SVTA2065]. The value “automatic-popular” is the default multicast mode. This property makes sense only when using multicast delivery.'
+          type: string
+          enum: [automatic-popular, on-demand]
+      example:
+        value:
+          {
+            "generic-metadata-type": "MI.OcnSelection",
+            "generic-metadata-value": {
+              "ocn-delivery": {
+                "ocn-medium": "SATELLITE",
+                "ocn-transport": "MABR"
+                },
+              "ocn-type": "EDGE",
+              "ocn-selection": "attempt-or-failed"
+            }
+          }
     MI_OcnDelivery:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -89,7 +107,7 @@ components:
         ocn-transport:
           description: 'This property is used to instruct the dCDN to perform delegation operating a particular transport arrangement. The following values are specified: "MABR", "HAS". At least one of the two properties, ocn-medium and ocn-transport, must be present.'
           type: string
-          enum: [MABR,HAS]
+          enum: [MULTICAST, MABR, UNICAST, HAS]
     MI_RequestRouting:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -119,7 +137,7 @@ components:
           type: string
           enum: [vod, live, object-download]
         hints:
-          description: 'Other traffic characteristics that uCDN can indicate to the dCDN as suggestions for service optimization. Accepts free-form unconstrained values.'
+          description: 'Other traffic characteristics that uCDN can indicate to the dCDN as suggestions for service optimization. Accepts by default free-form unconstrained values. Some SVTA specifications may impose some well-defined values, as with the Open Casting specification [SVTA2065].'
           type: array 
           items:
             type: string
@@ -142,8 +160,12 @@ components:
         mediaServiceName:
           description: 'String describing or identifying the media service.'
           type: string 
+        maximumBitrate:
+          description: 'This is the maximum bitrate in bits per second (bps) attached to the service delivery. If the service includes multiple representations or playlists, this property restricts the bitrate of each representation or playlist with a published bitrate to a value below this property value. The property’s value indicates the maximum bitrate provisioned for the service, regardless of the representations or playlists sent concurrently. This property must be set according to the maximum bitrate dedicated to the uCDN by the dCDN and published through FCI.MulticastDelivery (limit type “ingress”). For unicast, the property’s value indicates the maximum bitrate provisioned for the service regardless of the representation/playlist that is downstream. This property must be set according to the maximum bitrate dedicated to the uCDN by the dCDN and published through FCI.CapacityLimit (limit type  “ingress”). If not specified, the uCDN relies entirely on the dCDN for all uCDN multicast service delivery. It is strongly encouraged to specify a maximum bitrate for allowing the uCDN to operate multicast delivery for several concurrent services involving live delivery.'
+          type: integer
       example:
         value: {
             "manifestURL": "/live/channelXYZ/index.mpd",
             "mediaServiceName": "ChannelXYZ",
+            "maximumBitRate": 5000000
             }
