@@ -108,7 +108,7 @@ components:
           type: string
         password:
           description: The remote password to use for connecting to the SFTP server when using password-based authentication. This field is not used when SSH keys are provided by the uCDN via MI.LoggingPullTransportMetadata.
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
     FCI.LoggingPullTransportS3API:
       required:
         - host
@@ -124,7 +124,7 @@ components:
           type: string
         access-key-secret:
           description: The access key secret to use when connecting to the API.
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
         bucket-name:
           description: The bucket name to use to pull log file objects.
           type: string
@@ -227,7 +227,7 @@ components:
           type: string
         password:
           description: The remote password to use for connecting to the SFTP server when using password-based authentication.
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
     MI.LoggingTransportS3API:
       required:
         - host
@@ -241,7 +241,7 @@ components:
           type: string
         access-key-secret:
           description: The access key secret to use when connecting to the API.
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
         bucket-name:
           description: The bucket name to use for pushed log file objects.
           type: string
@@ -341,7 +341,7 @@ components:
           enum: [MD5, SHA256]
         key:
           description: The key used in computing the HMAC. Required only if a key is used or an empty string, if the key is confidential to the dCDN
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
     MI.LoggingTransformEncrypt:
       description: With this object, fields are encrypted with the selected scheme, and the nonce used is prepended to the outputted ciphertext. The encryption key is specified as an MI.SecretValue and is transmitted in the transforms field with log records in the metadata  header or as a sidecar. When a new key is configured, a new file and sidecar must be created with an updated key reference.
       required:
@@ -353,7 +353,7 @@ components:
           enum: [AEAD-XCHACHA20-POLY1305-IETF, AEAD-CHACHA20-POLY1305-IETF, AEAD-AES256-GCM, RC4] 
         key:
           description: A reference to an externally defined encryption key.
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.SecretValue'
+          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
     MI.LoggingTransformEncode:
       required:
         - encoding
