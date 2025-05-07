@@ -101,32 +101,18 @@ components:
           description: 'This maps a particular limit to a specific metric with relevant real-time data provided by a telemetry source.'
           $ref: '#/components/schemas/FCI_TelemetryMetricRef'
     FCI_capacitylimittype:
+      anyOf:
+        - $ref: '#/components/schemas/FCI_capacitylimittypebase'
+        - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_capacitylimittypemulticast'
+    FCI_capacitylimittypebase:
       type: string
       enum: [egress, requests, storage-size, storage-objects, sessions, cache-size]
-    FCI.CapacityLimitScope:
-      type: object
-      description: 'An FCI.CapacityLimitScope object is used to define a more granular scope for a limit within the encompassing footprint.  The object will define what type of scope is being declared (published host, service ids, etc..) and will then contain an array of items of the type defined (publishedhostA.cdn.com, publishedhostB.cdn.com,etc..).  The scope types are meant to be extendible and reference already established identifiers as used in the SVA Configuration API framework.  The scope types MUST be mutually understood between the uCDN and dCDN. '
-      required:
-        - type 
-        - values
-      properties:
-        type:
-          description: 'Defines the type of scope definition. published-host is the host name that corresponds to one of the configured host names as part of the host index. service-id and property-id are properties of the MI.ServiceIDs.'
-          $ref: '#/components/schemas/FCI_capacitylimitscopetype'
-        values:
-          description: 'An array of strings of identifiers of the scope type'
-          type: array
-          items:
-            type: string
-    FCI_capacitylimitscopetype:
-      type: string
-      enum: [published-host, service-id, property-id]
     FCI_TelemetryMetricRef:
       type: object
       description: 'Defines a specific metric of a specific telemetry source.'
       properties:
         id:
-          description: 'The ID of the telematry source to be used in conjunction with the Telemetry interface URL not communicated.'
+          description: 'The ID of the telemetry source to be used in conjunction with the Telemetry interface URL not communicated.'
           type: string
         metric:
           description: ' A unique (for the telemetry source) identifier for that metric. '

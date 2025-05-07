@@ -140,7 +140,9 @@ components:
           description: 'Other traffic characteristics that uCDN can indicate to the dCDN as suggestions for service optimization. Accepts by default free-form unconstrained values. Some SVTA specifications may impose some well-defined values, as with the Open Casting specification [SVTA2065].'
           type: array 
           items:
-            type: string
+            oneOf:
+              - type: string
+              - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/MI_traffictypemulticasthints'
       example:
         value: {
                 "traffic-type": "vod",

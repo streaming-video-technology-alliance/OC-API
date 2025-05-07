@@ -1,0 +1,63 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - Object definitions attached to the OpenCasting specification (SVTA2065)
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA).'
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 1.0.0
+externalDocs:
+    description: Find out more
+    url: 'https://opencaching.svta.org/'
+components:
+  schemas:
+#FCI
+    FCI_LOI_capabilitytype:
+      type: string
+      enum: [FCI.MulticastDelivery]
+    FCI_LOI_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.MulticastDelivery'
+    FCI.MulticastDelivery:
+      description: 'Permit the discovery of the capabilities of the downstream CDN allocated to the uCDN related to multicast delivery.'
+      type: object
+      required:
+        - traffic-types
+      properties:
+        capacity-limits:
+          description: 'Expose the capacity limits related to multicast deleivery as specified in the Capacity Insight Interface (SVTA2049).'
+          type: array
+          items: 
+            $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CapacityLimit'
+        traffic-types:
+          description: 'Permits the dCDN to announce the list of traffic types (MI.TrafficType) supported over the multicast delivery.'
+          type: array
+          items: 
+            $ref: './SVTA_OC_openAPI_COI_2g.yaml#/components/schemas/MI.TrafficType'
+    FCI_capacitylimittypemulticast:
+      description: 'A new capacity limit that complements the list depicted in the Capacity Insight Interface (SVTA2049). maximum MEN node input bitrate at DMM interface (see SVTA2049)'
+      type: string
+      enum: [ingress]
+    FCI_recordtypemulticast:
+      type: string
+      enum: [opencaching_mcst_minimal_json_v1, opencaching_mcst_minimal_whitespace_v1, opencaching_mcst_minimal_csv_v1, opencaching_mcst_standard_json_v1, opencaching_mcst_standard_csv_v1, opencaching_mcst_standard_whitespace_v1, opencaching_mcst_extended_json_v1, opencaching_mcst_extended_csv_v1, opencaching_mcst_extended_whitespace_v1]
+# COI
+    MI_traffictypemulticasthints:
+      type: array
+      items: 
+        type: string
+        enum: [carousel, no-carousel, multiplex, serial, manifest]
+    MI_manifestCarousel:
+      description: 'A manifest format for describing a list of files to feed a multicast carousel. See Open Casting specification (SVTA2065)'
+      type: array
+      items:
+        $ref: '#/components/schemas/MI_carouseledfile'
+    MI_carouseledfile:
+      description: 'the description of a file to be sent over a multicast carousel'
+      properties:
+        name:
+          type: string
+        size: 
+          type: number
+        url:
+          type: string
+          format: uri

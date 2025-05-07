@@ -129,6 +129,10 @@ components:
           description: The bucket name to use to pull log file objects.
           type: string
     FCI_recordtype:
+      oneOf:
+        - $ref: '#/components/schemas/FCI_recordtypebase'
+        - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_recordtypemulticast'     
+    FCI_recordtypebase:
       type: string
       enum: [cdni_http_request_v1,opencaching_minimal_json_v1,opencaching_standard_json_v1,opencaching_extended_json_v1,opencaching_minimal_whitespace_v1,opencaching_standard_whitespace_v1,opencaching_extended_whitespace_v1,opencaching_minimal_csv_v1,opencaching_standard_csv_v1,opencaching_extended_csv_v1,opencaching_protobuf_v1]
     FCI_containerformat:

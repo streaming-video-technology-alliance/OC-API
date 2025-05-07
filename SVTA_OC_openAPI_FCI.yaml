@@ -196,7 +196,6 @@ components:
           type: array
           description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006]).'
           items:
-            type: string
             $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint'
     FCI.DeliveryProtocol:
       type: object

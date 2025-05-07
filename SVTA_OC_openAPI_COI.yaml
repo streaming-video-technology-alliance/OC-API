@@ -11,7 +11,7 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
-  /OC/CI/configuration:
+  /OC/COI/configuration:
     put:
       tags:
         - OC_COI_simple
@@ -100,7 +100,7 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/CI/configuration/{host}:
+  /OC/COI/configuration/{host}:
     put:
       tags:
         - OC_COI_simple_host
@@ -210,7 +210,7 @@ paths:
         404:
           description: Not found.
           content: {}
-  /OC/CI/configuration/{host}/{pathPattern}:
+  /OC/COI/configuration/{host}/{pathPattern}:
     put:
       tags:
         - OC_COI_simple_pathPattern
@@ -339,7 +339,7 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/CI/subscription:
+  /OC/COI/subscription:
     post:
       tags:
         - OC_COI_notif
@@ -392,7 +392,7 @@ paths:
           description: 'Forbidden.'
         404:
           description: 'No such API.' 
-  /OC/CI/subscription/{subscriptionId}:
+  /OC/COI/subscription/{subscriptionId}:
     get:
       tags:
         - OC_COI_notif
@@ -451,7 +451,7 @@ paths:
           content: {}    
         404:
           description: 'Not found' 
-  /OC/CI/trigger:
+  /OC/COI/triggers:
     post:
       tags:
         - OC_OCI_trigger
@@ -468,7 +468,7 @@ paths:
         required: true
       callbacks:
         requestMetadata:
-          /OC/CI/metadata/{pathName}:
+          /OC/COI/metadata/{pathName}:
             get:
               summary: ''
               description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata elements referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006/RFC8007.'
@@ -512,10 +512,32 @@ paths:
         403:
           description: Forbidden.
           content: {}
-  /OC/CI/status/{triggerId}:
+    get:
+      summary: 'Fetch the trigger collection'
+      description: 'According to the RFC 8007 for the Trigger protcol'
+      tags: 
+        - OC_OCI_trigger
+      operationId: OC_CI_collection
+      responses:
+        200:
+          description: 'list of triggers'
+          content:
+            application/cdni;ptype=ci-trigger-collection:
+              schema:
+                $ref: '#/components/schemas/ci-trigger-collection'
+        304:
+          description: 'not modified.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+  /OC/COI/triggers/{triggerId}:
     get: 
       summary: 'Check the CI trigger status.'
-      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcool and RFC 8006.'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcol and RFC 8006.'
       tags:
         - OC_OCI_trigger
       operationId: OC_CI_status
@@ -1173,6 +1195,38 @@ components:
     CI_status:
       type: string
       enum: [pending, active, complete, processed, failed, canceling, canceled]
+    ci-trigger-collection:
+      type: object
+      description: 'A Trigger Collection'
+      required:
+        - triggers
+      properties:
+        triggers:
+          description: 'Links to Trigger Status Resources in the collection.'
+          type: array
+          items: 
+            type: string
+        staleresourcetime:
+          description: 'The length of time for which the dCDN guarantees to keep a completed Trigger Status Resource.  After this time, the dCDN SHOULD delete the Trigger Status Resource and all references to it from collectionsMandatory, in the collection of all Trigger Status Resources if the dCDN deletes stale entries.  If the property is present in the filtered collections, it MUST have the same value as in the collection of all Trigger Status Resources.'
+          $ref: '#/components/schemas/CI_time'
+        cdn-id:
+          description: 'Only in the collection of all Trigger Status Resources, if the dCDN implements the filtered collections. Optional in the filtered collections (the uCDN can always find the dCDN cdn-id in the collection of all Trigger Status Resources, but the dCDN can choose to repeat that information in its implementation of filtered collections)' 
+          type: string
+        coll-all:
+          description: 'Link (URL path) to all triggers collection'
+          type: string
+        call-pending:
+          description: 'Link (URL path) to the pending triggers collection'
+          type: string
+        call-active:
+          description: 'Link (URL path) to the active triggers collection'
+          type: string
+        call_complete:
+          description: 'Link (URL path) to the complete triggers collection'
+          type: string        
+        call_failed:
+          description: 'Link (URL path) to the failed triggers collection'
+          type: string        
     CI_error:
       type: object
       required:
@@ -1235,20 +1289,9 @@ components:
           metadata.urls:
             $ref: '#/components/schemas/CI_urls'
             description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
-          content.urls:
-            $ref: '#/components/schemas/CI_urls'
-            description: 'The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
-          content.ccid:
-            type: array
-            items:
-              type: string
-            description: 'The Content Collection IDentifier of content the trigger applies to. The "ccid" is a grouping of content, as defined by [RFC8006]'
           metadata.patterns:
             $ref: '#/components/schemas/CI_patterns'
             description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
-          content.patterns:
-            $ref: '#/components/schemas/CI_patterns'
-            description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
       type: number
       description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
