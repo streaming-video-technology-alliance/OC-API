@@ -11,7 +11,7 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
-  /OC/COI/configuration:
+  /OC/CI/configuration:
     put:
       tags:
         - OC_COI_simple
@@ -100,20 +100,20 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/COI/configuration/{host}:
+  /OC/CI/configuration/{host}:
+    parameters:
+      - name: host
+        in: path
+        required: true
+        description: 'Parameter to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
+        schema:
+          type: string
     put:
       tags:
         - OC_COI_simple_host
       summary: Communicates part of the metadata/configuration (RFC8006 + RFC8804) to the ISP with a simple API.
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host
-      parameters:
-        - name: host
-          in: path
-          required: true
-          description: 'Parameter to create/update the configuration related to a host. "www.disney.com" allows to create or modify the configuration associated with that host name.'
-          schema:
-            type: string
       requestBody:
         description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNI RFCs 8006/8804. It is the metadata associated with a host name. the MI.HostMetadata object must be provided.'
         content:
@@ -162,13 +162,6 @@ paths:
       summary: 'Gets part of the metadata configuration (RFC 8006)'
       description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve the valid configuration associated with a host name. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration_host
-      parameters:
-        - name: host
-          in: path
-          required: true
-          description: 'Parameter to get the configuration related to a host. "www.disney.com" allows to get the configuration associated with that host name.'
-          schema:
-            type: string
       responses:
         200:
           description: 'Prepositioned configuration metadata. The MI.HostMetadata object is returned.'
@@ -190,13 +183,6 @@ paths:
         - OC_COI_simple_host
       summary: 'Deletes part of the configuration related to a host name.'
       operationId: OC_CI_deleteConfiguration_host
-      parameters:
-        - name: host
-          in: path
-          description: 'Parameter to delete the configuration related to a host. "www.disney.com" allows to delete the configuration associated with that host name.'
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: 'Part of the prepositioned configuration metadata, according to the host parameter, is deleted/purged. This does cancel/stop the corresponding delegation.'
@@ -210,27 +196,27 @@ paths:
         404:
           description: Not found.
           content: {}
-  /OC/COI/configuration/{host}/{pathPattern}:
+  /OC/CI/configuration/{host}/{pathPattern}:
+    parameters:
+      - name: host
+        in: path
+        description: 'Parameter indicating the host ("www.disney.com")'
+        required: true
+        schema:
+          type: string
+      - name: pathPattern
+        in: path
+        description: 'Parameter to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
+        required: true
+        schema:
+          type: string
+          format: URL
     put:
       tags:
         - OC_COI_simple_pathPattern
       summary: Communicates the metadata/configuration (RFC8006 + RFC88004) to the ISP with a simple API
       description: 'To be used when the metadata to communicate is pseudo static and simple. The ISP (dCDN) processes the request and answers immediately. For a more complex metadata then use the CI API.'
       operationId: OC_CI_configure_host_pathPattern
-      parameters:
-        - name: host
-          in: path
-          description: 'Parameter indicating the host ("www.disney.com")'
-          required: true
-          schema:
-            type: string
-        - name: pathPattern
-          in: path
-          description: 'Parameter to update the configuration related to a host AND a path pattern (e.g. the path pattern  "/live/*" associated with the host "www.disney.com").'
-          required: true
-          schema:
-            type: string
-            format: URL
       requestBody:
         description: 'The metadata(configuration) to be considered/processed by the ISP According to SVA OpenCaching specification and CDNi RFCs 8006/8804. It is a part of it according to the host and pathPattern parameters. The MI.PathMetadata object is provided.'
         content:
@@ -279,19 +265,6 @@ paths:
       summary: 'Gets part of the metadata configuration (RFC 8006) associated with a path pattern.'
       description: 'This API is exposed by the dCDN and is used by the uCDN to retrieve a valid configuration subset. It does not contain any metadata object references.'
       operationId: OC_CI_getConfiguration_pathPattern
-      parameters:
-        - name: host
-          in: path
-          description: 'Parameter to get the configuration related to a host.'
-          required: true
-          schema:
-            type: string
-        - name: pathPattern
-          in: path
-          description: 'Parameter to get the configuration related to a host AND a path pattern GET  /OC/CI/configuration/www.disney.com/live/*" to get metadata associated with that path pattern. The MI.PathMetadata object is returned.'
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: 'Part of the prepositioned configuration metadata according to the host and pathPattern parameters'
@@ -313,19 +286,6 @@ paths:
         - OC_COI_simple_pathPattern
       summary: 'Deletes part of the configuration associated with a host name AND a path pattern'
       operationId: OC_CI_deleteConfiguration_pathPattern
-      parameters:
-        - name: host
-          in: path
-          description: 'Parameter to indicate the host.'
-          required: true
-          schema:
-            type: string
-        - name: pathPattern
-          in: path
-          description: 'Parameter to delete the configuration related to a host AND a path pattern.'
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: 'Part of the prepositioned configuration metadata, according to the host and the pathPattern parameters, is deleted/purged. This does cancel/stop the corresponding delegation.'
@@ -339,7 +299,7 @@ paths:
         404:
           description: Not found.
           content: {}  
-  /OC/COI/subscription:
+  /OC/CI/subscription:
     post:
       tags:
         - OC_COI_notif
@@ -392,20 +352,20 @@ paths:
           description: 'Forbidden.'
         404:
           description: 'No such API.' 
-  /OC/COI/subscription/{subscriptionId}:
+  /OC/CI/subscription/{subscriptionId}:
+    parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
+        schema:
+          type: string
     get:
       tags:
         - OC_COI_notif
       summary: get the OCI notification subscription 
       operationId: oc_oci_get_notificationSubscription
       description: ''
-      parameters:
-        - name: subscriptionId
-          in: path
-          required: true
-          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
-          schema:
-            type: string
       responses:
         200:
           description: 'OCI notification subscription.'
@@ -432,13 +392,6 @@ paths:
         - OC_COI_notif
       summary: 'delete the notification subscription'
       operationId: OC_oci_delete_notificationSubscription
-      parameters:
-        - name: subscriptionId
-          in: path
-          required: true
-          description: 'Identifier of the subscription resource. This parameter is returned when creating the subscription.'
-          schema:
-            type: string 
       responses:
         200:
           description: 'Notification subscription deleted'
@@ -451,7 +404,7 @@ paths:
           content: {}    
         404:
           description: 'Not found' 
-  /OC/COI/triggers:
+  /OC/CI/triggers:
     post:
       tags:
         - OC_OCI_trigger
@@ -534,21 +487,21 @@ paths:
         403:
           description: Forbidden.
           content: {}
-  /OC/COI/triggers/{triggerId}:
+  /OC/CI/triggers/{triggerId}:
+    parameters:
+      - in: path
+        name: triggerId
+        description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the PUT /OC/CI/configuration API and the POST OC/CI/trigger API.'
+        required: true
+        schema:
+          type: string
+          format: url
     get: 
       summary: 'Check the CI trigger status.'
       description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcol and RFC 8006.'
       tags:
         - OC_OCI_trigger
       operationId: OC_CI_status
-      parameters:
-        - in: path
-          name: triggerId
-          description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the PUT /OC/CI/configuration API and the POST OC/CI/trigger API.'
-          required: true
-          schema:
-            type: string
-            format: url
       responses:
         200:
           description: 'Preposioning metadata/configuration status.'
@@ -571,21 +524,10 @@ paths:
       tags:
         - OC_OCI_trigger
       operationId: OC_CI_delete
-      parameters:
-        - in: path
-          name: triggerId
-          description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the PUT /OC/CI/configuration API and the POST OC/CI/trigger API.'
-          required: true
-          schema:
-            type: string
-            format: url
       responses:
         200:
           description: 'trigger command deleted'
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                $ref: '#/components/schemas/ci-trigger-status'
+          content: {}
         400:
           description: Command is invalid.
           content: {}
@@ -1057,6 +999,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/MI_payloadtype'
         - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/MI_LOI_payloadtype'
+        - $ref: './SVTA_OC_openAPI_CMI.yaml#/components/schemas/MI_CMI_payloadtype'
         - $ref: './SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_COI2a_payloadtype'
         - $ref: './SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_COI2b_payloadtype'
         - $ref: './SVTA_OC_openAPI_COI_2c.yaml#/components/schemas/MI_COI2c_payloadtype'
@@ -1074,6 +1017,7 @@ components:
         - $ref: '#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI_payloadvalue'
         - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/MI_LOI_payloadvalue'
+        - $ref: './SVTA_OC_openAPI_CMI.yaml#/components/schemas/MI_CMI_payloadvalue'
         - $ref: './SVTA_OC_openAPI_COI_2a.yaml#/components/schemas/MI_COI2a_payloadvalue'
         - $ref: './SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_COI2b_payloadvalue'
         - $ref: './SVTA_OC_openAPI_COI_2c.yaml#/components/schemas/MI_COI2c_payloadvalue'
