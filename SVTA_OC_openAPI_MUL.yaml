@@ -11,10 +11,10 @@ externalDocs:
 components:
   schemas:
 #FCI
-    FCI_LOI_capabilitytype:
+    FCI_MUL_capabilitytype:
       type: string
       enum: [FCI.MulticastDelivery]
-    FCI_LOI_capabilityvalue:
+    FCI_MUL_capabilityvalue:
       oneOf:
         - $ref: '#/components/schemas/FCI.MulticastDelivery'
     FCI.MulticastDelivery:
