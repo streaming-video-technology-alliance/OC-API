@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - CONfiguration Interface (COI) - 2b - Processing stages
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It provides metadata objects definition for processing stages configuration.'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 2.0.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2032 specification'
+    url: 'https://www.svta.org/product/svta2032/'
 components:
   schemas:
 # MI objects

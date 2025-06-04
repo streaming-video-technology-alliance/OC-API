@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - Capacity Insight Interface (CII)
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA). It exposes some capacity insight information through FCI dedicated objects to the uCDN.'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2049 specification' 
+    url: 'https://www.svta.org/product/svta2049/'
 components:
   schemas:
     FCI_CII_capabilitytype:

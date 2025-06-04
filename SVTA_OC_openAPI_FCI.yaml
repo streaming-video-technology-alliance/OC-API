@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - Footprint and Capabilities Interface (FCI)
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). Exposes a REST API and IETF CDNi defined basic objects'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.1.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2045 specification'
+    url: 'https://www.svta.org/product/2045/'
 security: 
   - bearerToken: []
 paths:

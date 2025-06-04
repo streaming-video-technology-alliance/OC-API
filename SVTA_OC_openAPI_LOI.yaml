@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - LOgging Interaface (LOI)
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP (dCDN) according to the Streaming Video Alliance (SVTA). It exposes the metadata objects used by a uCDN to configure the dCDN logging process (records and format).'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2050 specification'
+    url: 'https://www.svta.org/product/svta2050/'
 components:
   schemas:
 #FCI

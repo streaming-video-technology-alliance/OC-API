@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - CONfiguration Interface (COI) - 2h - Private Features
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). Metadata objects for dicovering and configuraing private extensions.'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 2.0.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2038 specification'
+    url: 'https://www.svta.org/product/svta2038/'
 components:
   schemas:
 # FCI objects

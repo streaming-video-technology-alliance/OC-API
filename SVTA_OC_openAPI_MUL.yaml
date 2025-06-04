@@ -1,12 +1,12 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - Object definitions attached to the OpenCasting specification (SVTA2065)
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA).'
+  title: Open Caching API - OpenCasting 
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Alliance (SVTA). '
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
 externalDocs:
-    description: Find out more
+    description: 'specification SVTA 2065'
     url: 'https://opencaching.svta.org/'
 components:
   schemas:

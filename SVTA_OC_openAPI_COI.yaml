@@ -6,8 +6,8 @@ info:
     email: guillaume.bichot@broadpeak.tv
   version: 2.1.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2028 specification refering to the SVTA 2029 (CDNi extension) and SVTA 2030 (Simple metadata configuration API)'
+    url: 'https://www.svta.org/product/svta2028/'
 security: 
   - bearerToken: []
 paths:
@@ -32,28 +32,28 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currently under processing. The response gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         200:
           description: The configuration file has been modified.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration file has been created.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration file. The URL corresponds to the configuration file modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed".'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden.
         404:
@@ -128,28 +128,28 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration metadata file has been successfully updated, creating a new Host entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         202:
           description: 'The 202 (Processing) status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete. The reponse gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currenly under processing.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.HostMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed".'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         403:
           description: Forbidden.
         404:
@@ -231,28 +231,28 @@ paths:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration file.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         201:
           description: The configuration metadata file has been successfully updated, creating a new path metadata entry.
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is complete. The status report gathers the URL of the activated metadata configuration part.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         202:
           description: 'The 102 (Processing) status code is an interim response used to inform the client that the server has accepted the complete request, but has not yet completed it. This status code SHOULD only be sent when the server has a reasonable expectation that the request will take significant time to complete. The reponse gathers in the Location header the triggerID URL to be used with the GET OC/CI/status/{TriggerID} in order for the uCDN to check the completion of the configuration'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is pending. The status report gathers the URL of the metadata configuration file(s) currenly under processing.'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         400:
           description: 'Command is invalid. The status report gathers the URL of the faulty metadata configuration part. The URL corresponds to the request body part (MI.PathMetadata) modified: Invalid metadata objects are marked with the properties safe-to-redistribute set to "false" and incomprehensible set to "true". Note that the status report is not kept by the dCDN.'
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
                 description: 'The status is "Failed"'
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         403:
           description: 'Forbidden.'
         404:
@@ -335,7 +335,7 @@ paths:
                 content: 
                   'application/cdni;ptype=ci-trigger-status':
                     schema:
-                      $ref: '#/components/schemas/ci-trigger-status'
+                      $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
               responses:
                 '200':
                   description: 'Configuration status updated.'
@@ -417,7 +417,7 @@ paths:
           application/cdni;ptype=ci-trigger-command:
             schema:
               description: 'For triggering the creation of a trigger command for metadata. The URL(s) present in the ci-trigger-commnd metadata.urls property should conform to the callbacks format (see below).'
-              $ref: '#/components/schemas/ci-trigger-command'
+              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command'
         required: true
       callbacks:
         requestMetadata:
@@ -452,7 +452,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                $ref: '#/components/schemas/ci-trigger-status' 
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status' 
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -477,7 +477,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-collection:
               schema:
-                $ref: '#/components/schemas/ci-trigger-collection'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection'
         304:
           description: 'not modified.'
           content: {}
@@ -508,7 +508,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                $ref: '#/components/schemas/ci-trigger-status'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
         304:
           description: 'not modified.'
           content: {}
@@ -1092,150 +1092,4 @@ components:
                 "service-name" : "My Streaming Service",
                 "property-id" : "$path_element(req.uri, 1)",
                 "property-id-is-expression" : true
-                }          
-# CI (Control) interface (RFC 8007) 
-# Regsitered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml
-    ci-trigger-command:
-      type: object
-      required:
-        - cdn-path 
-      properties:
-        cdn-path:
-          $ref: '#/components/schemas/CI_cdn-path'
-          description: 'The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs'
-        cancel:
-          $ref: '#/components/schemas/CI_cancel'
-          description: 'The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel'
-        trigger:
-          $ref: '#/components/schemas/CI_trigger'
-          description: 'A specification of the trigger type and a set of data to act upon'
-    ci-trigger-status:
-      type: object
-      description: 'Trigger Status Resource created by the dCDN once processing a ci-trigger-Command'
-      required:
-        - trigger
-        - ctime
-        - mtime 
-        - status
-      properties:
-        trigger:
-          $ref: '#/components/schemas/CI_trigger'
-          description: 'The Trigger Specification posted in the body of the CI/T Command. Note that this need not be a byte-for-byte copy. For example, in the JSON representation the dCDN may re-serialize the information differently.'
-        ctime:
-          $ref: '#/components/schemas/CI_time'
-          description: 'Time at which the CI/T Command was received by the dCDN. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
-        mtime:
-          $ref: '#/components/schemas/CI_time'
-          description: 'Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs' 
-        etime:
-          $ref: '#/components/schemas/CI_time'
-          description: 'Estimate of the time at which the dCDN expects to complete the activity. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs'
-        status:
-          $ref: '#/components/schemas/CI_status'
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/CI_error'
-    CI_status:
-      type: string
-      enum: [pending, active, complete, processed, failed, canceling, canceled]
-    ci-trigger-collection:
-      type: object
-      description: 'A Trigger Collection'
-      required:
-        - triggers
-      properties:
-        triggers:
-          description: 'Links to Trigger Status Resources in the collection.'
-          type: array
-          items: 
-            type: string
-        staleresourcetime:
-          description: 'The length of time for which the dCDN guarantees to keep a completed Trigger Status Resource.  After this time, the dCDN SHOULD delete the Trigger Status Resource and all references to it from collectionsMandatory, in the collection of all Trigger Status Resources if the dCDN deletes stale entries.  If the property is present in the filtered collections, it MUST have the same value as in the collection of all Trigger Status Resources.'
-          $ref: '#/components/schemas/CI_time'
-        cdn-id:
-          description: 'Only in the collection of all Trigger Status Resources, if the dCDN implements the filtered collections. Optional in the filtered collections (the uCDN can always find the dCDN cdn-id in the collection of all Trigger Status Resources, but the dCDN can choose to repeat that information in its implementation of filtered collections)' 
-          type: string
-        coll-all:
-          description: 'Link (URL path) to all triggers collection'
-          type: string
-        call-pending:
-          description: 'Link (URL path) to the pending triggers collection'
-          type: string
-        call-active:
-          description: 'Link (URL path) to the active triggers collection'
-          type: string
-        call_complete:
-          description: 'Link (URL path) to the complete triggers collection'
-          type: string        
-        call_failed:
-          description: 'Link (URL path) to the failed triggers collection'
-          type: string        
-    CI_error:
-      type: object
-      required:
-        - error
-      description: 'Metadata and content references copied from the Trigger Specification.  Only those URLs and patterns to which the error applies are included in each property, but those URLs and patterns MUST be exactly as they appear in the request; the dCDN MUST NOT generalize the URLs. For example, if the uCDN requests pre-positioning of URLs "https://content.example.com/a" and "https://content.example.com/b", the dCDN must not generalize its error report to the pattern "https://content.example.com/*".)'
-      properties:
-        error:
-          type: string
-          enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
-        metadata.urls:
-          $ref: '#/components/schemas/CI_urls'
-          description: 'Copied from the CI_trigger related request/command concerned by the error'
-        content.urls:
-          $ref: '#/components/schemas/CI_urls'
-          description: 'Copied from the CI_trigger related request/command concerned by the error'
-        metadata.patterns:
-          $ref: '#/components/schemas/CI_patterns'
-          description: 'The metadata the trigger applies to'
-        content.patterns:
-          $ref: '#/components/schemas/CI_patterns'
-          description: 'The content the trigger applies to'
-        description:
-          type: string
-          description: 'A human-readable description of the error'
-    CI_cdn-path:
-      type: array
-      items:
-        type: string
-    CI_cancel:
-       type: array
-       items:
-          type: string
-    CI_patterns:
-      type: array
-      items:
-        type: object
-        properties:
-          pattern:
-            type: string
-          case-sensitive:
-              type: boolean
-              default: false
-          match-query-string:
-            type: boolean
-            default: false
-            description: 'Flag indicating whether to include the query part of the URI when comparing against the pattern.'    
-    CI_urls:
-      type: array
-      items:
-        type: string
-      description: 'The URLs of content the CI Trigger Command applies to.'
-    CI_trigger:
-        type: object
-        required:
-          - type
-        properties:
-          type:
-            type: string
-            enum: [preposition, invalidate, purge]
-          metadata.urls:
-            $ref: '#/components/schemas/CI_urls'
-            description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
-          metadata.patterns:
-            $ref: '#/components/schemas/CI_patterns'
-            description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
-    CI_time:
-      type: number
-      description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
+                }

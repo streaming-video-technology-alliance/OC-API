@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Open Caching API - BOotstrap Interface (BOI)
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA).'
+  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). The Bootstrap API exposes the list of supported interfaces and for each interface, the list of supported versions.'
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
 externalDocs:
-    description: Find out more
-    url: 'https://opencaching.svta.org/'
+    description: 'Corresponding SVTA 2060 specification' 
+    url: 'https://www.svta.org/svta-published-documents-dashboard/?add-to-cart=47273'
 security: 
   - bearerToken: []
 paths:

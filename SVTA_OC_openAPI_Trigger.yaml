@@ -1,0 +1,566 @@
+openapi: 3.0.1
+info:
+  title: Open Caching API - CDNi Trigger model
+  description: "This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It exposes API and data model object elements for content management in the dCDN  Open Caching infrastructure."
+  contact:
+    email: guillaume.bichot@broadpeak.tv
+  version: 1.0.0
+externalDocs:
+  description: 'Corresponding IETF CDNi specification' 
+  url: "https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/"
+components:
+  schemas:
+# FCI objects (Trigger V2)
+    FCI_CMI_capabilitytype:
+      type: string
+      enum: [FCI.CITEndpoints, FCI.CITScope, FCI.CITObjectListType, FCI.CITPrivateUrlType, FCI.CITExtendedStatus]
+    FCI_CMI_capabilityvalue:
+      oneOf:
+        - $ref: '#/components/schemas/FCI.CITEndpoints'
+        - $ref: '#/components/schemas/FCI.CITScope'
+        - $ref: '#/components/schemas/FCI.CITObjectListType'
+        - $ref: '#/components/schemas/FCI.CITPrivateUrlType'
+        - $ref: '#/components/schemas/FCI.CITExtendedStatus'
+    FCI.CITEndpoints:
+      description: 'The CI/T trigger endpoint capability object is used to advertise one or more CI/T interface endpoints along with CI/T interface versions supported by these endpoints. The capability type is "FCI.CITEndpoints". Version 1, as originally defined in [RFC8007], is the default if this capability is not explicitly declared.'
+      type: object
+      required:
+        - trigger-endpoint-uri
+        - trigger-versions
+      properties:
+        trigger-endpoint-uri:
+          description: "CI/T endpoint URI"
+          type: string
+          format: url
+        trigger-versions:
+          description: "A list of CI/T versions supported by the trigger endpoint."
+          type: array
+          items:
+            type: string
+        trigger-subject:
+          description: 'Array of trigger subjects supported by the trigger endpoint. A missing or empty "trigger-subject" list means that all trigger subjects are supported by the endpoint. dCDN SHOULD advertise only one endpoint for every trigger subject and CI/T interface version pair. If more than one interface endpoint supports the same trigger subject and CI/T interface version (e.g., CI/T version 2 interface for content objects), uCDN SHOULD be able to use any of the advertised CI/T interface endpoints interchangeably.'
+          type: array
+          items:
+            type: string
+            enum: [content]
+    FCI.CITScope:
+      description: 'The CI/T supports several trigger actions for different trigger subjects as defined in Section 4.1.1 and Section 4.1.2.2. Additional actions, as well as subjects, may be defined in the future. This object is used to indicate support for a trigger action for a subject. It further specifies the trigger generic spec types that may be used for selecting the targets the triggers are applied on, along with the supported trigger generic extension types.'
+      required:
+        - trigger-action
+        - trigger-subject
+      properties:
+        trigger-action:
+          description: "The supported CDNI CI/T trigger action."
+          $ref: "#/components/schemas/CI_triggeraction"
+        trigger-subject:
+          description: "The supported CDNI CI/T trigger subject."
+          type: string
+          enum: [content]
+        trigger-specs:
+          description: 'A list of supported CDNI CI/T GenericSpecObject types for trigger action and subject. The default in case of a missing or an empty list MUST be interpreted as "no GenericExtensionObject types supported". A non-empty list MUST be interpreted as containing "the only GenericExtensionObject types that are supported".'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_triggerSpec"
+        trigger-extensions:
+          description: 'A list of supported CDNI CI/T GenericExtensionObject types for trigger action and subject. The default in case of a missing or an empty list MUST be interpreted as "no GenericExtensionObject types are supported". A non-empty list MUST be interpreted as containing "the only GenericExtensionObject types that are supported".'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_triggerExtension"
+    FCI.CITObjectListType:
+      description: 'Given an object list being supported by dCDN, the CI/T Object List Type capability object is used to indicate support for one or more Object List types listed in Section 7.5 by the type property of the "ObjectList" object.'
+      properties:
+        object-list-types:
+          description: "A list of supported ObjectList types. In case of a missing or an empty list, MUST be interpreted as no ObjectList types are supported."
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_objectListType"
+    FCI.CITPrivateUrlType:
+      description: 'The CI/T Private URL capability object is used to indicate support for operations on private URLs (see Section 4.3.1 for details). The capability type is "FCI.CITPrivateUrlType".'
+      properties:
+        private-url-type-support:
+          description: 'Indicate whether private URL type is supported by dCDN. In case of missing or an empty attribute, MUST be interpreted as no support for private URLs.'
+          type: boolean
+    FCI.CITExtendedStatus:
+      description: 'The CI/T extended trigger status capability object is used to indicate support for extended trigger status. The extended trigger status is returned upon uCDN request and includes: "objects" attribute in the "trigger" object, "objects" attribute in Error.v2 description object, "all-triggers" attribute in the "trigger-collection" object'
+      properties:
+        extended-status-objects:
+          description: "List of CI/T objects that support extended attributes. By default, in case of a missing or an empty list, no extended attribute objects are supported."
+          type: array
+          items:
+            type: string
+            enum: [Error.v2, trigger, trigger-collection]
+# Trigger V1 (RFC 8007)
+# Registered CI payload types in IANA: https://www.iana.org/assignments/cdni-parameters/cdni-parameters.xhtml
+    ci-trigger-command:
+      type: object
+      required:
+        - cdn-path
+      properties:
+        cdn-path:
+          $ref: "#/components/schemas/CI_cdn-path"
+          description: "The CDN PIDs of CDNs that have already issued the CI/T Command to their dCDNs"
+        cancel:
+          $ref: "#/components/schemas/CI_cancel"
+          description: "The URLs of Trigger Status Resources for CI/T Trigger Commands that the uCDN wants to cancel"
+        trigger:
+          $ref: "#/components/schemas/CI_trigger"
+          description: "A specification of the trigger type and a set of data to act upon"
+    ci-trigger-status:
+      type: object
+      description: "Trigger Status Resource created by the dCDN once processing a ci-trigger-Command"
+      required:
+        - trigger
+        - ctime
+        - mtime
+        - status
+      properties:
+        trigger:
+          $ref: "#/components/schemas/CI_trigger"
+          description: "The Trigger Specification posted in the body of the CI/T Command. Note that this need not be a byte-for-byte copy. For example, in the JSON representation the dCDN may re-serialize the information differently."
+        ctime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Time at which the CI/T Command was received by the dCDN. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        mtime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        etime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Estimate of the time at which the dCDN expects to complete the activity. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        status:
+          $ref: "#/components/schemas/CI_status"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_error"
+    ci-trigger-collection:
+      type: object
+      description: "A Trigger Collection"
+      required:
+        - triggers
+      properties:
+        triggers:
+          description: "Links to Trigger Status Resources in the collection."
+          type: array
+          items:
+            type: string
+        staleresourcetime:
+          description: "The length of time for which the dCDN guarantees to keep a completed Trigger Status Resource.  After this time, the dCDN SHOULD delete the Trigger Status Resource and all references to it from collectionsMandatory, in the collection of all Trigger Status Resources if the dCDN deletes stale entries.  If the property is present in the filtered collections, it MUST have the same value as in the collection of all Trigger Status Resources."
+          $ref: "#/components/schemas/CI_time"
+        cdn-id:
+          description: 'Only in the collection of all Trigger Status Resources, if the dCDN implements the filtered collections. Optional in the filtered collections (the uCDN can always find the dCDN cdn-id in the collection of all Trigger Status Resources, but the dCDN can choose to repeat that information in its implementation of filtered collections). each CDN uses a CDN Provider ID (PID) to uniquely identify itself.  In every CI/T Command it originates or cascades, each CDN MUST append an array element containing its CDN PID to a JSON array under an entry named "cdn-path".  When receiving CI/T Commands, a dCDN MUST check the cdn-path and reject any CI/T Command that already contains its ownCDN PID in the cdn-path.  Transit CDNs MUST check the cdn-path and not cascade the CI/T Command to dCDNs that are already listed in the cdn-path. The CDN PID consists of the two characters "AS" followed by the CDN provider Autonomous System number [RFC1930], then a colon (":") and an additional qualifier that is used to guarantee uniqueness in case a particular AS has multiple independent CDNs deployed -- for example, "AS64496:0". If the CDN provider has multiple ASes, the same AS number SHOULD be used in all messages from that CDN provider, unless there are multiple distinct CDNs. If the CDNI Request Routing Redirection interface (RI) described in [RFC7975] is implemented by the dCDN, the CI/T interface and the RI SHOULD use the same CDN PID.'
+          type: string
+        coll-all:
+          description: "Link (URL path) to all triggers collection"
+          type: string
+        coll-pending:
+          description: "Link (URL path) to the pending triggers collection"
+          type: string
+        coll-active:
+          description: "Link (URL path) to the active triggers collection"
+          type: string
+        coll_complete:
+          description: "Link (URL path) to the complete triggers collection"
+          type: string
+        coll_failed:
+          description: "Link (URL path) to the failed triggers collection"
+          type: string
+    CI_status:
+      type: string
+      enum:
+        [pending, active, complete, processed, failed, cancelling, cancelled]
+    CI_error:
+      type: object
+      required:
+        - error
+      description: 'Metadata and content references copied from the Trigger Specification.  Only those URLs and patterns to which the error applies are included in each property, but those URLs and patterns MUST be exactly as they appear in the request; the dCDN MUST NOT generalize the URLs. For example, if the uCDN requests pre-positioning of URLs "https://content.example.com/a" and "https://content.example.com/b", the dCDN must not generalize its error report to the pattern "https://content.example.com/*".)'
+      properties:
+        error:
+          type: string
+          enum: [emeta, econtent, eperm, ereject, ecdn, ecanceled, eunsupported]
+        metadata.urls:
+          $ref: "#/components/schemas/CI_urls"
+          description: "Copied from the CI_trigger related request/command concerned by the error"
+        content.urls:
+          $ref: "#/components/schemas/CI_urls"
+          description: "Copied from the CI_trigger related request/command concerned by the error"
+        metadata.patterns:
+          $ref: "#/components/schemas/CI_patterns"
+          description: "The metadata the trigger applies to"
+        content.patterns:
+          $ref: "#/components/schemas/CI_patterns"
+          description: "The content the trigger applies to"
+        description:
+          type: string
+          description: "A human-readable description of the error"
+    CI_cdn-path:
+      type: array
+      items:
+        type: string
+    CI_cancel:
+      type: array
+      items:
+        type: string
+    CI_patterns:
+      type: array
+      items:
+        type: object
+        properties:
+          pattern:
+            type: string
+          case-sensitive:
+            type: boolean
+            default: false
+          match-query-string:
+            type: boolean
+            default: false
+            description: "Flag indicating whether to include the query part of the URI when comparing against the pattern."
+    CI_urls:
+      type: array
+      items:
+        type: string
+      description: "The URLs of content the CI Trigger Command applies to."
+    CI_trigger:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: "#/components/schemas/CI_triggeraction"
+        metadata.urls:
+            $ref: '#/components/schemas/CI_urls'
+            description: 'The uCDN URLs of the metadata the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present'
+        metadata.patterns:
+            $ref: '#/components/schemas/CI_patterns'
+            description: 'The metadata the trigger applies to. Not allowed with the "preposition" trigger'
+        content.urls:
+          $ref: "#/components/schemas/CI_urls"
+          description: "The URLs of content the CI/T Trigger Command applies to. At least metadata.urls or content.urls must be present"
+        content.ccid:
+          type: array
+          items:
+            type: string
+          description: 'The Content Collection IDentifier of content the trigger applies to. The "ccid" is a grouping of content, as defined by [RFC8006]'
+        content.patterns:
+          $ref: "#/components/schemas/CI_patterns"
+          description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
+    CI_time:
+      type: number
+      description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
+    CI_triggeraction:
+      description: 'A trigger action is used in a trigger resource to describe trigger actions. It was initially referred to in [RFC8007] as "Trigger Type". All trigger actions MUST be registered in the IANA "CDNI CI/T Trigger Types" registry (see Section 7.2). dCDN receiving a request containing a trigger action that it does not recognize or does not support MUST reject the request by creating a trigger with a "failed" state and the "errors" array containing an Error.v2 Description with error "eunsupported" (see Section 4.1.6.2).'
+      type: string
+      enum: [preposition, invalidate, purge]
+# Trigger v2 objects - https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis
+    ci-trigger-resource:
+      description: 'MUST use a MIME media type of "application/cdni; ptype=ci-trigger.v2". Please note that dCDN MUST include all existing trigger attributes in the trigger resource representation when requested by uCDN.'
+      type: object
+      required:
+        - state
+      properties:
+        action:
+          description: " Defines the type of the CI/T trigger action. It is optional for trigger updates, otherwise mandatory."
+          $ref: "#/components/schemas/CI_triggeraction"
+        specs:
+          description: "Array of trigger specs representing the trigger targets, as described in Section 4.1.2. It is optional for trigger updates, otherwise mandatory. Furthermore, when mandatory, the list MUST NOT be empty."
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_GenericTriggerSpec"
+        extensions:
+          description: "Array of trigger extensions, as described in Section 4.1.3. By default, there is no extensions"
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_GenericTriggerExtension"
+        labels:
+          description: "Array of trigger labels, as described in Section 4.1.4. Not mandatory. By default, no label. "
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_triggerLabel"
+        cdn-path:
+          description: "The chain of CDN PIDs of CDNs that have already created this trigger resource. Not mandatory. By default, no CDN path. The array SHALL not be empty"
+          type: array
+          items:
+            description: "Each string is a CDN PID as defined in Section 4.3.3."
+            type: string
+        ctime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Time at which the CI/T Command was received by the dCDN. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        mtime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Time at which the Trigger Status Resource was last modified. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        etime:
+          $ref: "#/components/schemas/CI_time"
+          description: "Estimate of the time at which the dCDN expects to complete the activity. Time is determined by the dCDN; there is no requirement to synchronize clocks between interconnected CDNs"
+        state:
+          description: 'The current trigger state. dCDN MUST include trigger state in the trigger resource representations it sends. The trigger state defaults to "pending" when a trigger is created and is optional in trigger updates sent by uCDN.'
+          $ref: "#/components/schemas/CI_status"
+        state-reason:
+          description: "A human-readable explanation for the object state. Not mandatory"
+          type: string
+        errors:
+          description: 'Descriptions of errors that have occurred while processing the trigger. An empty array is allowed and is equivalent to omitting "errors" from the object. Not mandatory. dCDN SHOULD include this attribute in the trigger resource representations it sends when the trigger is in a "failed" state'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_error-v2"
+        total-objects-count:
+          description: 'Total aggregate number of objects affected by the trigger, e.g., number of objects purged, invalidated or prepositioned as a result of trigger processing. It is RECOMMENDED that dCDN maintains this attribute as a cumulative counter across all of its nodes, without de-duplicating the same objects processed in multiple nodes. The primary purpose of this attribute is to help uCDN identify abnormal trigger processing results, e.g., a purge or preposition trigger that impacted a lower number of objects than expected. dCDN MAY provide an updated object count as the trigger processing progresses in an "active" trigger state. This attribute is "optional-to-implement". When supported, dCDN SHOULD include this attribute in the trigger resource representations requested by uCDN.'
+          type: integer
+        total-objects-size:
+          description: 'Total aggregate size of objects affected by the trigger, in bytes. It is RECOMMENDED that dCDN maintains this attribute as a cumulative counter across all of its nodes, without de-duplicating the same objects processed in multiple nodes. As with "total-objects-count" attribute above, the primary purpose of this attribute is to help uCDN identify abnormal trigger processing results. dCDN MAY provide an updated object size as the trigger processing progresses in "active" trigger state. This attribute is "optional-to-implement". When supported, dCDN SHOULD include this attribute in the trigger resource representations requested by uCDN.'
+          type: integer
+        objects:
+          description: 'List of objects derived by dCDN when processing the trigger. dCDN MAY send this attribute in its trigger resource representation when available and the capability is advertised via FCI as described above. dCDN SHOULD provide the list of objects it used as input for processing the trigger with Section 4.1.2.8, provided that dCDN advertised support for extended status (Section 5.5). An empty array is allowed and is equivalent to omitting "objects" from the trigger representation. This field is intended to provide the list of all objects used in processing. The objects that failed to process SHOULD be specified using the Error.v2 Description resource.'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_objectList"
+    CI_GenericTriggerSpec:
+      description: "A trigger resource, as defined in Section 4.1, includes an array of trigger spec objects. Each trigger spec object contains properties that are used as trigger target selection directives for dCDN when processing the trigger, e.g., content URLs or metadata URL patterns. Each such trigger spec is a specialization of a CDNI GenericTriggerSpec object. The GenericTriggerSpec object abstracts the basic information required for trigger distribution from the specifics of any given property (i.e., property semantics, enforcement options, etc.). The semantics of the trigger specs list is additive, i.e., the trigger applies to any object matching one of the listed specs. A GenericSpecObject object is a wrapper for managing individual CDNI trigger specs in an opaque manner."
+      type: object
+      required:
+        - trigger-subject
+        - generic-trigger-spec-type
+        - generic-trigger-spec-value
+      properties:
+        trigger-subject:
+          description: 'Case-insensitive CDNI trigger subject. String containing the type of the subject matching the generic-trigger-spec-value property, such as "content" as defined in Section 4.1.2.2.'
+          type: string
+          enum: [content]
+        generic-trigger-spec-type:
+          description: "Case-insensitive CDNI trigger spec type. the spec type of the object contained in the generic-trigger-spec-value property (see table in Section 4.1.2)."
+          $ref: "#/components/schemas/CI_triggerSpec"
+        generic-trigger-spec-value:
+          description: "A CDNI trigger spec object. Defined by the value of the generic-trigger-spec-type property."
+          oneOf:
+            - $ref: "#/components/schemas/CI_triggerSpecUrls"
+            - $ref: "#/components/schemas/CI_triggerSpecCcids"
+            - $ref: "#/components/schemas/CI_triggerSpecUriPatternMatch"
+            - $ref: "#/components/schemas/CI_triggerSpecUriRegexMatch"
+            - $ref: "#/components/schemas/CI_triggerSpecContentObjectlist"
+      example:
+        {
+          "trigger-subject": "content",
+          "generic-trigger-spec-type": "urls",
+          "generic-trigger-spec-value":
+            {
+              "urls": ["https://metadata.example.com/a/b/c"],
+              "url-type": "published",
+            },
+        }
+    CI_triggerSpec:
+      type: string
+      enum:
+        [urls, ccids, uri-pattern-match, uri-regex-match, content-objectlist]
+    CI_triggerSpecUrls:
+      description: 'The "urls" spec type allows uCDN to manage uCDN content or metadata objects held by dCDN based on the objects URLs.'
+      type: object
+      required:
+        - urls
+      properties:
+        urls:
+          description: "Array of URLs over which the trigger MUST be executed."
+          type: array
+          items:
+            type: string
+        url-type:
+          decription: 'type of URL used. URL Type as defined in Section 4.3.1. When omitted or empty, the "published" URL type is assumed.'
+          $ref: "#/components/schemas/CI_URLtype"
+    CI_triggerSpecCcids:
+      description: ' CI_triggerThe "ccids" spec type allows uCDN to specify the Content Collection IDentifier (CCID) of content to which the trigger applies. The CCID is a grouping of content as defined by [RFC8006]. The "ccids" spec type is valid only for the content spec subject (see Section 4.1.2.2).'
+      type: object
+      required:
+        - ccids
+      properties:
+        ccids:
+          description: "An array of Content Collection IDentifiers over which the trigger MUST be executed."
+          type: array
+          items:
+            type: string
+    CI_triggerSpecUriPatternMatch:
+      description: "A UriPatternMatch consists of a string pattern to match against a URI, and flags describing the type of match."
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+          description: 'A pattern for URI matching. The pattern can contain the wildcards "*" and "?", where "*" matches any sequence of [RFC3986] pchar or "/" characters (including the empty string) and "?" matches exactly one [RFC3986] pchar character. The three literals "$", "*", and "?" MUST be escaped as "$$", "$*" and "$?" (where "$" is the designated escape character). All other characters are treated as literals.'
+          type: string
+        case-sensitive:
+          description: 'Flag indicating whether or not case-sensitive matching should be used. "true" (the matching is case sensitive) or "false" (the matching is case insensitive). default is "false", i.e., a case-insensitive match.'
+          type: boolean
+        match-query-string:
+          description: 'Flag indicating whether to include the query part of the URI when compared against the pattern. "true" (the full URI including the query part should be compared against the given pattern) or "false" (the query part of the URI should be dropped before comparison with the given pattern). default is "false". The query part of the URI should be dropped before comparison with the given pattern.'
+          type: boolean
+        url-type:
+          description: 'Type of URLs to match. When omitted or empty, "published" URL type is assumed.'
+          $ref: "#/components/schemas/CI_URLtype"
+    CI_triggerSpecUriRegexMatch:
+      description: 'The "uri-regex-match" spec type allows uCDN to manage content or metadata objects held by dCDN based on the objects URI regex. A RegexMatch consists of a regular expression string a URI is matched against, and flags describing the type of match.'
+      type: object
+      required:
+        - regex
+      properties:
+        regex:
+          description: 'A regular expression to match against the URI, i.e., against the path-absolute and the query string parameters [RFC3986]. The regular expression string MUST be compatible with POSIX [POSIX.1] Section 9 Extended Regular Expressions. This regular expression MUST be evaluated in the POSIX locale (POSIX [POSIX.1] Section 7.2).nNote: Because "\"" has a special meaning in JSON [RFC8259] as the escape character within JSON strings, the regular expression character "\" MUST be escaped as "\\". Either "true" (the matching is case-sensitive) or "false" (the matching is case insensitive). default is "false", i.e., a case-insensitive match.'
+        case-sensitive:
+          description: "Flag indicating whether or not case-sensitive matching should be used."
+          type: boolean
+        match-query-string:
+          description: 'Flag indicating whether to include the query part of the URI when compared against the regex. Either "true" (the full URI, including the query part, should be compared against the regex) or "false" (the query part of the URI should be dropped before comparison with the given regex). Default is "false". The query part of the URI MUST be dropped before comparison with the given regex. This makes the regular expression simpler and safer for cases in which the query parameters are not relevant to the match.'
+          type: boolean
+        url-type:
+          description: 'Type of URLs to match against. When omitted or empty, "published" URL type is assumed.'
+          $ref: "#/components/schemas/CI_URLtype"
+    CI_triggerSpecContentObjectlist:
+      description: 'The "objectlist" spec type allows uCDN to manage content or metadata held by dCDN based on structured object lists. The Object List spec type is valid only for the content spec subject (see Section 4.1.2.2).'
+      type: object
+      required:
+        - objects
+      properties:
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_objectList"
+    CI_URLtype:
+      type: string
+      enum: [published, private]
+    CI_objectList:
+      description: "ObjectList is a metadata object describing lists of objects that can be used in the context of CI/T v2 trigger spec, trigger status resources, and other contexts as required. The ObjectList object can either embed the lists of objects or point to external URL(s) that hold such lists. ObjectList allows the specification of an object list type, providing instructions on the interpretation of the object list format. ObjectLists MAY be recursive, i.e., including references to secondary manifests, including references to HLS, MPEG-DASH or MSS manifests as well as additional JSON-encoded ObjectLists, etc. The party consuming the object list MUST parse all recursions based on the object list type property. When doing so, the consuming party should also detect potential loops when the descendant ObjectList points back to the parent ObjectList. In the case of uCDN accessing ObjectList objects referencing external URLs published by dCDN, both parties SHOULD comply with the CI/T interface security requirements (see Section 8.1 for details). When dCDN accesses external URLs referenced by ObjectLists supplied by uCDN, for example as part of trigger spec, dCDN MUST match these URLs with source metadata objects, published by uCDN, such as SourceMetadata objects specified in Section 4.2.1 of [RFC8006], and use these metadata objects for content acquisition if a match was found. ObjectLists MAY combine regular objects and secondary ObjectLists in the same object. Please note that when embedding non-JSON object lists directly in ObjectList, absolute URLs MUST be provided at all times and the text SHOULD be encoded per the JSON grammar specification [ECMA404], including explicit newline encoding. When uCDN accesses ObjectList metadata resources published by uCDN, the same interface authentication and authorization requirements would apply, as when accessing the interface itself."
+      type: object
+      required:
+        - type
+      properties:
+        data:
+          description: 'List of objects in one of the recognized formats. Either "data" or "href" MUST be set.'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_objectList"
+        href:
+          description: 'URL pointing to an external object list or object in one of the recognized formats. Either "data" or "href" MUST be set.'
+          type: string
+          format: url
+        type:
+          description: "Object list type to be used when parsing and interpreting this object list. By default, each record in the list is assumed to represent an object that does not require additional processing."
+          $ref: "#/components/schemas/CI_objectListType"
+    CI_objectListType:
+      type: string
+      enum: [hls, mss, dash, json, text]
+    CI_GenericTriggerExtension:
+      description: ""
+      type: object
+      required:
+        - generic-trigger-extension-type
+        - generic-trigger-extension-value
+      properties:
+        generic-trigger-extension-type:
+          description: 'Case-insensitive CDNI trigger extension object type. String containing the CDNI Extension Type [RFC7736] of the object contained in the "generic-trigger-extension-value" property. The CDNI Control Interface / Triggers 1st edition [RFC8007] defines a set of properties and objects used by the trigger commands. This 2nd edition defines an extension mechanism to the triggers interface that enables applications to add instructions for finer control over the trigger execution, for example indicating a time window in which to execute the trigger. All trigger extensions are optional, and it is thus the responsibility of the extension specification to define a consistent default behavior for the case the extension is not present. All trigger extensions MUST be registered in the IANA "CDNI CI/T Trigger Extensions" registry (see Section 7.6). This document also defines an initial set of trigger extension objects and registers them in the IANA "CDNI CI/T Trigger Extensions" registry.'
+          $ref: "#/components/schemas/CI_triggerExtension"
+        generic-trigger-extension-value:
+          description: "CDNI trigger extension object."
+          type: object
+          additionalProperties: {}
+        mandatory-to-enforce:
+          description: "Flag identifying whether or not the enforcement of this trigger extension is mandatory. The default is to treat the trigger extension as mandatory to enforce (i.e., a value of True)."
+          type: boolean
+        safe-to-redistribute:
+          description: "Flag identifying whether or not this trigger extension can be safely redistributed without modification, even if the CDN fails to understand the extension. The default is to allow transparent redistribution (i.e., a value of True)."
+          type: boolean
+        incomprehensible:
+          description: 'Flag identifying whether or not any CDN in the chain of delegation has failed to understand and/or failed to properly transform this trigger extension object. Note: This flag only applies to trigger extension objects whose "safe-to-redistribute" property has a value of False. The default is comprehensible (i.e., a value of False).'
+          type: boolean
+    CI_triggerExtension:
+      type: string
+      enum: [location-policy, time-policy, execution-policy]
+    CI_triggerLabel:
+      description: 'Each label is a key-value pair, encoded as a JSON string, with "=" separator. The label key and value parts MUST contain up to 63 characters each, MUST begin with a letter or a number, and MAY contain letters, numbers, hyphens, dots, and underscores.'
+      type: string
+      pattern: '(\w[\w\_\-\.]+)=(\w[\w\_\-\.]+)'
+    ci-trigger-collection-resource:
+      type: object
+      description: "A Trigger Collection resource"
+      required:
+        - triggers
+      properties:
+        triggers:
+          description: "Links to Trigger Status Resources in the collection."
+          type: array
+          items:
+            type: string
+        staleresourcetime:
+          description: "The length of time for which the dCDN guarantees to keep a completed Trigger Status Resource.  After this time, the dCDN SHOULD delete the Trigger Status Resource and all references to it from the collection. Mandatory, in the collection of all Trigger Status Resources if the dCDN deletes stale entries.  If the property is present in the filtered collections, it MUST have the same value as in the collection of all Trigger Status Resources."
+          $ref: "#/components/schemas/CI_time"
+        cdn-id:
+          description: 'The CDN PID consists of the two characters "AS" followed by the CDN provider Autonomous System number [RFC1930], then a colon (":") and an additional qualifier that is used to guarantee uniqueness in case a particular AS has multiple independent CDNs deployed -- for example, "AS64496:0". If the CDN provider has multiple ASes, the same AS number SHOULD be used in all messages from that CDN provider, unless there are multiple distinct CDNs. If the CDNI Request Routing Redirection interface (RI) described in [RFC7975] is implemented by dCDN, the CI/T interface and the RI SHOULD use the same CDN PID.'
+          type: string
+        coll-state:
+          description: "An array of filtered collection representation objects, with one entry for each trigger state, as specified in Section 4.1.5."
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_filteredCollection"
+        coll-label:
+          description: 'An array of filtered collection representation objects, with one entry for each unique label key-value, as specified by uCDN, using the "labels" attribute of a trigger resource (see Section 4.1 for details).'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_filteredCollection"
+        all-triggers:
+          description: "Array of all triggers in the collection. Should be returned only when an extended trigger collection view is requested as described in Section 3.4.1.1."
+          type: array
+          items:
+            $ref: "#/components/schemas/ci-trigger-resource"
+    CI_filteredCollection:
+      type: object
+      description: "A trigger collection resource URI association with either a trigger state or a label."
+      required:
+        - uri
+      properties:
+        state:
+          description: 'The trigger state describes the current state of the triggered activity.  One of the "state" or "label" property MUST be present.'
+          $ref: "#/components/schemas/CI_status"
+        label:
+          description: 'Trigger label matching the filtered collection. One of the "state" or "label" property MUST be present.'
+          $ref: "#/components/schemas/CI_triggerLabel"
+        uri:
+          description: "the filtered trigger collection URI"
+          type: string
+    CI_error-v2:
+      type: object
+      description: "An Error.v2 Description is used to report the failure of a trigger."
+      required:
+        - error
+        - cdn-id
+      properties:
+        error:
+          description: "Error Code, as defined in Section 4.1.6.2."
+          type: string
+          enum:
+            [
+              emeta,
+              econtent,
+              eperm,
+              ereject,
+              ecdn,
+              ecancelled,
+              eunsupported,
+              espec,
+              esubject,
+              eextension,
+            ]
+        description:
+          description: "A human-readable description of the error."
+          type: string
+        specs:
+          description: 'Array of trigger spec objects from the corresponding "specs" array in the trigger resource. Only those specs to which the error applies are listed.'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_triggerSpec"
+        extensions:
+          description: 'Array of trigger extension objects copied from the corresponding "extensions" array in the trigger resource. Only those extensions to which the error applies are included, but those extensions MUST be exactly as they appear in the trigger resource. The "extensions" array SHOULD be used only if the error relates to extension objects. Property omission should be interpreted as "the error is not related to any extension".'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_GenericTriggerExtension"
+        cdn-id:
+          description: 'The CDN PID of the CDN where the error occurred. The "cdn-id" property is used by the originating uCDN or by the propagating dCDN to distinguish in which CDN the error occurred. An empty array is allowed and is equivalent to omitting "objects" from the Error.v2 Description.'
+          type: string
+        objects:
+          description: "List of objects that failed to be processed during trigger execution."
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_objectList"
