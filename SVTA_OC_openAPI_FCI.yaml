@@ -181,20 +181,20 @@ components:
         capability-type:
           oneOf:
             - $ref: '#/components/schemas/FCI_capabilitytype'
+            - $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/FCI_TRIGGER_capabilitytype'
             - $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CII_capabilitytype'
             - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_LOI_capabilitytype'
             - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_COI_capabilitytype'
             - $ref: './SVTA_OC_openAPI_RRI.yaml#/components/schemas/FCI_RRI_capabilitytype'
-            - $ref: './SVTA_OC_openAPI_CMI.yaml#/components/schemas/FCI_CMI_capabilitytype'
             - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_MUL_capabilitytype'            
         capability-value:
           oneOf:
             - $ref: '#/components/schemas/FCI_capabilityvalue'
+            - $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/FCI_TRIGGER_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CII_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_LOI_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_COI_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_RRI.yaml#/components/schemas/FCI_RRI_capabilityvalue'
-            - $ref: './SVTA_OC_openAPI_CMI.yaml#/components/schemas/FCI_CMI_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_MUL_capabilityvalue'
         footprints:
           type: array

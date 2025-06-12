@@ -11,10 +11,10 @@ externalDocs:
 components:
   schemas:
 # FCI objects (Trigger V2)
-    FCI_CMI_capabilitytype:
+    FCI_TRIGGER_capabilitytype:
       type: string
       enum: [FCI.CITEndpoints, FCI.CITScope, FCI.CITObjectListType, FCI.CITPrivateUrlType, FCI.CITExtendedStatus]
-    FCI_CMI_capabilityvalue:
+    FCI_TRIGGER_capabilityvalue:
       oneOf:
         - $ref: '#/components/schemas/FCI.CITEndpoints'
         - $ref: '#/components/schemas/FCI.CITScope'
