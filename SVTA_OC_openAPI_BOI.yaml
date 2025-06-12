@@ -21,7 +21,7 @@ paths:
         '200':
           description: 'Open Caching boostrap API entry point.'
           content:
-            jason:
+            application/jason:
               schema:
                 $ref: '#/components/schemas/BSI.Bootstrap'
         '400':
@@ -40,7 +40,7 @@ paths:
         '200':
           description: 'Open Caching API version.'
           content:
-            jason:
+            application/jason:
               schema:
                 $ref: '#/components/schemas/BSI.OpenCachingVersions'
         '400':
