@@ -11,7 +11,7 @@ externalDocs:
 security:
   - bearerToken: []
 paths:
-  #Trigger v1 API
+  # Trigger v1 API
   /OC/CMI/triggers:
     post:
       tags:
@@ -139,7 +139,7 @@ paths:
         404:
           description: "Not found"
           content: {}
-  #Trigger v2 API SVTA 2046
+# Trigger v2 API SVTA 2046
   /OC/CMI/{bucketIdType}/{bucketId}/triggers:
     parameters:
       - name: bucketIdType

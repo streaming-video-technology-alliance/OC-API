@@ -595,6 +595,7 @@ components:
           type:  object
           additionalProperties: {}
 # MI objects
+# MI Structural objects
     MI.HostIndex:
       type: object
       description: 'The HostIndex object is the entry point into the CDNi Metadata hierarchy.  It contains an array of HostMatch objects. An incoming content request is checked against the hostname (or IP address) specified by each of the listed HostMatch objects to find the HostMatch object that applies to the request.'
@@ -691,6 +692,7 @@ components:
           description: 'Description: Path-specific rules.  Path patterns (PathMatch objects) MUST be evaluated in the order they appear, and the first (and only the first) PathMatch object that matches the content request being processed MUST be used.'
           items:
             $ref: '#/components/schemas/MI_PathMatch'
+# MI payload objects
     MI_SourceMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1011,7 +1013,7 @@ components:
         - $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI_COI2i_payloadtype'
     MI_payloadtype:
       type: string
-      enum: [MI.ServiceIDs, MI.GenericMetadata]
+      enum: [MI.SourceMetadata, MI.LocationAcl, MI.TimeWindowAcl, MI.ProtocolAcl, MI.DeliveryAuthorization, MI.Cache, MI.Auth, MI.Grouping, MI.Auth, MI.ServiceIDs]
     MI_metadatavalue:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
@@ -1029,9 +1031,16 @@ components:
         - $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI_COI2i_payloadvalue'
     MI_payloadvalue:
       oneOf:
-        - $ref: '#/components/schemas/MI.ServiceIDs'        
-        - $ref: '#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.GenericMetadata' 
+        - $ref: '#/components/schemas/MI.SourceMetadata'
+        - $ref: '#/components/schemas/MI.LocationACL'
+        - $ref: '#/components/schemas/MI.TimeWindowACL'
+        - $ref: '#/components/schemas/MI.ProtocolACL'
+        - $ref: '#/components/schemas/MI.DeliveryAuthorization'
+        - $ref: '#/components/schemas/MI.Cache'
+        - $ref: '#/components/schemas/MI.Auth'
+        - $ref: '#/components/schemas/MI.Grouping'
+        - $ref: '#/components/schemas/MI.Auth'
+        - $ref: '#/components/schemas/MI.ServiceIDs'
     MI_GenericMetadata:
       oneOf:
         - $ref: '#/components/schemas/MI_link'
