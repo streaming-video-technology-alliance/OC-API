@@ -97,7 +97,7 @@ components:
           type: string 
           enum: [cms, cleartext]
         secret-certificate-id:
-          description: 'The ID of the MI.SecretStoreCertificate used to encrypt secret messages linked with this store configuration.'
+          description: 'The ID of the MI.SecretCertificate used to encrypt secret messages linked with this store configuration.'
           type: string
     MI.SecretStoreTypeHashiCorpVault:
       description: 'MI.SecretStoreTypeHashiCorpVault contains the configuration necessary to reference secrets stored in an external instance of a HashiCorp Vault KV store [HCVAULT]. MI.SecretValue objects reference secrets stored in the Vault using the secret-path property to identify the path and property key. See the MI.SecretValue section for details.'

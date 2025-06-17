@@ -977,10 +977,12 @@ components:
           oneOf:
             - $ref: '#/components/schemas/MI_authtype'
             - $ref: './SVTA_OC_openAPI_COI_2d.yaml#/components/schemas/MI_COI2d_authtype'
+            - $ref: './SVTA_OC_openAPI_COI_2e.yaml#/components/schemas/MI_COI2e_authtype'
         auth_value:
           oneOf:
             - $ref: '#/components/schemas/MI_authvalue'
             - $ref: './SVTA_OC_openAPI_COI_2d.yaml#/components/schemas/MI_COI2d_authvalue'
+            - $ref: './SVTA_OC_openAPI_COI_2e.yaml#/components/schemas/MI_COI2e_authvalue'            
     MI_authtype:
         type: string
         enum: [MI.UriSigning]
@@ -1039,7 +1041,6 @@ components:
         - $ref: '#/components/schemas/MI.Cache'
         - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.Grouping'
-        - $ref: '#/components/schemas/MI.Auth'
         - $ref: '#/components/schemas/MI.ServiceIDs'
     MI_GenericMetadata:
       oneOf:

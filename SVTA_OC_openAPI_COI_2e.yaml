@@ -101,7 +101,7 @@ components:
             description: 'An array of MI.TimeWindow objects to match against'
             type: array
             items:
-              $ref: '#/components/schemas/MI_TimeWindow'
+              $ref: 'SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow'
           action:
             description: 'The action to take place upon time window match'
             type: string
@@ -226,16 +226,13 @@ components:
           type: string
         time-window:
           description: 'Validity period of the certificate. According to Section 4.3.4 of [RFC8006], a TimeWindow object is defined by a window "start" time and a window "end" time. In the case of a STAR method, the "start" and "end" properties of the window MUST be understood respectively as the start-date and end-date of the certificate validity. In the case of a non-STAR method, the "start" and "end" properties of the window MUST be understood, respectively, as the notBefore and notAfter fields of the certificate. Mandatory only if a STAR delegation method is specified.'
-          $ref: '#/components/schemas/MI_TimeWindow'
+          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow'
         lifetime:
           description: See lifetime in Section 3.1.1 of [RFC8739]
           type: integer
         lifetime-adjust:
           description: See lifetime-adjust in Section 3.1.1 of [RFC8739]
           type: integer
-    MI_TimeWindow:
-      type: object
-
     MI_ClientAuthMetadata:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -249,6 +246,12 @@ components:
           delivery-auth:
             description: 'Authentication method to use when granting access to a resource requested by a client.'
             $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_Auth'
+    MI_COI2e_authtype:
+      type: string
+      enum: [MI.CATAuth]
+    MI_COI2e_authvalue:
+      oneOf:
+        - $ref: '#/components/schemas/MI.CATAuth' 
     MI.CATAuth: 
       description: 'The MI.CATAuth object defines the configuration for a dCDN to authenticate client requests using the Common Access Token standard. The MI.CATAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to to client requests by including it under the MI.ClientAuthMetadata.delivery-auth property.'
       required:
@@ -302,7 +305,7 @@ components:
         scheme:
           description: 'The scheme for the Authorization request header that contains the CAT token. Is required/mandatory only if the location property = "Authorization-Header". ' 
           type: string
-        names:
+        name:
           description: 'The names of the url-path-style parameter, query parameter or HTTP cookies that contain one or more CAT tokens. Is required/mandatory only if the location property is either "url-path-style-parameter", "query-parameter", or "cookie".'
           type: string
     MI.CATTokenConfiguration:
@@ -316,7 +319,7 @@ components:
         integrity-algo:
           description: 'The algorithm used for integrity protection of the CAT token. see [RFC9053].'
           type: string
-          enum: [hs256, es356]
+          enum: [hs256, es256]
         integrity-algo-key:
           description: 'The value of the key used for integrity protection of the CAT token as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039]'
           $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
@@ -334,6 +337,7 @@ components:
         rejected-token-action:
           description: 'An enumeration of ways in which a client response is created. Valid values are the following: - “fail” for returning a HTTP 403 response - “allow” for ignoring the result of token validation, as if the token was not present. This typically would result in serving a HTTP 200 for the requested resource - “token-defined” for constructing the client response per the parameters defined within the token. For a valid but rejected CAT token, the "catif" claim is used to construct the client response.'
           type: string
+          enum: [fail, allow, token-defined]
         token-defined-response:
           description: 'Specifies how the token values are used to create the client response for an invalid OR valid but rejected token. This property is mandatory when the value of "rejected-token-action" property is "token-defined". Use of this property for any other value of "rejected-token-action" is an invalid configuration.'
           $ref: '#/components/schemas/MI.CATTokenDefinedResponse'
