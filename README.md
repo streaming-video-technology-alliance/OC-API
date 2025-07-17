@@ -1,25 +1,30 @@
 # OC-API
-OpenAPI descriptions of the SVA Open Caching interface based on CDNI modeling ([RFC8006], [RFC8007], [RFC8008], [RFC8804]) and SVTA specifications. It is recommended to read first the Open Caching Architecture document (SVTA2051) for a better understanding of the Open Caching eco-system.
+OpenAPI descriptions of the SVA Open Caching interface based on CDNI modeling ([RFC8006], [RFC8007], [RFC8008], [RFC8804]) and SVTA specifications. It is recommended to read first the Open Caching Architecture document (SVTA2051) for a better understanding of the Open Caching eco-system. In general, the Open Caching Interface REST API exposes capabilities through the Footprint and Capabilities Interface (FCI) API metadata and allow provisioning/configuration through the COnfiguration Interface (COI). All other Interfaces in a way or in another to these two interfaces.
+
 The list of files is listed here with for each the corresponding SVTA specification number when appropriate.
+
 - README.md: this file
 - MAINTAINERS.md: the offical liust of maintainers (see below)
 - LICENCE.md: This work is licensed according to the conditions listed in this file.
-- SVTA_OC_openAPI_BOI.yaml (SVTA2060): the Bootstrap API allowing the uCDN to get the available versions and corresponding API/URLs for each interface. 
-- SVTA_OC_openAPI_FCI.yaml (SVTA2045): the Footprint And Capabilities Interface allowing the dCDN to expose its CDN capabilities and footprint to any uCDN
-- SVTA_OC_openAPI_COI.yaml (SVTA2028-SVTA2030, SVTA2040-SVTA2042): The COnfiguration Interface allowing the uCDN to provision streaming delegation to a dCDN.
-    - SVTA_OC_openAPI_COI_2a.yaml (SVTA2031): the Metadata Expression Language (MEL)
-    - SVTA_OC_openAPI_COI_2b.yaml (SVTA2032): Processing Stages Metadata
-    - SVTA_OC_openAPI_COI_2c.yaml (SVTA2033): Cache Control Metadata
-    - SVTA_OC_openAPI_COI_2d.yaml (SVTA2034): Source Access Control Metadata 
-    - SVTA_OC_openAPI_COI_2e.yaml (SVTA2035): Client Access Control Metadata
-    - SVTA_OC_openAPI_COI_2f.yaml (SVTA2036): Edge Control Metadata
-    - SVTA_OC_openAPI_COI_2g.yaml (SVTA2037): Delivery Metadata
-    - SVTA_OC_openAPI_COI_2h.yaml (SVTA2038): Private Features Metadata
-    - SVTA_OC_openAPI_COI_2i.yaml (SVTA2039): Protected Secrets Metadata
-- SVTA_OC_openAPI_LOI.yaml (SVTA2050): the Logging Interface exposed by the dCDN baed on [RFC7937]
+
+- SVTA_OC_openAPI_BOI.yaml (SVTA2060): the Bootstrap API allows the uCDN to get the available versions and corresponding API/URLs for each interface. 
+- SVTA_OC_openAPI_FCI.yaml (SVTA2045): the Footprint And Capabilities Interface allows the dCDN to expose its CDN capabilities and footprint to any uCDN.
+- SVTA_OC_openAPI_CII.yaml (SVTA2049): The Capacity Insight Interface exposes basic capacity information and poessible monitoring end points through the FCI interface.
+- SVTA_OC_openAPI_CMI.yaml (SVTA2046): The Content Management Interface allows the uCDN to control the cache nodes with operations like content pre-positioning or purge.
+- SVTA_OC_openAPI_COI.yaml (SVTA2028-SVTA2030, SVTA2040-SVTA2042): The COnfiguration Interface allows the uCDN to provision streaming delegation to a dCDN.
+    - SVTA_OC_openAPI_COI_2a.yaml (SVTA2031): the Metadata Expression Language (MEL).
+    - SVTA_OC_openAPI_COI_2b.yaml (SVTA2032): Processing Stages Metadata.
+    - SVTA_OC_openAPI_COI_2c.yaml (SVTA2033): Cache Control Metadata.
+    - SVTA_OC_openAPI_COI_2d.yaml (SVTA2034): Source Access Control Metadata.
+    - SVTA_OC_openAPI_COI_2e.yaml (SVTA2035): Client Access Control Metadata.
+    - SVTA_OC_openAPI_COI_2f.yaml (SVTA2036): Edge Control Metadata.
+    - SVTA_OC_openAPI_COI_2g.yaml (SVTA2037): Delivery Metadata.
+    - SVTA_OC_openAPI_COI_2h.yaml (SVTA2038): Private Features Metadata.
+    - SVTA_OC_openAPI_COI_2i.yaml (SVTA2039): Protected Secrets Metadata.
+- SVTA_OC_openAPI_LOI.yaml (SVTA2050): the Logging Interface exposed by the dCDN baed on [RFC7937].
+- SVTA_OC_openAPI_MUL.yaml (SVTA2065): the Open Casting (MULticast) API (a subset of OpenCaching API) related objects definitions.
 - SVTA_OC_openAPI_RRI.yaml (SVTA2048): The Request Routing Interface allowing the streaming delegation through the recursive mode of operations.
-- SVTA_OC_openAPI_Trigger.yaml: The CDNi Trigger control interface V1 (RFC7007) and V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis)
-This is an ongoing work.
+- SVTA_OC_openAPI_Trigger.yaml: The CDNi Trigger control interface metadata V1 (RFC7007) and V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis).
 
 # Format
 The files are JSON objects, yaml formated according to the OpenAPI specification (http://spec.openapis.org/oas/v3.0.3)

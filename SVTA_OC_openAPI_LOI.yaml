@@ -31,7 +31,7 @@ components:
           items:
             $ref: '#/components/schemas/FCI_recordtype' 
         container-formats:
-          description: The supported list of The supported list of container formats.
+          description: The supported list of container formats.
           type: array
           items:
             $ref: '#/components/schemas/FCI_containerformat' 
