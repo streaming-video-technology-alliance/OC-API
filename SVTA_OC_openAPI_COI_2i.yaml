@@ -6,8 +6,8 @@ info:
     email: guillaume.bichot@broadpeak.tv
   version: 2.1.0
 externalDocs:
-    description: 'SVTA 2039 specification version 2.0'
-    url: 'https://www.svta.org/product/svta2039/'
+    description: 'SVTA 2039 specification'
+    url: 'https://www.svta.org/product/svta2039-1'
 components:
   schemas:
 # FCI objects

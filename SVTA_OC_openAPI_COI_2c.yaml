@@ -7,7 +7,7 @@ info:
   version: 2.0.0
 externalDocs:
     description: 'Corresponding SVTA 2033 specification'
-    url: 'https://www.svta.org/product/svta2033/'
+    url: 'https://www.svta.org/product/svta2033-1'
 components:
   schemas:
 # MI objects
