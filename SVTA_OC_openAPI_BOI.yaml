@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - BOotstrap Interface (BOI)
+  title: Open Caching API - Bootstrap Interface (BOI)
   description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). The Bootstrap API exposes the list of supported interfaces and for each interface, the list of supported versions.'
   contact:
     email: guillaume.bichot@broadpeak.tv
@@ -21,7 +21,7 @@ paths:
         '200':
           description: 'Open Caching boostrap API entry point.'
           content:
-            application/jason:
+            application/json:
               schema:
                 $ref: '#/components/schemas/BSI.Bootstrap'
         '400':
@@ -30,17 +30,24 @@ paths:
           description: 'Forbidden.'
         '404':
           description: 'No bootstrap'
-  /OC/bootstrap/version:
+  /OC/{boostrap_api_version}/bootstrap/version:
     get:
       tags:
         - OC_BSI
       summary: 'Discover the dCDN OpenCaching exposed API information.'
-      operationId: oc_bs_get_bootstrap
+      operationId: oc_bs_get_bootstrap_version
+      parameters:
+        - name: boostrap_api_version
+          in: path
+          required: true
+          description: 'URL Path part related to the boostrap API version.'
+          schema:
+            type: string
       responses:
         '200':
           description: 'Open Caching API version.'
           content:
-            application/jason:
+            application/json:
               schema:
                 $ref: '#/components/schemas/BSI.OpenCachingVersions'
         '400':

@@ -15,9 +15,9 @@ paths:
     get:
       tags:
         - OC_FCI
-      summary: Gets the FCI advertisements according to SVA and CDNI (RFC8008/RFC8804)
+      summary: Gets the FCI advertisements according to SVTA and CDNI (RFC8008/RFC8804)
       operationId: oc_fci_get_advertisement
-      description: 'This operation is used to pull the FCI advertisement related to the requester (identified thanks to the security token obtained).'
+      description: 'This operation is used to pull the FCI advertisement related to the uCDN.'
       responses:
         '200':
           description: 'FCI advertisement'
@@ -49,6 +49,7 @@ paths:
               properties:
                 notificationTarget:
                   type: string
+                  description: 'The URL to be called back by the dCDN on any FCI advertisement change.'
                 notificationType:
                   type: string
                   enum: [fci]
@@ -67,9 +68,7 @@ paths:
                 content: 
                   'application/cdni':
                     schema:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/FCI_capabilities'
+                      $ref: '#/components/schemas/FCI_capabilities'
               responses:
                 '200':
                   description: 'FCI updated.'
@@ -85,14 +84,14 @@ paths:
         403:
           description: 'Forbidden.'
         404:
-          description: 'No suche API.'     
+          description: 'No such API.'     
   /OC/FCI/subscription/{subscriptionId}:
     get:
       tags:
         - OC_FCI
       summary: Gets the FCI notification subscription. 
       operationId: oc_fci_get_notificationSubscription
-      description: ''
+      description: 'Get the FCI subscription'
       parameters:
         - name: subscriptionId
           in: path
@@ -111,7 +110,8 @@ paths:
                   - notificationTarget
                 properties:
                   notificationTarget:
-                   type: string
+                    description: 'The URL associated with that subscription, to be called back by the dCDN on any FCI advertisement change'
+                    type: string
                   notificationType:
                     type: string
                     enum: [fci]

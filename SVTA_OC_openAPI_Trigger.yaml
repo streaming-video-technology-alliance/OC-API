@@ -37,7 +37,7 @@ components:
           type: array
           items:
             type: string
-        trigger-subject:
+        trigger-subjects:
           description: 'Array of trigger subjects supported by the trigger endpoint. A missing or empty "trigger-subject" list means that all trigger subjects are supported by the endpoint. dCDN SHOULD advertise only one endpoint for every trigger subject and CI/T interface version pair. If more than one interface endpoint supports the same trigger subject and CI/T interface version (e.g., CI/T version 2 interface for content objects), uCDN SHOULD be able to use any of the advertised CI/T interface endpoints interchangeably.'
           type: array
           items:
