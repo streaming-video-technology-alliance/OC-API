@@ -7,7 +7,7 @@ info:
   version: 2.1.0
 externalDocs:
     description: 'SVTA 2035 version 2.0 specification'
-    url: 'https://www.svta.org/product/svta2035/'
+    url: 'https://www.svta.org/product/svta2035-1'
 components:
   schemas:
 # MI objects
