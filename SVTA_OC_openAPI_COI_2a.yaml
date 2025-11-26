@@ -33,11 +33,10 @@ components:
             type: string
             enum: ["==", "!=", "!", ">", "<", ">=", "<=", "*=", "~=", "+", "-", "*", "/", "%", " . ", "()", "?:", "ipmatch"]
         variables:
-          description: A list of supported variables.
+          description: 'A list of supported variables names as defined in https://www.svta.org/product/svta2031-1, section 6 (Core variables).'
           type: array
           items:
             type: string
-            enum: ["req.h.<name>", "req.uri", "req.uri.path", "req.uri.pathquery", "req.uri.query", "req.uri.query.<key>", "req.uri.querykv.<key>", "req.method", "req.scheme", "resp.h.<name>", "resp.status", "req.clientip", "req.clientport", "var.<user-variable>" ]
         built-in-functions:
           description: A list of supported built-in function names.
           type: array

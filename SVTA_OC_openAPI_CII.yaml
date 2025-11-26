@@ -74,8 +74,8 @@ components:
         limits:
           type: array
           items:
-            $ref: '#/components/schemas/FCI_CapacityLimit'
-    FCI_CapacityLimit:
+            $ref: '#/components/schemas/FCI.CapacityLimit'
+    FCI.CapacityLimit:
       type: object
       description: 'Capacity metric limits'
       required:

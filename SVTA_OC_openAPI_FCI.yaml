@@ -113,6 +113,7 @@ paths:
                     description: 'The URL associated with that subscription, to be called back by the dCDN on any FCI advertisement change'
                     type: string
                   notificationType:
+                    description: 'The type of notification.'
                     type: string
                     enum: [fci]
         400:
@@ -125,6 +126,7 @@ paths:
       tags:
         - OC_FCI
       summary: 'Deletes the notification subscription.'
+      description: 'Deletes the notification subscription.'
       operationId: OC_fci_delete_notificationSubscription
       parameters:
         - name: subscriptionId

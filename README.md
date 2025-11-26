@@ -8,7 +8,7 @@ The list of files is listed here with for each the corresponding SVTA specificat
 - LICENCE.md: This work is licensed according to the conditions listed in this file.
 
 - SVTA_OC_openAPI_BOI.yaml (SVTA2060): the Bootstrap API allows the uCDN to get the available versions and corresponding API/URLs for each interface. 
-- SVTA_OC_openAPI_FCI.yaml (SVTA2045): the Footprint And Capabilities Interface allows the dCDN to expose its CDN capabilities and footprint to any uCDN.
+- SVTA_OC_openAPI_FCI.yaml (SVTA2045): the Footprint And Capabilities Interface allows the dCDN to expose its CDN capabilities and footprint to any uCDN (based on [RFC8008]).
 - SVTA_OC_openAPI_CII.yaml (SVTA2049): The Capacity Insight Interface exposes basic capacity information and poessible monitoring end points through the FCI interface.
 - SVTA_OC_openAPI_CMI.yaml (SVTA2046): The Cache Management Interface allows the uCDN to control the cache nodes with operations like content pre-positioning or purge.
 - SVTA_OC_openAPI_COI.yaml (SVTA2028-SVTA2030, SVTA2040-SVTA2042): The Configuration Interface allows the uCDN to provision streaming delegation to a dCDN.
@@ -32,14 +32,15 @@ The files are JSON objects, yaml formated according to the OpenAPI specification
 # Viewing/editing
 The files can be viewed/edited through the swagger tooling and/or a code editor (like Visual Studio) equiped with the Yaml language support and/or an OpenAPI validator.
 
-# Versions
+# Versions and repository structure
 There are three branches: COI_v1.1, COI_v2.0 and COI_v2.1 (the default one). 
 - COI_v1.1 version is associated with the SVTA Configuration interface 1.1 (first published version). 
 - COI_v2.0 is associated with SVTA Configuration interface 2.x versions. 
-- COI_v2.1 is associated with the Configuration interface v2.1. Also COI v2.1 proposes a completely new OpenAPI files distribution aligned with the SVTA Open Caching documentation . Before COI_v2.1 only 3 files contained the complete data model including the REST API definition whereas the last branch COI_v2.1 contains one yaml file per Interface with the exception of the configuration Interface that gathers 10 files. 
+- COI_v2.1 is associated with the Configuration interface v2.1. Also COI v2.1 proposes a completely new OpenAPI files distribution aligned with the SVTA Open Caching documentation . Before COI_v2.1 only 3 files contained the complete data model including the REST API definition whereas the last branch COI_v2.1 contains one yaml file per 
+Interface with the exception of the configuration Interface that gathers 10 files. 
 Each openAPI file exhibits:
-    - A version number it is compliant with and that corresponds to the document version number it is attached to.
-    - The document URL it is associated with.
+    - A version number that corresponds to the document version number attached to that file.
+    - The document URL.
     
 # Contributing
 Everyone (including those with read access) can contribute through a pull request. Fork the repository and create a branch from the default one, keep it as much as possible in sync with the main default one (rebase). You should check that the pull request merge properly with the default main branch. You can ask for a review from one particular maintainer and/or from anyone. The pull request should mention the prefered maintainer for handling the pull request
