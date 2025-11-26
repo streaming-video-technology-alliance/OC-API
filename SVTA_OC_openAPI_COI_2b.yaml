@@ -124,7 +124,7 @@ components:
         - $ref: '#/components/schemas/MI.MatchGroup'
     MI.MatchGroup:
       type: object
-      description: 'MI.MatchGroup is a subobject of MI.ClientRequestStage, MI.ClientResponseStage,  MI.OriginRequestStage, and MI.OriginResposeStage, allowing for a structured set of if/else rules to be applied based on an OPTIONAL match of an expression.'
+      description: 'MI.MatchGroup is a subobject of MI.ClientRequestStage, MI.ClientResponseStage,  MI.OriginRequestStage, and MI.OriginResponseStage, allowing for a structured set of if/else rules to be applied based on an OPTIONAL match of an expression.'
       required:
         - if-rule
       properties:
@@ -205,7 +205,7 @@ components:
         - $ref: '#/components/schemas/MI.ResponseTransform'
     MI.ResponseTransform:
       type: object
-      description: 'Metadata for transforming the HTTP response for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
+      description: 'Metadata for transforming the HTTP respose for a StageRules match. The transformation can be the modification of any response header, HTTP response status code, or the generation of a synthetic response. Modifications are applied such that downstream processing stages receive the modified HTTP response as their input.'
       properties:
         header-transform:
           description: 'A HeaderTransform object specifying HTTP request headers to add, replace, or delete.'
@@ -260,7 +260,7 @@ components:
                   {"name" : "X-custom-response-header", "value" : "some static value"},
                   ],
                   "response-status" : 405,
-                  "response-body" : "'Sorry, Access to resource ' . req.uri . ' is not allowed'",
+                  "body" : "'Sorry, Access to resource ' . req.uri . ' is not allowed'",
                   "body-is-expression": true
                 }
     MI_HeaderTransform:
@@ -317,6 +317,6 @@ components:
       example:
         value: {
                 "name" : "X-custom-response-header",
-                "value" : “$req.uri.query.session",
+                "value" : "$req.uri.query.session",
                 “value-is-expression” : true
               }
