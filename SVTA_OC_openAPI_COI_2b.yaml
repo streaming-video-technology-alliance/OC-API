@@ -143,6 +143,8 @@ components:
     MI.StageRules:
       type: object
       description: 'Used within the context of ProcessingStages to define elements in a list of match rules and stage-specific metadata and transformations that should be applied conditionally on a rich expression match.'
+      required:
+        - stage-metadata
       properties:
         match:
           description: 'A match property encapsulates a rich expression using the CDNi Metadata Expression Language (CDNI-MEL) to evaluate aspects of the HTTP request and/or response. The stage-metadata rules are only applied if the match evaluates to true or if no match expression is provided.'

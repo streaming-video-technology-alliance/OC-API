@@ -46,7 +46,7 @@ components:
         - $ref: '#/components/schemas/MI.LocationRuleExtended'
     MI.LocationRuleExtended:
         type: object
-        description: ''
+        description: 'MI.LocationRuleExtended is a subobject of MI.LocationACLExtended that defines pairs of user locations and allow/deny actions.'
         required:
           - locations
         properties:
@@ -54,8 +54,11 @@ components:
             description: 'An array of footprints to match against. These footprints, defined by pairs of MI_footprinttype_ex and 	MI_footprintvalue_ex respectively extend the CDNI MI_footprinttype and MI_footprintvalue. On top of the 4 footprint types defined by CDNI in rfc8006 [ipv4cidr,ipv6cidr,asn,countrycode], 3 new types are added: [ipv4range, ipv6range, subdivisioncode]'
             type: array
             items:
-              type: string
-              enum: [ipv4cidr, ipv6cidr, asn, countrycode, ipv4range, ipv6range, subdivisioncode]
+              type: object
+              description: 'An extension of the CDNi MI.Footprint object'
+              oneOf:
+                - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint'
+                - $ref: '#/components/schemas/MI_Footprint-ex'
           action:
             description: 'The action to take place upon location match'
             type: string
@@ -72,6 +75,24 @@ components:
             description: 'The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode'
             type: boolean
             default: false
+    MI_Footprint-ex:
+      type: object
+      description: 'A Footprint object extension.'
+      required:
+        - footprint-type
+        - footprint-value
+      properties:
+        footprint-type:
+           $ref: '#/components/schemas/MI_footprinttype-ex'
+        footprint-value:
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_footprintvalue-ex'
+    MI_footprinttype-ex:
+      type: string
+      enum: [ipv4range, ipv6range, subdivisioncode]
+    MI_footprintvalue-ex:
+       type: string
     MI_TimeWindowAclExtended:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -87,6 +108,7 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/MI_TimeWindowRuleExtended'
+
     MI_TimeWindowRuleExtended:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -165,7 +187,7 @@ components:
             type: array
             items:
               type: string
-              enum: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384, CipherSuite TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,      CipherSuite TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, CipherSuite TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384]
+              enum: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,  TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256,  TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384]
     MI_CertificateCredentialsMetadata:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -262,9 +284,10 @@ components:
         version:  
           description: 'Specifies the version of the CAT token. dCDN must reject a token for an unsupported version number. A rejected token results in the client response being defined by the "verification-action" property. A value greater than 0 is required: default value is 1.'
           type: number
+          default: 1
         token-object-name:
           description: 'Specifies the name of the token object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032].'
-          $ref: '#/components/schemas/MI.CATTokenObject'
+          type: string
         tokens:
           description: 'Specifies the location in the client request where one or more tokens are present and read for evaluation. When multiple tokens are present, the tokens are read and processed per section 4.4 of [CTA-5007-A].'
           type: array
@@ -281,7 +304,7 @@ components:
       required:
         - status
         - token
-        - status-details
+        - status_details
       properties:
         status:
           description: 'Captures the verification status of the CAT token'
@@ -299,14 +322,14 @@ components:
         - location
       properties:
         location: 
-          description: 'Specifies the location name to find one or more tokens in the client request. Valid location names are defined in SVTA 2035 specificationu per [RFC6570]'
+          description: 'Specifies the location name to find one or more tokens in the client request. Valid location names are defined in SVTA 2035 specification [RFC6570]'
           type: string
-          enum: [Authorization-Header, url-path-style-parameter, query-parameter, cookie]
+          enum: [authorization-header, http-header, path-style-parameter, form-style-parameter, cookie]
         scheme:
-          description: 'The scheme for the Authorization request header that contains the CAT token. Is required/mandatory only if the location property = "Authorization-Header". ' 
+          description: 'The scheme for the Authorization request header that contains the CAT token. Is required/mandatory only if the location property = "authorization-header". ' 
           type: string
         name:
-          description: 'The names of the url-path-style parameter, query parameter or HTTP cookies that contain one or more CAT tokens. Is required/mandatory only if the location property is either "url-path-style-parameter", "query-parameter", or "cookie".'
+          description: 'The names of the url-path-style parameter, query parameter, HTTP Header Field or HTTP cookies that contain one or more CAT tokens. only  if the location property is either "path-style-parameter", "form-style-parameter", "cookie" or "http-header" and not using the default “CTA-Common-Access-Token” header field name. Otherwise, this property is ignored.'
           type: string
     MI.CATTokenConfiguration:
       description: 'The MI.TokenConfiguration object defines the configuration parameters for verifying a CAT token.'
@@ -317,15 +340,14 @@ components:
         - encryption-algo-key
       properties: 
         integrity-algo:
-          description: 'The algorithm used for integrity protection of the CAT token. see [RFC9053].'
+          description: 'The algorithm used for integrity protection of the CAT token.  The minimum set of values to support are “hs256” (HMAC 256/256) (kty number 5, [RFC 9053], Section 3.1), “ps256” (kty number -37, [RFC9053], section 3.1) and “es256” (kty number -7, [RFC9053], section 2.1.'
           type: string
-          enum: [hs256, es256]
         integrity-algo-key:
           description: 'The value of the key used for integrity protection of the CAT token as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039]'
           $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
         encryption-algo:
-          description: 'The algorithm used in the "enc" claim. The minimum value to support is “ecdh-ss+a128kw” (see [RFC9053], section 6.4.1) as defined with the MI.SecretValue object that can either contain the hex version of the symmetric key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039].'
-          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
+          description: 'The algorithm used for encryption via the COSE standard (Ref. [RFC9052]) of the entire CAT token. The minimum value to support is “ecdh-ss+a128kw” (see [RFC9053], section 6.4.1).'
+          type: string
         encryption-algo-key:
           description: 'The value of the key used for encryption in the "enc" claim as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039].'
           $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
@@ -352,19 +374,10 @@ components:
           description: 'Specifies the configuration for processing the "catif" claim to construct the client response for a valid but rejected CAT token. Mandatory to use when the rejected-token-action property for the MI.CATTokenVerificationAction object is set to "token-defined".'
           $ref: '#/components/schemas/MI.CATIF'
     MI.CATIF: 
-      description: 'The  MI.CATIF object specifies the processing of the "catif" claim to construct the client response for a valid but rejected CAT token. See Section 4.9.1 of [CTA-5007-A].'
-      required:
-        - status
-        - token
-        - status-details
+      description: 'The  MI.CATIF object specifies the processing of the "catif" claim to construct the client response for a valid but rejected CAT token. See Section 4.9.1 of [CTA-5007-B].'
       properties: 
-        status:
-          description: 'Captures the verification status of the CAT token.'
-          type: string
-          enum: [success, failure]
-        token:
-          description: 'The string literal of the token in the request.'
-          type: string
-        status_details:
-          description: 'Specifies details about the token verification result when the token verification "status" = "failure". This string contains “Invalid CAT” when a token cannot be parsed (per [RFC8392], Section 7.2) or en empty string otherwise. If "status" = "success" the property MUST be an empty string.'
-          type: string
+        response-header-names-force-add:
+          description: 'For specific named headers of a rejected claim within the "catif" claim, these will be added to the client response, even if headers with same names were already going to be added to the response via other means.'
+          type: array
+          items:
+            type: string

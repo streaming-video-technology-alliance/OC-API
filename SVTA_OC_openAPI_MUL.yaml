@@ -27,7 +27,7 @@ components:
           description: 'Expose the capacity limits related to multicast deleivery as specified in the Capacity Insight Interface (SVTA2049).'
           type: array
           items: 
-            $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CapacityLimit'
+            $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI.CapacityLimit'
         traffic-types:
           description: 'Permits the dCDN to announce the list of traffic types (MI.TrafficType) supported over the multicast delivery.'
           type: array
