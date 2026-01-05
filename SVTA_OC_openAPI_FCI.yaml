@@ -91,7 +91,7 @@ paths:
         - OC_FCI
       summary: Gets the FCI notification subscription. 
       operationId: oc_fci_get_notificationSubscription
-      description: 'Get the FCI subscription'
+      description: 'Get the FCI subscription resource created with POST /OC/FCI/subscription'
       parameters:
         - name: subscriptionId
           in: path
@@ -126,7 +126,7 @@ paths:
       tags:
         - OC_FCI
       summary: 'Deletes the notification subscription.'
-      description: 'Deletes the notification subscription.'
+      description: 'Deletes the notification subscription created with POST /OC/FCI/subscription.'
       operationId: OC_fci_delete_notificationSubscription
       parameters:
         - name: subscriptionId
