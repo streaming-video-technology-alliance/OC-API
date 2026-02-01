@@ -87,8 +87,8 @@ components:
           description: 'The owner/organisation that has specified that feature.'
           type: string
         feature-type:
-          description: This property is used to indicate the type/name of the private feature configuration object.
+          description: 'This property is used to indicate the type/name of the private feature configuration object.'
           type: string
         feature-value:
-          description: 'Format/Type is defined by the value of the  feature-type property above'
+          description: 'Format/Type is defined by the value of the  feature-type property above.'
           type: object

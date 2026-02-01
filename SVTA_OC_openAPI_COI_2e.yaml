@@ -1,254 +1,282 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: Open Caching API - CONfiguration Interface (COI) - 2e - Client Access Control
-  description: 'This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It provides metadata objects definition for downstream client access control configuration.'
+  description: "This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It provides metadata objects definition for downstream client access control configuration."
   contact:
     email: guillaume.bichot@broadpeak.tv
   version: 2.1.0
 externalDocs:
-    description: 'SVTA 2035 version 2.0 specification'
-    url: 'https://www.svta.org/product/svta2035-1'
+  description: "SVTA 2035 version 2.0 specification"
+  url: "https://www.svta.org/product/svta2035-1"
 components:
   schemas:
-# MI objects
+    # MI objects
     MI_COI2e_payloadtype:
       type: string
-      enum: [ MI.CertificateMetadata, MI.EncryptionLevelMetadata, MI.CertificateCredentialsMetadata,MI.LocationACLExtended, MI.LocationRuleExtended, MI.TimeWindowAclExtended, MI.TimeWindowRuleExtended, MI.ClientAuthMetadata, MI.AccessControlAllowOrigin, MI.OcnDelivery, MI.MediaServiceDescription]
+      enum:
+        [
+          MI.CertificateMetadata,
+          MI.EncryptionLevelMetadata,
+          MI.CertificateCredentialsMetadata,
+          MI.LocationACLExtended,
+          MI.LocationRuleExtended,
+          MI.TimeWindowAclExtended,
+          MI.TimeWindowRuleExtended,
+          MI.ClientAuthMetadata,
+          MI.AccessControlAllowOrigin,
+          MI.OcnDelivery,
+          MI.MediaServiceDescription,
+        ]
     MI_COI2e_payloadvalue:
-      oneOf:  
-        - $ref: '#/components/schemas/MI.LocationACLExtended'
-        - $ref: '#/components/schemas/MI.LocationRuleExtended'
-        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
-        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
-        - $ref: '#/components/schemas/MI.CertificateMetadata'
-        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
-        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'        
-        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
-
+      oneOf:
+        - $ref: "#/components/schemas/MI.LocationACLExtended"
+        - $ref: "#/components/schemas/MI.LocationRuleExtended"
+        - $ref: "#/components/schemas/MI.TimeWindowAclExtended"
+        - $ref: "#/components/schemas/MI.TimeWindowRuleExtended"
+        - $ref: "#/components/schemas/MI.CertificateMetadata"
+        - $ref: "#/components/schemas/MI.EncryptionLevelMetadata"
+        - $ref: "#/components/schemas/MI.CertificateCredentialsMetadata"
+        - $ref: "#/components/schemas/MI.ClientAuthMetadata"
     MI_LocationACLExtended:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.LocationACLExtended'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.LocationACLExtended"
     MI.LocationACLExtended:
-        type: object
-        description: 'MI.LocationAclExtended is an alternative to the CDNI standard MI.LocationAcl object that defines which locations a User Agent needs to be in, in order to be able to receive the associated content. MI.LocationAclExtended uses ACL rules of type MI.LocationRuleExtended, providing rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.LocationAcl and the two are mutually exclusive.'
-        required:
-          - rules
-        properties:
-          rules:
-            description: 'An array of MI.LocationRuleExtended objects.'
-            type: array
-            items:
-              $ref: '#/components/schemas/MI_LocationRuleExtended'
+      type: object
+      description: "MI.LocationAclExtended is an alternative to the CDNI standard MI.LocationAcl object that defines which locations a User Agent needs to be in, in order to be able to receive the associated content. MI.LocationAclExtended uses ACL rules of type MI.LocationRuleExtended, providing rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.LocationAcl and the two are mutually exclusive."
+      required:
+        - rules
+      properties:
+        rules:
+          description: "An array of MI.LocationRuleExtended objects."
+          type: array
+          items:
+            $ref: "#/components/schemas/MI_LocationRuleExtended"
     MI_LocationRuleExtended:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.LocationRuleExtended'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.LocationRuleExtended"
     MI.LocationRuleExtended:
-        type: object
-        description: 'MI.LocationRuleExtended is a subobject of MI.LocationACLExtended that defines pairs of user locations and allow/deny actions.'
-        required:
-          - locations
-        properties:
-          locations:
-            description: 'An array of footprints to match against. These footprints, defined by pairs of MI_footprinttype_ex and 	MI_footprintvalue_ex respectively extend the CDNI MI_footprinttype and MI_footprintvalue. On top of the 4 footprint types defined by CDNI in rfc8006 [ipv4cidr,ipv6cidr,asn,countrycode], 3 new types are added: [ipv4range, ipv6range, subdivisioncode]'
-            type: array
-            items:
-              type: object
-              description: 'An extension of the CDNi MI.Footprint object'
-              oneOf:
-                - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint'
-                - $ref: '#/components/schemas/MI_Footprint-ex'
-          action:
-            description: 'The action to take place upon location match'
-            type: string
-            enum: [allow, deny]
-            default: deny
-          comment:
-            description: 'An optional text comment for user readability and for  incorporating in logging '
-            type: string
-          deny-response:
-            description: 'configuration of the 	entire response to the client in case of deny action.'
-            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
-            default: { "response-status" : "403" }
-          match-all-locations:
-            description: 'The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode'
-            type: boolean
-            default: false
+      type: object
+      description: "MI.LocationRuleExtended is a subobject of MI.LocationACLExtended that defines pairs of user locations and allow/deny actions."
+      required:
+        - locations
+      properties:
+        locations:
+          description: "An array of footprints to match against. These footprints, defined by pairs of MI_footprinttype_ex and 	MI_footprintvalue_ex respectively extend the CDNI MI_footprinttype and MI_footprintvalue. On top of the 4 footprint types defined by CDNI in rfc8006 [ipv4cidr,ipv6cidr,asn,countrycode], 3 new types are added: [ipv4range, ipv6range, subdivisioncode]"
+          type: array
+          items:
+            type: object
+            description: "An extension of the CDNi MI.Footprint object"
+            oneOf:
+              - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint"
+              - $ref: "#/components/schemas/MI_Footprint-ex"
+        action:
+          description: "The action to take place upon location match"
+          type: string
+          enum: [allow, deny]
+          default: deny
+        comment:
+          description: "An optional text comment for user readability and for  incorporating in logging "
+          type: string
+        deny-response:
+          description: "configuration of the 	entire response to the client in case of deny action."
+          $ref: "SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse"
+          default: { "response-status": "403" }
+        match-all-locations:
+          description: "The ACL rule match will take place 	only if all locations In the rule are matched, e.g both asn and subdivisioncode"
+          type: boolean
+          default: false
     MI_Footprint-ex:
       type: object
-      description: 'A Footprint object extension.'
+      description: "A Footprint object extension."
       required:
         - footprint-type
         - footprint-value
       properties:
         footprint-type:
-           $ref: '#/components/schemas/MI_footprinttype-ex'
+          $ref: "#/components/schemas/MI_footprinttype-ex"
         footprint-value:
           type: array
           items:
-            $ref: '#/components/schemas/MI_footprintvalue-ex'
+            $ref: "#/components/schemas/MI_footprintvalue-ex"
     MI_footprinttype-ex:
       type: string
       enum: [ipv4range, ipv6range, subdivisioncode]
     MI_footprintvalue-ex:
-       type: string
+      type: string
     MI_TimeWindowAclExtended:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.TimeWindowAclExtended'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.TimeWindowAclExtended"
     MI.TimeWindowAclExtended:
-        type: object
-        description: 'MI.TimeWindowAclExtended is an alternative to the CDNI standard MI.TimeWindow object for implementing time-based access restrictions. It uses ACL rules of type MI.TimeWindowRuleExtended to provide rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.TimeWindowAcl and the two are mutually exclusive'
-        required:
-          - rules
-        properties:
-          rules:
-            description: 'An array of MI.TimeWindowRuleExtended objects.'
-            type: array
-            items:
-              $ref: '#/components/schemas/MI_TimeWindowRuleExtended'
+      type: object
+      description: "MI.TimeWindowAclExtended is an alternative to the CDNI standard MI.TimeWindow object for implementing time-based access restrictions. It uses ACL rules of type MI.TimeWindowRuleExtended to provide rules for handling denied requests. This object conforms to the specification defined for the behavior of MI.TimeWindowAcl and the two are mutually exclusive"
+      required:
+        - rules
+      properties:
+        rules:
+          description: "An array of MI.TimeWindowRuleExtended objects."
+          type: array
+          items:
+            $ref: "#/components/schemas/MI_TimeWindowRuleExtended"
 
     MI_TimeWindowRuleExtended:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.TimeWindowRuleExtended'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.TimeWindowRuleExtended"
     MI.TimeWindowRuleExtended:
-        type: object
-        description: ''
-        required:
-          - windows
-        properties:
-          windows:
-            description: 'An array of MI.TimeWindow objects to match against'
-            type: array
-            items:
-              $ref: 'SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow'
-          action:
-            description: 'The action to take place upon time window match'
-            type: string
-            enum: [allow, deny]
-            default: deny
-          comment:
-            description: 'An optional text comment for user readability and for  incorporating in logging '
-            type: string
-          deny-response:
-            description: 'configuration of the 	entire response to the client in case of deny action.'
-            $ref: 'SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse'
-            default: { "response-status" : "403" }
+      type: object
+      description: ""
+      required:
+        - windows
+      properties:
+        windows:
+          description: "An array of MI.TimeWindow objects to match against"
+          type: array
+          items:
+            $ref: "SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow"
+        action:
+          description: "The action to take place upon time window match"
+          type: string
+          enum: [allow, deny]
+          default: deny
+        comment:
+          description: "An optional text comment for user readability and for  incorporating in logging "
+          type: string
+        deny-response:
+          description: "configuration of the 	entire response to the client in case of deny action."
+          $ref: "SVTA_OC_openAPI_COI_2b.yaml#/components/schemas/MI_SyntheticResponse"
+          default: { "response-status": "403" }
     MI_CertificateMetadata:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.CertificateMetadata'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.CertificateMetadata"
     MI.CertificateMetadata:
-        type: object
-        description: 'To allow for secure delivery of content, a dCDN must be configured to support HTTPs.  The MI.CertificateMetadata object is used to configure the dCDN HTTPs attributes such as TLS certificate credentials, encryption levels, protocols, and ciphers.'
-        required:
-          - encryption-level
-          - delegated-credentials
-        properties:
-          encryption-level:
-            description: 'A reference to a MI.EncryptionLevelMetadata object that specifies the TLS protocols and ciphers to use.'
-            $ref: '#/components/schemas/MI_EncryptionLevelMetadata'
-          delegated-credentials:
-            description: 'A reference to the certificate delegated credentials to use when establishing a TLS session with the client.'
-            $ref: '#/components/schemas/MI_CertificateCredentialsMetadata'
-          ocsp-enabled:
-            description: 'When ocsp-enabled is set to True, the dCDN will check the revocation status of the configured certificate and include that information with the  response to the client.  See https://datatracker.ietf.org/doc/html/rfc6066#section-8'
-            type: boolean
-            default: false
-          prefer-server-ciphers:
-            description: 'When prefer-server-ciphers is set to False (the default), the dCDN will prefer to use cipher suites in the order presented by the client when negotiating the TLS handshake.   When prefer-server-ciphers is set to True, cipher suites will be selected in the order preferred by the dCDN server.'
-            type: boolean
-            default: false
+      type: object
+      description: "To allow for secure delivery of content, a dCDN must be configured to support HTTPs.  The MI.CertificateMetadata object is used to configure the dCDN HTTPs attributes such as TLS certificate credentials, encryption levels, protocols, and ciphers."
+      required:
+        - encryption-level
+        - delegated-credentials
+      properties:
+        encryption-level:
+          description: "A reference to a MI.EncryptionLevelMetadata object that specifies the TLS protocols and ciphers to use."
+          $ref: "#/components/schemas/MI_EncryptionLevelMetadata"
+        delegated-credentials:
+          description: "A reference to the certificate delegated credentials to use when establishing a TLS session with the client."
+          $ref: "#/components/schemas/MI_CertificateCredentialsMetadata"
+        ocsp-enabled:
+          description: "When ocsp-enabled is set to True, the dCDN will check the revocation status of the configured certificate and include that information with the  response to the client.  See https://datatracker.ietf.org/doc/html/rfc6066#section-8"
+          type: boolean
+          default: false
+        prefer-server-ciphers:
+          description: "When prefer-server-ciphers is set to False (the default), the dCDN will prefer to use cipher suites in the order presented by the client when negotiating the TLS handshake.   When prefer-server-ciphers is set to True, cipher suites will be selected in the order preferred by the dCDN server."
+          type: boolean
+          default: false
     MI_EncryptionLevelMetadata:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.EncryptionLevelMetadata'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.EncryptionLevelMetadata"
     MI.EncryptionLevelMetadata:
-        type: object
-        description: 'MI.EncryptionLevelMetadata is a subobject of MI.CertificateMetadata to support HTTPs content delivery.  MI.EncryptionLevelMetadata specifies the protocols and ciphers to be used by the associated MI.CertificateMetadata object.  Externalizing MI.EncryptionLevelMetadata from MI.CertificateMetadata allows security policy (TLS protocols and ciphers) to be defined once and referenced by many configurations.'
-        required:
-          - encryption-level-name
-          - protocols
-          - ciphers
-        properties:
-          encryption-level-name:
-            description: 'A descriptive name for the MI.EncryptionLevelMetadata object.  This name is expected to be used by operators to reference the MI.EncryptionLevelMetadata configuration.'
+      type: object
+      description: "MI.EncryptionLevelMetadata is a subobject of MI.CertificateMetadata to support HTTPs content delivery.  MI.EncryptionLevelMetadata specifies the protocols and ciphers to be used by the associated MI.CertificateMetadata object.  Externalizing MI.EncryptionLevelMetadata from MI.CertificateMetadata allows security policy (TLS protocols and ciphers) to be defined once and referenced by many configurations."
+      required:
+        - encryption-level-name
+        - protocols
+        - ciphers
+      properties:
+        encryption-level-name:
+          description: "A descriptive name for the MI.EncryptionLevelMetadata object.  This name is expected to be used by operators to reference the MI.EncryptionLevelMetadata configuration."
+          type: string
+        protocols:
+          description: "An array that lists the allowed protocols for the TLS session."
+          type: array
+          items:
             type: string
-          protocols:
-            description: 'An array that lists the allowed protocols for the TLS session.'
-            type: array
-            items:
-              type: string
-              enum: [TLSv1.0,TLSv1.1,TLSv1.2,TLSv1.3,SSLv3]
-          ciphers:
-            description: 'An array that lists the allowed ciphers for the TLS session using cipher suite names defined in [RFC5289].'
-            type: array
-            items:
-              type: string
-              enum: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,  TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256,  TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384]
+            enum: [TLSv1.0, TLSv1.1, TLSv1.2, TLSv1.3, SSLv3]
+        ciphers:
+          description: "An array that lists the allowed ciphers for the TLS session using cipher suite names defined in [RFC5289]."
+          type: array
+          items:
+            type: string
+            enum:
+              [
+                TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+                TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,
+                TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384,
+                TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+                TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256,
+                TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384,
+                TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+                TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
+                TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384,
+                TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+                TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256,
+                TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384,
+              ]
     MI_CertificateCredentialsMetadata:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.CertificateCredentialsMetadata'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.CertificateCredentialsMetadata"
     MI.CertificateCredentialsMetadata:
-        type: object
-        description: 'MI.CertificateCredentialsMetadata is a subobject of MI.CertificateMetadata  that defines the credentials to use when establishing a TLS session between a dCDN and client.'
-        required:
-          - delegated-credentials-type
-          - delegated-credentials-value
-        properties:
-          delegated-credentials-type:
-            description: 'DelegatedCredentials type (The CDNI Payload Type [RFC7736]  of the GenericMetadata object contained in the delegated-credentials-value property).'
-            $ref: '#/components/schemas/MI_delegationtype'
-          delegated-credentials-value:
-            description: 'An object conforming to the specification associated with the DelegatedCredentials type.'
-            $ref: '#/components/schemas/MI_delegationvalue'
+      type: object
+      description: "MI.CertificateCredentialsMetadata is a subobject of MI.CertificateMetadata  that defines the credentials to use when establishing a TLS session between a dCDN and client."
+      required:
+        - delegated-credentials-type
+        - delegated-credentials-value
+      properties:
+        delegated-credentials-type:
+          description: "DelegatedCredentials type (The CDNI Payload Type [RFC7736]  of the GenericMetadata object contained in the delegated-credentials-value property)."
+          $ref: "#/components/schemas/MI_delegationtype"
+        delegated-credentials-value:
+          description: "An object conforming to the specification associated with the DelegatedCredentials type."
+          $ref: "#/components/schemas/MI_delegationvalue"
     MI_delegationtype:
       type: string
       enum: [MI.DelegatedCredentials, MI.ACMEDelegationMethod]
     MI_delegationvalue:
-     oneOf:
-        - $ref: '#/components/schemas/MI.DelegatedCredentials'
-        - $ref: '#/components/schemas/MI.ACMEDelegationMethod'
+      oneOf:
+        - $ref: "#/components/schemas/MI.DelegatedCredentials"
+        - $ref: "#/components/schemas/MI.ACMEDelegationMethod"
     MI.DelegatedCredentials:
-      type: object    
+      type: object
       description: 'As expressed in [RFC9345], when an uCDN has delegated to a dCDN, the dCDN presents the "delegated_credential" (rather than its own certificate) during the TLS handshake [RFC8446] to the User Agent. This implies that the dCDN is also in the possession of the private key corresponding to the public key in DelegatedCredential.cred [RFC9345]. This allows the User Agent to verify the signature in a CertificateVerify message (Section 4.4.3 of [RFC8446]) sent and signed by the dCDN.\n This section defines the MI.DelegatedCredentials object containing an array of delegated credentials and optionally the corresponding private keys. The CDNI MI [RFC8006] describes the CDNI metadata distribution mechanisms according to which a dCDN can retrieve the MI.DelegatedCredentials object from the uCDN.'
       required:
         - delegated-credentials
       properties:
         delegated-credentials:
-          description: 'Array of delegated credentials'
+          description: "Array of delegated credentials"
           type: array
           items:
-            $ref: '#/components/schemas/MI_DelegatedCredentialObject'
+            $ref: "#/components/schemas/MI_DelegatedCredentialObject"
     MI_DelegatedCredentialObject:
       type: object
       required:
         - delegated-credential
       properties:
         delegated-credential:
-          description: 'Base64-encoded (as defined in Section 4 of [RFC4648]) version of a CertificateEntry as defined in Section 4.4.2 of [RFC8446]. The CertificateEntry MUST contain a DelegatedCredential structure (as defined in [RFC9345]) using the extension in the CertificateEntry of its end-entity certificate (see Section 4.1.1 of [RFC9345]).'
-          type:
-            string
+          description: "Base64-encoded (as defined in Section 4 of [RFC4648]) version of a CertificateEntry as defined in Section 4.4.2 of [RFC8446]. The CertificateEntry MUST contain a DelegatedCredential structure (as defined in [RFC9345]) using the extension in the CertificateEntry of its end-entity certificate (see Section 4.1.1 of [RFC9345])."
+          type: string
         private-key:
-          description: 'Encrypted private key corresponding to the public key contained in the DelegatedCredential. The envelope format for this property is JSON Web Encryption (JWE) [RFC7516] using the base64 compact serialization (Section 7.1 of [RFC7516]).'
-          type:
-            string
+          description: "Encrypted private key corresponding to the public key contained in the DelegatedCredential. The envelope format for this property is JSON Web Encryption (JWE) [RFC7516] using the base64 compact serialization (Section 7.1 of [RFC7516])."
+          type: string
     MI.ACMEDelegationMethod:
-      type: object    
+      type: object
       description: 'The ACMEDelegationMethod object allows a uCDN to define both STAR and non-STAR delegations. The dCDN, the consumer of the delegation, can determine the type of delegation by the presence (or absence) of the "lifetime" property. That is, the presence of the "lifetime" property explicitly means a short-term delegation with lifetime of the certificate based on that property (and the optional "lifetime-adjust" attribute). A non-STAR delegation will not have the "lifetime" property in the delegation.'
       required:
         - acme-delegation
         - time-window
       properties:
         acme-delegation:
-          description: 'A URL pointing at an ACME delegation object, either STAR or non-STAR, associated with the dCDN account on the uCDN ACME server (see Section 2.3.1.3 of [RFC9115] for the details). The URL MUST use the https scheme.'
+          description: "A URL pointing at an ACME delegation object, either STAR or non-STAR, associated with the dCDN account on the uCDN ACME server (see Section 2.3.1.3 of [RFC9115] for the details). The URL MUST use the https scheme."
           type: string
         time-window:
           description: 'Validity period of the certificate. According to Section 4.3.4 of [RFC8006], a TimeWindow object is defined by a window "start" time and a window "end" time. In the case of a STAR method, the "start" and "end" properties of the window MUST be understood respectively as the start-date and end-date of the certificate validity. In the case of a non-STAR method, the "start" and "end" properties of the window MUST be understood, respectively, as the notBefore and notAfter fields of the certificate. Mandatory only if a STAR delegation method is specified.'
-          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow'
+          $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_TimeWindow"
         lifetime:
           description: See lifetime in Section 3.1.1 of [RFC8739]
           type: integer
@@ -257,102 +285,109 @@ components:
           type: integer
     MI_ClientAuthMetadata:
       oneOf:
-        - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
-        - $ref: '#/components/schemas/MI.ClientAuthMetadata'
+        - $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link"
+        - $ref: "#/components/schemas/MI.ClientAuthMetadata"
     MI.ClientAuthMetadata:
-        type: object
-        description: 'The MI.ClientAuthMetadata defines how a dCDN authenticates client requests.'
-        required:
-          - delivery-auth
-        properties:
-          delivery-auth:
-            description: 'Authentication method to use when granting access to a resource requested by a client.'
-            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_Auth'
+      type: object
+      description: "The MI.ClientAuthMetadata defines how a dCDN authenticates client requests."
+      required:
+        - delivery-auth
+      properties:
+        delivery-auth:
+          description: "Authentication method to use when granting access to a resource requested by a client."
+          $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_Auth"
     MI_COI2e_authtype:
       type: string
       enum: [MI.CATAuth]
     MI_COI2e_authvalue:
       oneOf:
-        - $ref: '#/components/schemas/MI.CATAuth' 
-    MI.CATAuth: 
-      description: 'The MI.CATAuth object defines the configuration for a dCDN to authenticate client requests using the Common Access Token standard. The MI.CATAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to to client requests by including it under the MI.ClientAuthMetadata.delivery-auth property.'
+        - $ref: "#/components/schemas/MI.CATAuth"
+    MI.CATAuth:
+      description: "The MI.CATAuth object defines the configuration for a dCDN to authenticate client requests using the Common Access Token standard. The MI.CATAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to to client requests by including it under the MI.ClientAuthMetadata.delivery-auth property."
       required:
         - tokens
         - configuration
         - verification-action
-      properties: 
-        version:  
+      properties:
+        version:
           description: 'Specifies the version of the CAT token. dCDN must reject a token for an unsupported version number. A rejected token results in the client response being defined by the "verification-action" property. A value greater than 0 is required: default value is 1.'
           type: number
           default: 1
         token-object-name:
-          description: 'Specifies the name of the token object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032].'
+          description: "Specifies the name of the token object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032]."
           type: string
         tokens:
-          description: 'Specifies the location in the client request where one or more tokens are present and read for evaluation. When multiple tokens are present, the tokens are read and processed per section 4.4 of [CTA-5007-A].'
+          description: "Specifies the location in the client request where one or more tokens are present and read for evaluation. When multiple tokens are present, the tokens are read and processed per section 4.4 of [CTA-5007-A]."
           type: array
           items:
-            $ref: '#/components/schemas/MI.CATTokenLocator'
+            $ref: "#/components/schemas/MI.CATTokenLocator"
         configuration:
-          description: 'Specifies the configuration parameters needed to verify a token.'
-          $ref: '#/components/schemas/MI.CATTokenConfiguration'
+          description: "Specifies the configuration parameters needed to verify a token."
+          $ref: "#/components/schemas/MI.CATTokenConfiguration"
         verification-action:
-          description: 'Specifies how an invalid token OR a valid but rejected token defines the response returned to the client.'
-          $ref: '#/components/schemas/MI.CATTokenVerificationAction'
+          description: "Specifies how an invalid token OR a valid but rejected token defines the response returned to the client."
+          $ref: "#/components/schemas/MI.CATTokenVerificationAction"
     MI.CATTokenObject:
-      description: 'The MI.CATTokenObject object defines a read-only object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032].'
+      description: "The MI.CATTokenObject object defines a read-only object that captures the results of the token verification. The verification result is available for inspection in all processing stages [SVTA2032]."
       required:
         - status
         - token
         - status_details
       properties:
         status:
-          description: 'Captures the verification status of the CAT token'
+          description: "Captures the verification status of the CAT token"
           type: string
           enum: [success, failure]
         token:
-          description: 'The string literal of the token in the request.'
+          description: "The string literal of the token in the request."
           type: string
         status_details:
           description: 'Specifies details about the token verification result when the token verification "status" = "failure"; an Empty string corresponds to a missing token. “Invalid CAT” when a token cannot be parsed, per [RFC8392], Section 7.2 or “Invalid Claim: <name of the first claim that caused the CAT token to be rejected>". Mandatory. If the status is "success", the value MUST be an empty string.'
           type: string
     MI.CATTokenLocator:
-      description: 'The MI.CATTokenLocator object defines the location to read one or more tokens from the client request.'
+      description: "The MI.CATTokenLocator object defines the location to read one or more tokens from the client request."
       required:
         - location
       properties:
-        location: 
-          description: 'Specifies the location name to find one or more tokens in the client request. Valid location names are defined in SVTA 2035 specification [RFC6570]'
+        location:
+          description: "Specifies the location name to find one or more tokens in the client request. Valid location names are defined in SVTA 2035 specification [RFC6570]"
           type: string
-          enum: [authorization-header, http-header, path-style-parameter, form-style-parameter, cookie]
+          enum:
+            [
+              authorization-header,
+              http-header,
+              path-style-parameter,
+              form-style-parameter,
+              cookie,
+            ]
         scheme:
-          description: 'The scheme for the Authorization request header that contains the CAT token. Is required/mandatory only if the location property = "authorization-header". ' 
+          description: 'The scheme for the Authorization request header that contains the CAT token. Is required/mandatory only if the location property = "authorization-header". '
           type: string
         name:
           description: 'The names of the url-path-style parameter, query parameter, HTTP Header Field or HTTP cookies that contain one or more CAT tokens. only  if the location property is either "path-style-parameter", "form-style-parameter", "cookie" or "http-header" and not using the default “CTA-Common-Access-Token” header field name. Otherwise, this property is ignored.'
           type: string
     MI.CATTokenConfiguration:
-      description: 'The MI.TokenConfiguration object defines the configuration parameters for verifying a CAT token.'
-      required: 
+      description: "The MI.TokenConfiguration object defines the configuration parameters for verifying a CAT token."
+      required:
         - integrity-algo
         - integrity-algo-key
         - encryption-algo
         - encryption-algo-key
-      properties: 
+      properties:
         integrity-algo:
-          description: 'The algorithm used for integrity protection of the CAT token.  The minimum set of values to support are “hs256” (HMAC 256/256) (kty number 5, [RFC 9053], Section 3.1), “ps256” (kty number -37, [RFC9053], section 3.1) and “es256” (kty number -7, [RFC9053], section 2.1.'
+          description: "The algorithm used for integrity protection of the CAT token.  The minimum set of values to support are “hs256” (HMAC 256/256) (kty number 5, [RFC 9053], Section 3.1), “ps256” (kty number -37, [RFC9053], section 3.1) and “es256” (kty number -7, [RFC9053], section 2.1."
           type: string
         integrity-algo-key:
-          description: 'The value of the key used for integrity protection of the CAT token as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039]'
-          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
+          description: "The value of the key used for integrity protection of the CAT token as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039]"
+          $ref: "./SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue"
         encryption-algo:
-          description: 'The algorithm used for encryption via the COSE standard (Ref. [RFC9052]) of the entire CAT token. The minimum value to support is “ecdh-ss+a128kw” (see [RFC9053], section 6.4.1).'
+          description: "The algorithm used for encryption via the COSE standard (Ref. [RFC9052]) of the entire CAT token. The minimum value to support is “ecdh-ss+a128kw” (see [RFC9053], section 6.4.1)."
           type: string
         encryption-algo-key:
           description: 'The value of the key used for encryption in the "enc" claim as defined with the MI.SecretValue object that can either contain the hex version of the key in the clear (not recommended) or as a reference in an external key store. See [SVTA2039].'
-          $ref: './SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue'
+          $ref: "./SVTA_OC_openAPI_COI_2i.yaml#/components/schemas/MI.SecretValue"
     MI.CATTokenVerificationAction:
-      description: 'The MI.CATTokenVerificationAction object defines how a client response is created for an invalid OR valid but rejected token.'
+      description: "The MI.CATTokenVerificationAction object defines how a client response is created for an invalid OR valid but rejected token."
       required:
         - rejected-token-action
       properties:
@@ -362,7 +397,7 @@ components:
           enum: [fail, allow, token-defined]
         token-defined-response:
           description: 'Specifies how the token values are used to create the client response for an invalid OR valid but rejected token. This property is mandatory when the value of "rejected-token-action" property is "token-defined". Use of this property for any other value of "rejected-token-action" is an invalid configuration.'
-          $ref: '#/components/schemas/MI.CATTokenDefinedResponse'
+          $ref: "#/components/schemas/MI.CATTokenDefinedResponse"
     MI.CATTokenDefinedResponse:
       description: 'The MI.CATTokenDefinedResponse object defines how a client response is constructed using the "catif" claim or some fallback.'
       properties:
@@ -372,10 +407,10 @@ components:
           enum: [fail, allow]
         catif:
           description: 'Specifies the configuration for processing the "catif" claim to construct the client response for a valid but rejected CAT token. Mandatory to use when the rejected-token-action property for the MI.CATTokenVerificationAction object is set to "token-defined".'
-          $ref: '#/components/schemas/MI.CATIF'
-    MI.CATIF: 
+          $ref: "#/components/schemas/MI.CATIF"
+    MI.CATIF:
       description: 'The  MI.CATIF object specifies the processing of the "catif" claim to construct the client response for a valid but rejected CAT token. See Section 4.9.1 of [CTA-5007-B].'
-      properties: 
+      properties:
         response-header-names-force-add:
           description: 'For specific named headers of a rejected claim within the "catif" claim, these will be added to the client response, even if headers with same names were already going to be added to the response via other means.'
           type: array
