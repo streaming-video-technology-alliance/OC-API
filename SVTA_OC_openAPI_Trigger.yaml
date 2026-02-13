@@ -455,8 +455,11 @@ components:
           $ref: "#/components/schemas/CI_triggerExtension"
         generic-trigger-extension-value:
           description: "CDNI trigger extension object."
-          type: object
-          additionalProperties: {}
+          oneOf:
+            - $ref: '#/components/schemas/CI_locationPolicy'
+            - $ref: '#/components/schemas/CI_timePolicy'
+            - $ref: '#/components/schemas/CI_schedulePolicy'
+
         mandatory-to-enforce:
           description: "Flag identifying whether or not the enforcement of this trigger extension is mandatory. The default is to treat the trigger extension as mandatory to enforce (i.e., a value of True)."
           type: boolean
@@ -468,7 +471,96 @@ components:
           type: boolean
     CI_triggerExtension:
       type: string
-      enum: [location-policy, time-policy, execution-policy]
+      enum: [location-policy, time-policy, execution-policy, preposition-policy, schedule-policy, purge-policy]
+    CI_locationPolicy:
+      description: 'A content operation may be relevant for a specific geographical region or need to be excluded from a specific region. In this case, the trigger should be applied only to parts of the network that are either "included" or "not excluded" by the location policy. Note that the restrictions here are on the cache location rather than the client location. The LocationPolicy object defines the cache or CDN locations in which the trigger is to be executed, thereby constraining the trigger scope to those locations. Although users are typically proximate to the corresponding cache nodes, the policy applies to the caches themselves, not to the users locations.'
+      properties: 
+        locations:
+          description: 'An Access List that allows or denies (blocks) the trigger execution per cache location.'
+          type: array
+          items:
+            $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.LocationRule"
+    CI_timePolicy:
+      description: "The uCDN may wish to perform content management operations on the dCDN on a specific schedule. The TimePolicy extension allows the uCDN to instruct the dCDN to execute the trigger command in a desired time window. For example, a video content provider may wish to pre-populate a new episode during off-peak hours so that it is ready on caches at prime time when the episode is released for viewing. A scheduled operation enables the uCDN to direct the dCDN in what time frame to execute the trigger. This specification supports region-by-region time scheduling when used in conjunction with the Location Policy. The uCDN can trigger separate commands for different geographical regions using a different schedule for each region. This allows the uCDN to control the execution time per region."
+      properties: 
+        unix-time-window:
+          description: 'A UNIX epoch time window in which the trigger SHOULD be executed. Eexactly one of either "unix-time-window" or "utc-window" MUST be present.'
+          $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.TimeWindow'
+        utc-window:
+          description: 'A UTC time window in which the trigger SHOULD be executed. Exactly one of either "unix-time-window" or "utc-window" MUST be present.'
+          $ref: '#/components/schemas/CI_UTCWindow'
+    CI_schedulePolicy:
+      description: "Schedule specifying when the trigger SHOULD run, consisting of one or more schedule windows. Each one of the windows in the schedule MAY be a one-off time window, or have a recurrence associated with it. The schedules are encoded using JSON-based iCalendar (jCal) format. jCal is specified in [RFC7265], and describes JSON encoding of the iCalendar standard [RFC5545]."
+      required:
+        - schedule
+      properties:
+        schedule:
+          type: string
+    CI_executionPolicy:
+      description: 'Unless specified otherwise, the dCDN is at liberty to decide how to choose trigger commands for execution from all pending commands, whether to process trigger commands sequentially or in parallel, immediately upon acceptance, or with a delay in batches. The uCDN may wish to control trigger processing in more detail, including the order of execution, dependencies, and concurrency. Please note that the uCDN MAY request immediate processing of a trigger either by setting its state to "active" at creation time or by modifying a pending trigger to set its state to "active"'
+      properties:
+        priority: 
+          description: 'Relative weight of the trigger. When picking a trigger for execution from all pending triggers posted by each uCDN, the dCDN MUST choose the trigger with the highest priority first. An Integer from -100 to 100.'
+          type: integer
+        depends:
+          description: 'Links to trigger resources that the current trigger depends on. Indicates which triggers should fully finish processing before starting execution of the current trigger. The triggers SHOULD be in one of the following states to be considered finished: "complete", "processed", "failed" or "cancelled". A JSON array of zero or more URLs, represented as JSON strings.'
+          type: array
+          items:
+            type: string
+            format: URL
+    CI_prepositionPolicy:
+      description: 'The PrepositionPolicy extension specifies how the dCDN manages pre-positioning trigger requests.'
+      properties:
+        preposition-methods-allowed: 
+          description: 'Policy to determine what HTTP methods the dCDN SHOULD utilize to retrieve cache objects specified in the trigger. By specifying only “HEAD” or “OPTIONS”, the uCDN MAY indicate that the trigger is used to propagate cache hints only, without actually retrieving cache objects. When specifying “GET” only, the uCDN indicates compulsory retrieval of the objects. If the uCDN specifies both “GET”, as well as “HEAD” or “OPTIONS” method, this indicates that the uCDN defers to the dCDN whether to treat the trigger as a “cache hint” or a “pre-positioning” trigger.'
+          type: array
+          items:
+            type: string
+            enum: [GET, HEAD, OPTIONS]
+        preposition-retry-max:
+          description: 'Maximum number of attempts to retrieve an object before failing the trigger'
+          type: integer
+          default: 1
+        preposition-retry-interval:
+          description: 'Timeout value, in seconds, before retrying a pre-positioning request.'
+          type: integer
+        preposition-byte-range-allowed:
+          description: 'Byte range requests supported for pre-positioning'
+          type: boolean
+          default: True
+        preposition-partial-retrieval:
+          description: ' Policy to determine whether the dCDN is allowed to retrieve cache objects specified by the trigger partially - including both failure to pre-position multiple objects specified by the trigger itself (e.g., multiple objectlists in the “content-objectlists” attribute) and cache objects referenced by an objectlist. As the default behavior, the dCDN stops objectlist retrieval when encountering an error and reports a trigger failure. The uCDN SHOULD utilize the extended Trigger v2 Status to query the dCDN about the list of objects that could not be retrieved.'
+          type: boolean
+          default: False
+        preposition-concurrency:
+          description: 'Policy to determine whether the dCDN is eligible to retrievecache objects from a number of cache nodes in parallel.'
+          type: boolean
+          default: True
+        preposition-max-bandiwdth:
+          description: 'Aggregate bandwidth cap to be enforced by the dCDN when retrieving objects from the object source, to rate-limit load on the uCDN origin. When not specified, the limit is not enforced. The dCDN SHOULD consider the implications of combining concurrent pre-positioning with maximum bandwidth limits, when both properties are present in the same trigger. In Mbps'
+          type: integer
+        preposition-metadata-include:
+          description: 'Specifies which metadata objects previously provisioned by the uCDN SHOULD be taken into account when processing the trigger. Such metadata objects MAY have to do with source access control [Configuration Interface 2d], protected secrets [Configuration Interface 2i], processing stages [Configuration Interface 2b], etc. This property cannot be used when using the “private” URL type. When specified, only those metadata objects explicitly listed are applied.'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'
+        preposition-metadata-exclude:
+          description: 'Specifies which metadata objects previously provisioned by the uCDN SHOULD be excluded from processing, when processing the trigger. This attribute cannot be used when using the “private” URL type. The use of it is exclusive to the preposition-metadata-include attribute.'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'  
+    CI_UTCWindow:
+      type: object
+      required:
+        - start
+        - end
+      properties:
+        start:
+          description: 'Internet date and time as defined in [RFC3339]. At least one of "start" or "end" MUST be present and non-empty. If "start" is empty or not specified, the time range is considered to begin at an arbitrary (unspecified) time.'
+          type: string
+        end:
+          description: 'Internet date and time as defined in [RFC3339]. At least one of "start" or "end" MUST be present and non-empty. If "start" is empty or not specified, the time range is considered to begin at an arbitrary (unspecified) time.'
+          type: string
     CI_triggerLabel:
       description: 'Each label is a key-value pair, encoded as a JSON string, with "=" separator. The label key and value parts MUST contain up to 63 characters each, MUST begin with a letter or a number, and MAY contain letters, numbers, hyphens, dots, and underscores.'
       type: string
