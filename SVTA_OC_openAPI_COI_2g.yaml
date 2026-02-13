@@ -81,6 +81,9 @@ components:
     FCI.MulticastDelivery:
       type: object
       description: 'The presence of a multicast delivery capability is announced through the FCI.OcnSelection object. This FCI.MulticastDelivery object discloses more information about the multicast delivery service. DEPRECATED'
+      required:
+        - capacity-limits
+        - raffic-types
       properties:
         capacity-limits:
           description: 'An array of FCI.CapacityLimit objects.'

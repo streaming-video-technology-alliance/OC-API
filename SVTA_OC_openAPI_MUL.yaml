@@ -10,29 +10,7 @@ externalDocs:
     url: 'https://opencaching.svta.org/product/svta2065'
 components:
   schemas:
-#FCI
-    FCI_MUL_capabilitytype:
-      type: string
-      enum: [FCI.MulticastDelivery]
-    FCI_MUL_capabilityvalue:
-      oneOf:
-        - $ref: '#/components/schemas/FCI.MulticastDelivery'
-    FCI.MulticastDelivery:
-      description: 'Permit the discovery of the capabilities of the downstream CDN allocated to the uCDN related to multicast delivery.'
-      type: object
-      required:
-        - traffic-types
-      properties:
-        capacity-limits:
-          description: 'Expose the capacity limits related to multicast deleivery as specified in the Capacity Insight Interface (SVTA2049).'
-          type: array
-          items: 
-            $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI.CapacityLimit'
-        traffic-types:
-          description: 'Permits the dCDN to announce the list of traffic types (MI.TrafficType) supported over the multicast delivery.'
-          type: array
-          items: 
-            $ref: './SVTA_OC_openAPI_COI_2g.yaml#/components/schemas/MI.TrafficType'
+# FCI
     FCI_capacitylimittypemulticast:
       description: 'A new capacity limit that complements the list depicted in the Capacity Insight Interface (SVTA2049). maximum MEN node input bitrate at DMM interface (see SVTA2049)'
       type: string
