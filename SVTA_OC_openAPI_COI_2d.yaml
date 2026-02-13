@@ -401,9 +401,9 @@ components:
       description: 'Defines how content acquisition requests are distributed over the SourceExtended objects listed in the SourceMetadataExtended object.'
       properties:
         balance-algorithm:
-          description: 'This property specifies the algorithm to be used when distributing content acquisition requests over the sources in a SourceMetadataExtended object. The available algorithms are: round-robin, content-hash, and ip-hash. round-robin: Requests are distributed over the sources in proportion to their associated weights. content-hash: Requests are distributed over the sources in a consistent fashion, based on the balance-path-pattern property.ip-hash: Requests are distributed over the sources in a consistent fashion based on the IP address of the client requestor.'
+          description: 'This property specifies the algorithm to be used when distributing content acquisition requests over the sources in a SourceMetadataExtended object. The available algorithms are: random, content-hash, and ip-hash. random: Requests are distributed over the sources in proportion to their associated weights. content-hash: Requests are distributed over the sources in a consistent fashion, based on the balance-path-pattern property.ip-hash: Requests are distributed over the sources in a consistent fashion based on the IP address of the client requestor.'
           type: string
-          enum: [round-robin, content-hash, ip-hash]
+          enum: [random, content-hash, ip-hash]
         balance-weights:
           description:  This property specifies the relative frequency that a source is used when distributing requests. For example, if there are three SourceExtended objects in a SourceMetadataExtended object with balance-weights [1, 2, 1], source 1 will receive 1/4 of the requests; source 2 will receive 2/4 of the requests; source 3 will receive 1/4 of the requests.
           type: array

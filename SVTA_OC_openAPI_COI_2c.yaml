@@ -26,19 +26,20 @@ components:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.CachePolicy'
     MI_cachepolicy_iors:
-      type: string
-      pattern: '^as-is|no-cache|no-store|\d+$'
+      oneOf:
+        - type: string
+          enum: ["as-is", "no-cache", "no-store"]
+        - type: integer
+      default: "as-is"
     MI.CachePolicy:
       type: object
       properties:
         internal:  
           description: 'This property is used to specify the (internal) cache control policy to be used by the dCDN.The value of the cache policy is in seconds, for example "5" is a five second cache. The following special values are also supported: "as-is", "no-cache", "no-store". If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.' 
           $ref: '#/components/schemas/MI_cachepolicy_iors'
-          default: as-is
         external:  
           description: 'This property is used to specify the (external) cache control policy to be used by clients of this dCDN. The value of the cache policy is in seconds. The following special values are also supported: "as-is", "no-cache", "no-store". "no-cache". If not used, the default is to use the cache control policy specified in the HTTP response from the uCDN.'
           $ref: '#/components/schemas/MI_cachepolicy_iors'
-          default: as-is
         force-internal:  
           description: 'If set to True, the metadata interface cache policy defined in the MI.CachePolicy internal property value will override any cache control policy set in the response from the uCDN. If set to False, the MI.CachePolicy internal property value is only used if there is no cache control policy provided in the response from the uCDN. The default is False, which will apply the MI.CachePolicy internal property value only if no policy is provided in the response from the uCDN.'
           type: boolean

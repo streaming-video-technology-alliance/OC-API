@@ -332,7 +332,7 @@ components:
           description: The number of bits to strip from the end of an IPv4 address. MAximum 32 for IPv4
           type: number
         mask-lsb-v6:
-          description: The number of bits to strip from the end of an IPv6 address. Maximum 126 for IPv6
+          description: The number of bits to strip from the end of an IPv6 address. Maximum 128 for IPv6
           type: number
     MI.LoggingTransformHash:
       description: This object replaces record-fields values with their Hash-Based Message Authentication Code (HMAC).

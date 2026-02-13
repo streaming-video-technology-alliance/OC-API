@@ -7,7 +7,7 @@ info:
   version: 1.0.0
 externalDocs:
     description: 'Corresponding SVTA 2060 specification' 
-    url: 'https://www.svta.org/svta-published-documents-dashboard/?add-to-cart=47273'
+    url: 'https://www.svta.org/product/svta2060'
 security: 
   - bearerToken: []
 paths:
@@ -15,11 +15,11 @@ paths:
     get:
       tags:
         - OC_BSB
-      summary: 'The boostrap API entry point. Expose the bootstrap API versions and their respective entry points.'
+      summary: 'The bootstrap API entry point. Expose the bootstrap API versions and their respective entry points.'
       operationId: oc_bs_get_bootstrap
       responses:
         '200':
-          description: 'Open Caching boostrap API entry point.'
+          description: 'Open Caching bootstrap API entry point.'
           content:
             application/json:
               schema:
@@ -30,17 +30,17 @@ paths:
           description: 'Forbidden.'
         '404':
           description: 'No bootstrap'
-  /OC/{boostrap_api_version}/bootstrap/version:
+  /OC/{bootstrap_api_version}/bootstrap/version:
     get:
       tags:
         - OC_BSI
       summary: 'Discover the dCDN OpenCaching exposed API information.'
       operationId: oc_bs_get_bootstrap_version
       parameters:
-        - name: boostrap_api_version
+        - name: bootstrap_api_version
           in: path
           required: true
-          description: 'URL Path part related to the boostrap API version.'
+          description: 'URL Path part related to the bootstrap API version.'
           schema:
             type: string
       responses:
@@ -70,7 +70,7 @@ components:
         - bsi
       properties:
         bsi: 
-          description: 'Boostrap API version(s)'
+          description: 'Bootstrap API version(s)'
           type: array
           items:
             $ref: '#/components/schemas/BSI_version'

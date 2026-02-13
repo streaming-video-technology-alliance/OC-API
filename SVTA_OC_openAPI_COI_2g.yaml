@@ -7,7 +7,7 @@ info:
   version: 2.1.0
 externalDocs:
     description: 'SVTA 2037 specification'
-    url: 'https://www.svta.org/product/svta2037-2'
+    url: 'https://www.svta.org/product/svta2037-1'
 components:
   schemas:
 # FCI objects
@@ -53,6 +53,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/FCI.RequestRouting'
         - $ref: '#/components/schemas/FCI.OcnSelection'
+        - $ref: '#/components/schemas/FCI.MulticastDelivery'
     FCI.RequestRouting:
       type: object
       description: 'To signal/announce the supported request routing modes. This can be optionally used by the uCDN to further select a subset of those modes when operating one of the iterative delegation modes. See the section  GenericMetadata: RequestRouting.'
@@ -65,7 +66,7 @@ components:
             enum: [DNS, HTTP, MANIFEST_REWRITE]
     FCI.OcnSelection:
       type: object
-      description: 'To signal/announce the supported OCN types and/or their transport arrangement and/or medium supported by OCNs.'
+      description: 'To signal/announce the supported OCN types and/or their transport arrangement and/or medium supported by OCNs. DEPRECATED'
       properties:
         ocn-delivery-list:
           description: 'List of supported medium and/or transport arrangements.'
@@ -77,6 +78,20 @@ components:
           type: array
           items: 
             type: string
+    FCI.MulticastDelivery:
+      type: object
+      description: 'The presence of a multicast delivery capability is announced through the FCI.OcnSelection object. This FCI.MulticastDelivery object discloses more information about the multicast delivery service. DEPRECATED'
+      properties:
+        capacity-limits:
+          description: 'An array of FCI.CapacityLimit objects.'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI.CapacityLimit'
+        traffic-types:
+          description: 'Traffic types available.'
+          type: array
+          items: 
+            $ref: '#/components/schemas/MI.TrafficType'
 # MI objects
     MI_COI2g_payloadtype:
       type: string

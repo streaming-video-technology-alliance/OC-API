@@ -82,7 +82,7 @@ components:
         - limit-type
         - maximum-hard
       properties:
-        Id:
+        id:
           description: 'Specifies a unique identifier associated with a limit.  This CAN be used as a relational identifier to a specific FCI.CapacityLimit object'
           type: string
         limit-type:

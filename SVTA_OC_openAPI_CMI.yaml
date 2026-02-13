@@ -474,6 +474,7 @@ components:
         - $ref: "#/components/schemas/MI.CacheBucketRef"
         - $ref: "#/components/schemas/MI.GroupingExtended"
         - $ref: "#/components/schemas/MI.CachePriority"
+        - $ref: "#/components/schemas/MI.ObjectList"
     MI.CacheBucketRef:
       type: object
       description: "object used for linking configuration metadata objects to CMI.CacheBucket objects managed by the Cache Management Interface using the Cache Bucket API. This object provides a reference to the cache bucket using the Cache Management Interface URI, and optionally specifies which footprint(s) it is to be applied to. When used without footprint(s), MI.CacheBucketRef can be used to bind a specific type of content (e.g. images) or uCDN configuration subset with a cache bucket. The footprint further supports cache separation based on geography and/or multiple cache layers within dCDN."
@@ -520,6 +521,21 @@ components:
           type: array
           items:
             type: string
+    MI.ObjectList:
+      type: object
+      description: "A metadata object describing lists of objects that can be used in thecontext of CI/T v2 trigger spec, trigger status resources and other contexts as required. The ObjectList object can either embed the lists of objects or point to external URL(s) that hold such lists. ObjectList allows specification of an object list type, providing instructions on the interpretation of the object list format. ObjectLists MAY be recursive, i.e. including references to secondary manifests, including references to HLS, MPEG-DASH or HSS manifests as well as additional JSON-encodedObjectLists , etc. The party consuming the object list MUST parse all recursions based on the object list type property. When doing so, the consuming party should also detect potential loops when a descendent ObjectList points back to parent ObjectList. ObjectLists MAY combine regular objects and secondary ObjectLists in the same object. Please note that when embedding non-JSON object lists directly in ObjectList, absolute URLs MUST be provided at all times and the text SHOULD be encoded in accordance with the JSON grammar specification [ECMA404], including explicit newline encoding. When the uCDN accesses ObjectList metadata resources published by the uCDN, the same interface authentication and authorization requirements would apply, as when accessing the interface itself."
+      properties:
+        data:
+          description: "List of objects in one of recognized formats. Either “data” or “href” MUST be set."
+          type: string
+        href:
+          description: "URL pointing to an external object list or object in one of recognized formats. Either “data” or “href” MUST be set"
+          type: string
+          format: Uri
+        type:
+          description: "Object list type to be used when parsing and interpreting this object list. By default each record in the list is assumed to represent an object that does not require additional processing."
+          type: string
+          enum: [“hls”, “dash”, “mss”, “text”, “json”]
 # CMI objects
     CMI.CacheBucket:
       type: object
@@ -535,10 +551,8 @@ components:
           type: string
         status:
           description: "Current bucket status. The bucket is marked active when there is an active CDN configuration associated with it. In absence of an active configuration, the bucket is marked idle and can be removed. Additionally, the storage buckets MAY be degraded or offline when some or all objects stored within  are no longer available, due to a fault."
-          type: array
-          items:
-            type: string
-            enum: [“active”, “idle”, “degraded”, “offline”]
+          type: string
+          enum: [“active”, “idle”, “degraded”, “offline”]
         type:
           description: "Bucket type.This property is immutable and cannot be changed after the bucket is created."
           type: string
