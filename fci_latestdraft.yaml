@@ -1,0 +1,70 @@
+[
+  {
+    "capability-type": "FCI.RedirectionMode",
+    "capability-value": { "redirection-modes": ["DNS-I"] },
+    "footprints":
+      [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": ["192.168.10.0/24", "192.168.20.0/24"],
+        },
+      ],
+  },
+  {
+    "capability-type": "FCI.Metadata",
+    "capability-value":
+      {
+        "metadata":
+          [
+            "MI.SourceMetadata",
+            "MI.LocationACL",
+            "MI.ProtocolACL",
+            "MI.FallbackTarget",
+          ],
+      },
+    "footprints":
+      [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": ["192.168.10.0/24", "192.168.20.0/24"],
+        },
+      ],
+  },
+  {
+    "capability-type": "FCI.CdnTransport",
+    "capability-value":
+      {
+        "cdn-transport-list":
+          [
+            {
+              "cdn-transport-name": "MULTICAST",
+              "cdn-transport-type": "MULTICAST",
+              "cdn-transport-capacity-limit":
+                [
+                  {
+                    "id": "capacity_limit_multicast",
+                    "limit-type": "ingress",
+                    "maximum-hard": 50000000,
+                    "maximum-soft": 40000000,
+                    "current": 15000000,
+                  },
+                  {
+                    "id": "capacity_limit_multicast",
+                    "limit-type": "egress",
+                    "maximum-hard": 5000000,
+                    "maximum-soft": 4000000,
+                  },
+                ],
+              "cdn-transport-traffic-types": [{ "traffic-type": "live" }],
+            },
+          ],
+      },
+    "footprints":
+      [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": ["192.168.10.0/24", "192.168.20.0/24"],
+        },
+      ],
+  },
+]

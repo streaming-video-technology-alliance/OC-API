@@ -1,0 +1,68 @@
+[
+  {
+    "capability-type": "FCI.RedirectionMode",
+    "capability-value": { "redirection-modes": ["DNS-I"] },
+    "footprints":
+      [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": ["192.168.10.0/24", "192.168.20.0/24"],
+        },
+      ],
+  },
+  {
+    "capability-type": "FCI.Metadata",
+    "capability-value":
+      {
+        "metadata":
+          [
+            "MI.SourceMetadata",
+            "MI.LocationACL",
+            "MI.ProtocolACL",
+            "MI.FallbackTarget",
+          ],
+      },
+    "footprints":
+      [
+        {
+          "footprint-type": "ipv4cidr",
+          "footprint-value": ["192.168.10.0/24", "192.168.20.0/24"],
+        },
+      ],
+  },
+  {
+    "capability-type": "FCI.MulticastDelivery",
+    "capability-value":
+      {
+        "capacity-limits":
+          [
+            {
+              "id": "capacity_limit_multicast",
+              "limit-type": "ingress",
+              "maximum-hard": 50000000,
+              "maximum-soft": 40000000,
+              "current": 15000000,
+            },
+            {
+              "id": "capacity_limit_multicast",
+              "limit-type": "egress",
+              "maximum-hard": 5000000,
+              "maximum-soft": 4000000,
+            },
+          ],
+        “traffic-types”: [{ "traffic-type": "live" }],
+      },
+    "footprints":
+      [{ "footprint-type": "ipv4cidr", "footprint-value": ["192.0.2.0/24"] }],
+  },
+  {
+      "capability-type": "FCI.OcnSelection",
+      "generic-metadata-value": {
+        "ocn-delivery-list": [
+          {
+            "ocn-transport": "MULTICAST"
+          }
+        ]
+      }
+  }
+]

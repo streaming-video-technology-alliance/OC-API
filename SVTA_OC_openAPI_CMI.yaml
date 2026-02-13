@@ -6,7 +6,7 @@ info:
     email: guillaume.bichot@broadpeak.tv
   version: 1.0.0
 externalDocs:
-  description: 'Corresponding SVTA 2046 specification' 
+  description: "Corresponding SVTA 2046 specification"
   url: "https://www.svta.org/product/svta2046/"
 security:
   - bearerToken: []
@@ -85,7 +85,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-collection:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection"
         400:
           description: Command is invalid.
           content: {}
@@ -113,7 +113,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-status:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status"
         400:
           description: Command is invalid.
           content: {}
@@ -139,12 +139,12 @@ paths:
         404:
           description: "Not found"
           content: {}
-# Trigger v2 API SVTA 2046
+  # Trigger v2 API SVTA 2046
   /OC/CMI/{bucketIdType}/{bucketId}/triggers:
     parameters:
       - name: bucketIdType
         in: path
-        description: "All cache management operations, except for cache bucket management, take place in the context of a cache bucket, indicated in all interface requests. the way to dientify the bucket"
+        description: "All cache management operations, except for cache bucket management, take place in the context of a cache bucket, indicated in all interface requests."
         required: true
         schema:
           type: string
@@ -166,7 +166,7 @@ paths:
         content:
           application/cdni;ptype=ci-trigger.v2:
             schema:
-              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         required: true
       callbacks:
         requestContent:
@@ -202,7 +202,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-collection.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
           links:
             getTriggerId:
               operationId: OC_CMI_status
@@ -216,18 +216,18 @@ paths:
           description: Forbidden.
           content: {}
     get:
-      summary: "Fetch the trigger collection"
+      summary: "Fetch all trigger collections"
       description: "According to the SVTA2046"
       tags:
         - OC_CMI_trigger_v2
-      operationId: OC_CMI_collectionResource
+      operationId: OC_CMI_indexCollectionResource
       responses:
         200:
           description: "list of triggers"
           content:
-            application/cdni;ptype=ci-trigger-collection.v2:
+            application/cdni;ptype=ci-trigger-index.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-index-resource"
         304:
           description: "not modified."
           content: {}
@@ -271,7 +271,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
         304:
           description: "not modified."
           content: {}
@@ -297,7 +297,7 @@ paths:
             application/cdni;ptype=ci-trigger.v2:
               schema:
                 description: "A trigger ressource delete request accepted."
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
         400:
           description: Command is invalid.
           content: {}
@@ -321,7 +321,7 @@ paths:
         content:
           application/cdni;ptype=ci-trigger.v2:
             schema:
-              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
         required: true
       responses:
         200:
@@ -329,7 +329,7 @@ paths:
           content:
             application/cdni;ptype=;ptype=ci-trigger.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -341,7 +341,7 @@ paths:
           content:
             application/cdni;ptype=;ptype=ci-trigger.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -360,6 +360,52 @@ paths:
         501:
           description: "Not implemented"
           content: {}
+  /OC/CMI/{bucketIdType}/{bucketId}/triggers/{filter}:
+    parameters:
+      - name: bucketIdType
+        in: path
+        description: "All cache management operations, except for cache bucket management, take place in the context of a cache bucket, indicated in all interface requests. the way to identify the bucket"
+        required: true
+        schema:
+          type: string
+          enum: [name, id]
+      - name: bucketId
+        in: path
+        description: 'The bucket name ("default" is the name of the default bucket ) or bucket ID'
+        required: true
+        schema:
+          type: string
+      - name: filter
+        in: path
+        description: 'Specifies the filter value used to select the triggers in the collection. For per-label trigger collections, this attribute MUST contain the corresponding label value. For per-state trigger collections, it MUST contain the trigger state shared by all triggers in the collection.'
+        required: true
+        schema:
+          oneOf:
+            - $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_status"
+            - $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_triggerLabel"
+    get:
+      summary: "Check the CI trigger collection."
+      description: "According to SVA OpenCaching Cache management specification (SVTA2046)."
+      tags:
+        - OC_CMI_trigger_v2
+      operationId: OC_CMI_triggerResourceCollectionCheck
+      responses:
+        200:
+          description: "A trigger ressource collection for content management."
+          content:
+            application/cdni;ptype=ci-trigger-collection.v2:
+              schema:
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-resource'
+        304:
+          description: "not modified."
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+
   # Bucket API
   /OC/CMI/bucket/{bucketNameOrId}:
     parameters:
@@ -465,7 +511,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-# MI (configuration) objects
+    # MI (configuration) objects
     MI_CMI_payloadtype:
       type: string
       enum: [MI.CacheBucketRef, MI.GroupingExtended, MI.CachePriority]
@@ -536,7 +582,7 @@ components:
           description: "Object list type to be used when parsing and interpreting this object list. By default each record in the list is assumed to represent an object that does not require additional processing."
           type: string
           enum: [“hls”, “dash”, “mss”, “text”, “json”]
-# CMI objects
+    # CMI objects
     CMI.CacheBucket:
       type: object
       required:

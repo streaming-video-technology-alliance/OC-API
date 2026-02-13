@@ -1,0 +1,219 @@
+{
+  "hosts":
+    [
+      {
+        "host": "contentProvider.com",
+        "host-metadata":
+          {
+            "metadata":
+              [
+                {
+                  "generic-metadata-type": "MI.FallbackTarget",
+                  "generic-metadata-value":
+                    { "host": "contentProvider.cdnaas.example.com" },
+                },
+                {
+                  "generic-metadata-type": "MI.LocationACL",
+                  "generic-metadata-value":
+                    {
+                      "locations":
+                        [
+                          {
+                            "action": "allow",
+                            "footprints":
+                              [
+                                {
+                                  "footprint-type": "countrycode",
+                                  "footprint-value": ["uk"],
+                                },
+                              ],
+                          },
+                        ],
+                    },
+                },
+              ],
+            "paths":
+              [
+                {
+                  "path-pattern":
+                    {
+                      "case-sensitive": true,
+                      "pattern": "/live/channelA/abr/*",
+                    },
+                  "path-metadata":
+                    {
+                      "metadata":
+                        [
+                          {
+                            "generic-metadata-type": "MI.SourceMetadata",
+                            "generic-metadata-value":
+                              {
+                                "sources":
+                                  [
+                                    {
+                                      "endpoints":
+                                        ["https://contentProvider.example.com"],
+                                    },
+                                  ],
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.TrafficType",
+                            "generic-metadata-value":
+                              { "traffic-type": "live" },
+                          },
+                          {
+                            "generic-metadata-type": "MI.MediaServiceDescription",
+                            "generic-metadata-value":
+                              {
+                                "manifestURL": "/live/channelA/index.mpd",
+                                "mediaServiceName": "ChannelA",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.Grouping",
+                            "generic-metadata-value":
+                              {
+                                "ccid": "contentProvider.example.com/live/channelA/",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.TimeWindowACL",
+                            "generic-metadata-value": { "times": [{ "windows": [
+                                          {
+                                            "start": "1736442000", # Thursday, January 9, 2025 05:00:00 PM
+                                            "end": "1736463600", # Thursday, January 9, 2025 11:00:00 PM
+                                          },
+                                        ], "action": "allow" }] },
+                          },
+                          {
+                            "generic-metadata-type": "MI.CdnTransport",
+                            "generic-metadata-value":
+                              {
+                                "cdn-transport-name": "MULTICAST",
+                                "cdn-transport-selection": "attempt-or-failed",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.LoggingMetadata",
+                            "generic-metadata-value":
+                              {
+                                "transports":
+                                  [
+                                    {
+                                      "transport-type": "MI.LoggingTransportKafka",
+                                      "record-type": "opencaching_mcst_standard_json_v1",
+                                      "account-id": "ChannelA",
+                                      "endpoint":
+                                        {
+                                          "bootstrap-servers":
+                                            [
+                                              "kafka.contentProvider.ucdn.example.com:9092",
+                                            ],
+                                          "topic": "dcdn-logs",
+                                        },
+                                    },
+                                  ],
+                              },
+                          },
+                        ],
+                    },
+                },
+                {
+                  "path-pattern":
+                    { "case-sensitive": true, "pattern": "/live/channelB/*" },
+                  "path-metadata":
+                    {
+                      "metadata":
+                        [
+                          {
+                            "generic-metadata-type": "MI.SourceMetadata",
+                            "generic-metadata-value":
+                              {
+                                "sources":
+                                  [
+                                    {
+                                      "endpoints":
+                                        [
+                                          "https://contentProvider2.example.com",
+                                        ],
+                                    },
+                                  ],
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.TrafficType",
+                            "generic-metadata-value":
+                              { "traffic-type": "live" },
+                          },
+                          {
+                            "generic-metadata-type": "MI.MediaServiceDescription",
+                            "generic-metadata-value":
+                              {
+                                "manifestURL": "/live/channelB/index.mpd",
+                                "mediaServiceName": "ChannelB",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.Grouping",
+                            "generic-metadata-value":
+                              {
+                                "ccid": "contentProvider.example.com/live/channelB/",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.TimeWindowConfiguration",
+                            "generic-metadata-value": { "times": [{ "windows": [
+                                          {
+                                            "start": "1736406000", # Thursday, January 9, 2025 7:00:00 AM
+                                            "end": "1736726340", # Sunday, January 12, 2025 11:59:00 PM
+                                          },
+                                        ], "action": "allow" }] },
+                          },
+                          {
+                            "generic-metadata-type": "MI.TimeWindowACL",
+                            "generic-metadata-value": { "times": [{ "windows": [
+                                          {
+                                            "start": "1736406000", # Thursday, January 9, 2025 7:00:00 AM
+                                            "end": "1736726340", # Sunday, January 12, 2025 11:59:00 PM
+                                          },
+                                        ], "action": "allow" }] },
+                          },
+                          {
+                            "generic-metadata-type": "MI.CdnTransport",
+                            "generic-metadata-value":
+                              {
+                                "cdn-transport-name": "MULTICAST",
+                                "cdn-transport-selection": "attempt-or-besteffort",
+                              },
+                          },
+                          {
+                            "generic-metadata-type": "MI.LoggingMetadata",
+                            "generic-metadata-value":
+                              {
+                                "transports":
+                                  [
+                                    {
+                                      "transport-type": "MI.LoggingTransportKafka",
+                                      "record-type": "opencaching_standard_json_v1",
+                                      "account-id": "ChannelB",
+                                      "endpoint":
+                                        {
+                                          "bootstrap-servers":
+                                            [
+                                              "kafka.contentProvider.ucdn.example.com:9092",
+                                            ],
+                                          "topic": "dcdn-logs",
+                                        },
+                                    },
+                                  ],
+                              },
+                          },
+                        ],
+                    },
+                },
+              ],
+          },
+      },
+    ],
+}
