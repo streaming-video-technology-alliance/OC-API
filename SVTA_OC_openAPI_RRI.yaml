@@ -11,19 +11,65 @@ externalDocs:
 security: 
   - bearerToken: []
 paths:
+  /OC/RRI/{object}:
+    parameters:
+      - name: object
+        in: path
+        description: 'the user requested object including the path part'
+        required: true
+        schema:
+          type: string
+          format: url-path-style
+    post:
+      tags:
+        - OC_RRI
+      summary: Routing Request API for HTTP redirect method in recursive mode (reponse-driven session from SVTA2048).
+      operationId: OC_RRI_responsedriven
+      requestBody:
+        description: 'The object communicated by the uCDN, fetched from the origin and possibly modified'
+        content:
+          {}
+        required: true
+      responses:
+        200:
+          content:
+            {}
+          required: true
+        302:
+          headers: 
+            Location:
+              schema:
+                type: string
+                format: url
+        400:
+          description: Command is invalid.
+        403:
+          description: Forbidden.
+        404:
+          description: Not found.
+        500:
+        501:
+        502:
+        503:
+        504:
+        505:
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
   /OC/RRI/routing_request:
     post:
       tags:
         - OC_RRI
       summary: Routing Request API for DNS or HTTP redirect method in recursive mode (RFC 7975).
-      description: 'Simplification applies regarding RFC 7975. Ther is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP.'
+      description: 'Simplification applies regarding RFC 7975. There is no CDN traversal and therfore no loop possible. Only one uCDN and one dCDN/ISP.'
       operationId: OC_RRI_routingrequest
       requestBody:
         description: 'The request according to RFC 7975.'
         content:
           application/cdni;ptype=redirection-request:
             schema:
-              description: ''
+              description: 'per RFC7975'
               $ref: '#/components/schemas/RI.Request'
         required: true
       responses:
@@ -140,7 +186,7 @@ components:
           enum: [100, 400, 500, 501, 502, 503, 504, 505, 506]
         reason:
           type: string
-          description: "The list of potential reasons associated with each of the error-code value is given in RFC7975 / section 4.7."
+          description: "Reason associated with each of the error-code value as indicated in RFC7975 / section 4.7."
     RI.Request:
       type: object
       description: 'dns or http property is required. not both'

@@ -30,7 +30,7 @@ paths:
         requestContent:
           /OC/CMI/content/{pathName}:
             get:
-              summary: ""
+              summary: "" 
               description: "This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command."
               tags:
                 - OC_CMI
@@ -100,7 +100,7 @@ paths:
         required: true
         schema:
           type: string
-          format: Uri
+          format: Url-path-style
     get:
       summary: "Check the CI trigger status."
       description: "According to RFC 8007 for the Trigger protocol."
@@ -159,13 +159,22 @@ paths:
       tags:
         - OC_CMI_trigger_v2
       summary: For the uCDN to allow the dCDN fetching the content in its cache infrastructure thanks to the CI/trigger API and SVTA extensions.
-      description: "To create a new trigger "
+      description: "To create or modify a trigger "
       operationId: OC_CMI_createTriggerRessource
       requestBody:
         description: "A trigger ressource for content management. The URL(s) present in the specs property should conform to the callbacks format (see below)."
         content:
+          application/cdni;ptype=ci-trigger-command.create.v2:
+            schema:
+              description: 'CMI 1.0'
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-create-v2"
+          application/cdni;ptype=ci-trigger-command.modify.v2:
+            schema:
+              description: 'CMI 1.0'
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-modify-v2"          
           application/cdni;ptype=ci-trigger.v2:
             schema:
+              description: 'CMI 1.1'
               $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         required: true
       callbacks:
@@ -200,9 +209,14 @@ paths:
         201:
           description: Created.
           content:
-            application/cdni;ptype=ci-trigger-collection.v2:
+            application/cdni;ptype=ci-trigger-status.v2:
               schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
+                description: 'CMI 1.0'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
+            application/cdni;ptype=ci-trigger.v2:
+              schema:
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
           links:
             getTriggerId:
               operationId: OC_CMI_status
@@ -225,9 +239,14 @@ paths:
         200:
           description: "list of triggers"
           content:
+            application/cdni;ptype=ci-trigger-collection:
+              schema:
+                description: 'CMI 1.0'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2-14'
             application/cdni;ptype=ci-trigger-index.v2:
               schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-index-resource"
+                description: 'CMI 1.1'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-index-v2'
         304:
           description: "not modified."
           content: {}
@@ -269,9 +288,14 @@ paths:
         200:
           description: "A trigger ressource for content management."
           content:
+            application/cdni;ptype=ci-trigger-status.v2:
+              schema:
+                description: 'CMI 1.0'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
             application/cdni;ptype=ci-trigger.v2:
               schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         304:
           description: "not modified."
           content: {}
@@ -291,13 +315,8 @@ paths:
         200:
           description: "trigger command deleted"
           content: {}
-        202:
+        204:
           description: "trigger command delete request accepted"
-          content:
-            application/cdni;ptype=ci-trigger.v2:
-              schema:
-                description: "A trigger ressource delete request accepted."
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
         400:
           description: Command is invalid.
           content: {}
@@ -321,7 +340,7 @@ paths:
         content:
           application/cdni;ptype=ci-trigger.v2:
             schema:
-              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         required: true
       responses:
         200:
@@ -329,7 +348,7 @@ paths:
           content:
             application/cdni;ptype=;ptype=ci-trigger.v2:
               schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -341,7 +360,7 @@ paths:
           content:
             application/cdni;ptype=;ptype=ci-trigger.v2:
               schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-resource"
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
           links:
             getTriggerId:
               operationId: OC_CI_status
@@ -385,7 +404,7 @@ paths:
             - $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_triggerLabel"
     get:
       summary: "Check the CI trigger collection."
-      description: "According to SVA OpenCaching Cache management specification (SVTA2046)."
+      description: "According to SVA OpenCaching Cache management specification (SVTA2046 release 1 and above)."
       tags:
         - OC_CMI_trigger_v2
       operationId: OC_CMI_triggerResourceCollectionCheck
@@ -395,7 +414,7 @@ paths:
           content:
             application/cdni;ptype=ci-trigger-collection.v2:
               schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-resource'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2'
         304:
           description: "not modified."
           content: {}
@@ -618,3 +637,74 @@ components:
               storageUsage:
                 description: "Storage usage in Kbytes"
                 type: integer
+    CI_CMI_triggerExtensionType:
+      type: string
+      enum:
+        [
+          preposition-policy,
+          schedule-policy,
+          purge-policy,
+        ]
+    CI_CMI_triggerExtensionValue:
+          description: "CDNI trigger extension object"
+          oneOf:
+            - $ref: '#/components/schemas/CI_CMI_schedulePolicy'
+            - $ref: '#/components/schemas/CI_CMI_prepositionPolicy'
+    CI_CMI_schedulePolicy:
+      description: "Schedule specifying when the trigger SHOULD run, consisting of one or more schedule windows. Each one of the windows in the schedule MAY be a one-off time window, or have a recurrence associated with it. The schedules are encoded using JSON-based iCalendar (jCal) format. jCal is specified in [RFC7265], and describes JSON encoding of the iCalendar standard [RFC5545]."
+      required:
+        - schedule
+      properties:
+        schedule:
+          description: 'Schedule specifying when the trigger SHOULD run,consisting of one or more schedule windows. JSON-encoded jCal object'
+          type: string
+    CI_CMI_purgePolicy:
+      description: 'The purge policy extension specifies how the dCDN manages purge trigger requests. The main purpose of this extension is to provide support for copyright infringement and similar content takedown use case requirements.'
+      required:
+        - schedule
+      properties:
+        delete-objects:
+          description: 'Policy regulating purging of objects from the dCDN cache nodes. If set to “True”, the dCDN MUST delete the objects from its cache nodes before completing the trigger. Otherwise, the dCDN MAY mark the purged objects as no longer available to end-users before the trigger completion and defer the actual purge to a later time.'
+          type: boolean
+          default: false
+    CI_CMI_prepositionPolicy:
+      description: 'The PrepositionPolicy extension specifies how the dCDN manages pre-positioning trigger requests.'
+      properties:
+        preposition-methods-allowed:
+          description: 'Policy to determine what HTTP methods the dCDN SHOULD utilize to retrieve cache objects specified in the trigger. By specifying only “HEAD” or “OPTIONS”, the uCDN MAY indicate that the trigger is used to propagate cache hints only, without actually retrieving cache objects. When specifying “GET” only, the uCDN indicates compulsory retrieval of the objects. If the uCDN specifies both “GET”, as well as “HEAD” or “OPTIONS” method, this indicates that the uCDN defers to the dCDN whether to treat the trigger as a “cache hint” or a “pre-positioning” trigger.'
+          type: array
+          items:
+            type: string
+            enum: [GET, HEAD, OPTIONS]
+        preposition-retry-max:
+          description: 'Maximum number of attempts to retrieve an object before failing the trigger'
+          type: integer
+          default: 1
+        preposition-retry-interval:
+          description: 'Timeout value, in seconds, before retrying a pre-positioning request.'
+          type: integer
+        preposition-byte-range-allowed:
+          description: 'Byte range requests supported for pre-positioning'
+          type: boolean
+          default: True
+        preposition-partial-retrieval:
+          description: 'Policy to determine whether the dCDN is allowed to retrieve cache objects specified by the trigger partially - including both failure to pre-position multiple objects specified by the trigger itself (e.g., multiple objectlists in the “content-objectlists” attribute) and cache objects referenced by an objectlist. As the default behavior, the dCDN stops objectlist retrieval when encountering an error and reports a trigger failure. The uCDN SHOULD utilize the extended Trigger v2 Status to query the dCDN about the list of objects that could not be retrieved.'
+          type: boolean
+          default: False
+        preposition-concurrency:
+          description: 'Policy to determine whether the dCDN is eligible to retrievecache objects from a number of cache nodes in parallel.'
+          type: boolean
+          default: True
+        preposition-max-bandiwdth:
+          description: "Aggregate bandwidth cap to be enforced by the dCDN when retrieving objects from the object source, to rate-limit load on the uCDN origin. When not specified, the limit is not enforced. The dCDN SHOULD consider the implications of combining concurrent pre-positioning with maximum bandwidth limits, when both properties are present in the same trigger. In Mbps"
+          type: integer
+        preposition-metadata-include:
+          description: "Specifies which metadata objects previously provisioned by the uCDN SHOULD be taken into account when processing the trigger. Such metadata objects MAY have to do with source access control [Configuration Interface 2d], protected secrets [Configuration Interface 2i], processing stages [Configuration Interface 2b], etc. This property cannot be used when using the “private” URL type. When specified, only those metadata objects explicitly listed are applied."
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'
+        preposition-metadata-exclude:
+          description: 'Specifies which metadata objects previously provisioned by the uCDN SHOULD be excluded from processing, when processing the trigger. This attribute cannot be used when using the “private” URL type. The use of it is exclusive to the preposition-metadata-include attribute.'
+          type: array
+          items:
+            $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_payloadtype'

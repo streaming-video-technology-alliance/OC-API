@@ -187,8 +187,7 @@ components:
             - $ref: './SVTA_OC_openAPI_CII.yaml#/components/schemas/FCI_CII_capabilitytype'
             - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_LOI_capabilitytype'
             - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_COI_capabilitytype'
-            - $ref: './SVTA_OC_openAPI_RRI.yaml#/components/schemas/FCI_RRI_capabilitytype'
-            - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_MUL_capabilitytype'            
+            - $ref: './SVTA_OC_openAPI_RRI.yaml#/components/schemas/FCI_RRI_capabilitytype'     
         capability-value:
           oneOf:
             - $ref: '#/components/schemas/FCI_capabilityvalue'
@@ -197,7 +196,6 @@ components:
             - $ref: './SVTA_OC_openAPI_LOI.yaml#/components/schemas/FCI_LOI_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/FCI_COI_capabilityvalue'
             - $ref: './SVTA_OC_openAPI_RRI.yaml#/components/schemas/FCI_RRI_capabilityvalue'
-            - $ref: './SVTA_OC_openAPI_MUL.yaml#/components/schemas/FCI_MUL_capabilityvalue'
         footprints:
           type: array
           description: 'List of CDNi Footprint objects (from the "CDNi Metadata Footprint Types" registry [RFC8006]).'
