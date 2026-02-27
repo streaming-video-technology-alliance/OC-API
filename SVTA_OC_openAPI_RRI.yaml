@@ -32,27 +32,54 @@ paths:
         required: true
       responses:
         200:
+          description: 'Returns the POST request body object, possibly modified.'
           content:
             {}
-          required: true
         302:
+          description: ''
           headers: 
             Location:
               schema:
                 type: string
                 format: url
         400:
-          description: Command is invalid.
+          description: 'Command is invalid.'
         403:
-          description: Forbidden.
+          description: 'Forbidden.'
         404:
-          description: Not found.
+          description: 'Not found.'
         500:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
         501:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
         502:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
         503:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
         504:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
         505:
+          description: ''
           content:
             'application/cdni':
               schema:
