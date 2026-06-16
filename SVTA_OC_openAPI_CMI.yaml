@@ -11,134 +11,6 @@ externalDocs:
 security:
   - bearerToken: []
 paths:
-  # Trigger v1 API
-  /OC/CMI/triggers:
-    post:
-      tags:
-        - OC_CMI_trigger
-      summary: For the uCDN to allow the dCDN fetching the content in its cache infrastructure thanks to the CI/trigger API and SVTA extensions.
-      description: "To create a new trigger "
-      operationId: OC_CMI_createTrigger
-      requestBody:
-        description: "The trigger command metadatas or a link to be considered/processed by the ISP. For triggering the creation of a trigger command related to cached content. The URL(s) present in the ci-trigger-commnd metadata.urls property should conform to the callbacks format (see below)."
-        content:
-          application/cdni;ptype=ci-trigger-command:
-            schema:
-              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command'
-        required: true
-      callbacks:
-        requestContent:
-          /OC/CMI/content/{pathName}:
-            get:
-              summary: "" 
-              description: "This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command."
-              tags:
-                - OC_CMI
-              operationId: OC_CMI_getContent
-              parameters:
-                - name: pathName
-                  in: path
-                  description: 'The calbback url has a fqdn part followed by the mandatory "OC/CMI/content" followed by a path sufixe associated with the content object to be retrieved according to the MI API.'
-                  required: true
-                  schema:
-                    type: string
-                    format: uri
-              responses:
-                200:
-                  description: "Returns the requested content (either a file or a playlist gathering the list of files to pre-position)."
-                  content:
-                    text/plain:
-                      schema:
-                        type: string
-                        format: binary
-                404:
-                  description: Not found.
-                  content: {}
-      responses:
-        201:
-          description: Created.
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
-          links:
-            getTriggerId:
-              operationId: OC_CMI_status
-              parameters:
-                triggerId: "$response.header.Location"
-                description: 'The value returned in the "Location" header of the HTTP response is the URI to be used with "GET /OC/CI/status/{triggerId}".'
-        400:
-          description: Command is invalid.
-          content: {}
-        403:
-          description: Forbidden.
-          content: {}
-    get:
-      summary: "Fetch the trigger collection"
-      description: "According to the RFC 8007 for the Trigger protcol"
-      tags:
-        - OC_CMI_trigger
-      operationId: OC_CMI_collection
-      responses:
-        200:
-          description: "list of triggers"
-          content:
-            application/cdni;ptype=ci-trigger-collection:
-              schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection"
-        400:
-          description: Command is invalid.
-          content: {}
-        403:
-          description: Forbidden.
-          content: {}
-  /OC/CMI/triggers/{triggerId}:
-    parameters:
-      - name: triggerId
-        in: path
-        description: 'The triggerId parameter corresponds to the "Location" header of the response corresponding to the POST OC/CMI/trigger API.'
-        required: true
-        schema:
-          type: string
-          format: Url-path-style
-    get:
-      summary: "Check the CI trigger status."
-      description: "According to RFC 8007 for the Trigger protocol."
-      tags:
-        - OC_CMI_trigger
-      operationId: OC_CMI_status
-      responses:
-        200:
-          description: "the Trigger status"
-          content:
-            application/cdni;ptype=ci-trigger-status:
-              schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status"
-        400:
-          description: Command is invalid.
-          content: {}
-        403:
-          description: Forbidden.
-          content: {}
-    delete:
-      summary: "delete the corresponding trigger resource"
-      description: "According to SVA OpenCaching specification and RFC 8007 for the Trigger protcol and RFC 8006."
-      tags:
-        - OC_CMI_trigger
-      operationId: OC_CMI_delete
-      responses:
-        200:
-          description: "trigger command deleted"
-          content: {}
-        400:
-          description: Command is invalid.
-          content: {}
-        403:
-          description: Forbidden.
-          content: {}
-        404:
-          description: "Not found"
-          content: {}
   # Trigger v2 API SVTA 2046
   /OC/CMI/{bucketIdType}/{bucketId}/triggers:
     parameters:
@@ -159,7 +31,7 @@ paths:
       tags:
         - OC_CMI_trigger_v2
       summary: For the uCDN to allow the dCDN fetching the content in its cache infrastructure thanks to the CI/trigger API and SVTA extensions.
-      description: "To create or modify a trigger "
+      description: "To create or modify a trigger."
       operationId: OC_CMI_createTriggerRessource
       requestBody:
         description: "A trigger ressource for content management. The URL(s) present in the specs property should conform to the callbacks format (see below)."
@@ -629,7 +501,7 @@ components:
           description: "List of status metrics associated with the bucket provided for “storage” cache buckets only"
           type: array
           items:
-            type: object
+            type: object  
             properties:
               cacheObjects:
                 description: "Number of cache objects in the bucket"
