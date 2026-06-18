@@ -9,7 +9,197 @@ externalDocs:
   description: "Corresponding IETF CDNi specification"
   url: "https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/"
 paths:
- # Trigger v1 API
+ # Trigger V2 API
+  /OC/CI/V2/triggers:
+    post:
+      tags:
+        - OC_CI_trigger_v2
+      summary: For the uCDN to allow the dCDN fetching the configuration metadata or content thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
+      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
+      operationId: OC_CI_trigger
+      requestBody:
+        description: 'The trigger command.'
+        content:
+          application/cdni;ptype=ci-trigger-command.create.v2:
+            schema:
+              description: 'For triggering the creation of a trigger command for metadata. The URL(s) present in the ci-trigger-commnd metadata.urls property should conform to the callbacks format (see below).'
+              $ref: '#/components/schemas/ci-trigger-command-create-v2'
+        required: true
+      callbacks:
+        requestMetadata:
+          /OC/CI/V2/metadata/{pathName}:
+            get:
+              summary: ''
+              description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata elements referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006.'
+              tags:
+              - OC_CI
+              operationId: oc_ci_get_metadata
+              parameters:
+                - name: pathName
+                  in: path
+                  description: 'The calbback url has a FQDN part followed by the mandatory "OC/MI/metadata/" followed by a path suffix associated with the metadata object to be retrieved according to the MI API.'
+                  required: true
+                  schema:
+                    type: string
+                    format: uri
+              responses:
+                200:
+                  description: 'Returns the requested metadata object.'
+                  content:
+                    application/cdni:
+                      schema:
+                        $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.HostIndex'
+                404:
+                  description: Not found
+                  content: {}
+        requestContent:
+          /OC/CI/content/{pathName}:
+            get:
+              summary: "" 
+              description: "This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command.create.v2."
+              tags:
+                - OC_CI
+              operationId: oc_ci_getcontent
+              parameters:
+                - name: pathName
+                  in: path
+                  description: 'The calbback url has a fqdn part followed by the mandatory "OC/CMI/content" followed by a path sufixe associated with the content object to be retrieved according to the MI API.'
+                  required: true
+                  schema:
+                    type: string
+                    format: uri
+              responses:
+                200:
+                  description: "Returns the requested content (either a file or a playlist gathering the list of files to pre-position)."
+                  content:
+                    text/plain:
+                      schema:
+                        type: string
+                        format: binary
+                404:
+                  description: Not found.
+                  content: {}      
+      responses:
+        201:
+          description: Created.
+          content:
+            application/cdni;ptype=ci-trigger-status.v2:
+              schema:
+                $ref: '#/components/schemas/ci-trigger-status-v2' 
+          links:
+            getTriggerId:
+              operationId: OC_CI_status
+              parameters:
+                triggerId: '$response.header.Location'
+                description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+    get:
+      summary: 'Fetch the trigger collection'
+      description: 'According to the https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol'
+      tags: 
+        - OC_CI_trigger_v2
+      operationId: OC_CI_collection
+      responses:
+        200:
+          description: 'list of triggers'
+          content:
+            application/cdni;ptype=ci-trigger-collection:
+              schema:
+                $ref: '#/components/schemas/ci-trigger-collection-v2'
+        304:
+          description: 'not modified.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+  /OC/CI/V2/triggers/{status}:
+    parameters:
+      - in: path
+        name: status
+        description: 'The status a trigger collection'
+        required: true
+        schema:
+          $ref: '#/components/schemas/CI_status'
+    get: 
+      summary: 'Get the collection filtered with the status.'
+      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006.'
+      tags:
+        - OC_OCI_trigger_v2
+      operationId: OC_CI_collection_status
+      responses:
+        200:
+          description: 'Get the trigger collection filtered with a status '
+          content:
+            application/cdni;ptype=ci-trigger-collection:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ci-trigger-collection-v2'
+                  - $ref: '#/components/schemas/ci-trigger-collection-v2-14'
+        304:
+          description: 'not modified.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+  /OC/CI/triggers/{triggerId}:
+    parameters:
+      - in: path
+        name: triggerId
+        description: 'The triggerId parameter corresponds to the "Location" header as part of the response corresponding to the PUT /OC/CI/configuration API and the POST OC/CI/trigger API.'
+        required: true
+        schema:
+          type: string
+          format: url
+    get: 
+      summary: 'Check the CI trigger status.'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protocol and RFC 8006.'
+      tags:
+        - OC_OCI_trigger_v1
+      operationId: OC_CI_status
+      responses:
+        200:
+          description: 'Preposioning metadata/configuration status.'
+          content:
+            application/cdni;ptype=ci-trigger-status:
+              schema:
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status'
+        304:
+          description: 'not modified.'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+    delete: 
+      summary: 'delete the corresponding trigger command'
+      description: 'According to SVA OpenCaching specification and RFC 8007 for the Trigger protcol and RFC 8006.'
+      tags:
+        - OC_OCI_trigger_v1
+      operationId: OC_CI_delete
+      responses:
+        200:
+          description: 'trigger command deleted'
+          content: {}
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}
+ # Trigger V1 API
   /OC/CI/triggers:
     post:
       tags:
