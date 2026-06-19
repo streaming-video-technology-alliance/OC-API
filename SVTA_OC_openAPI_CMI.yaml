@@ -11,7 +11,7 @@ externalDocs:
 security:
   - bearerToken: []
 paths:
-  # Trigger v2 API SVTA 2046
+  # Trigger v2(v14) API SVTA 2046
   /OC/CMI/{bucketIdType}/{bucketId}/triggers:
     parameters:
       - name: bucketIdType
@@ -39,11 +39,7 @@ paths:
           application/cdni;ptype=ci-trigger-command.create.v2:
             schema:
               description: 'CMI 1.0'
-              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-create-v2"
-          application/cdni;ptype=ci-trigger-command.modify.v2:
-            schema:
-              description: 'CMI 1.0'
-              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-modify-v2"          
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-create-v2"       
           application/cdni;ptype=ci-trigger.v2:
             schema:
               description: 'CMI 1.1'
@@ -84,7 +80,7 @@ paths:
             application/cdni;ptype=ci-trigger-status.v2:
               schema:
                 description: 'CMI 1.0'
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
             application/cdni;ptype=ci-trigger.v2:
               schema:
                 description: 'CMI 1.1'
@@ -150,8 +146,64 @@ paths:
         schema:
           type: string
           format: Uri
+    post:
+      tags:
+        - OC_CMI_trigger_v2
+      summary: For the uCDN to MODIFY an existing (created) trigger thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
+      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
+      operationId: OC_CI_trigger
+      requestBody:
+        description: 'The trigger resource to be modified.'
+        content:
+          application/cdni;ptype=ci-trigger-command.modify.v2:
+            schema:
+              description: 'CMI 1.0'
+              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-modify-v2' 
+          application/cdni;ptype=ci-trigger.v2:
+            schema:
+              description: 'CMI 1.1'
+              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2'
+        required: true
+      responses:
+        200:
+          description: 'Modified.'
+          content:
+            application/cdni;ptype=ci-trigger-status.v2:
+              schema:
+                description: 'CMI 1.0'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
+            application/cdni;ptype=ci-trigger.v2:
+              schema:
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
+        202:
+          description: 'The command has been accepted but the modification is not fully complete yet.'
+          content:
+            application/cdni;ptype=ci-trigger-status.v2:
+              schema:
+                description: 'CMI 1.0'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2' 
+            application/cdni;ptype=ci-trigger.v2:
+              schema:
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
+        400:
+          description: Command is invalid.
+          content: {}
+        403:
+          description: Forbidden.
+          content: {}    
+        404:
+          description: Not found.
+          content: {}    
+        409:
+          description: 'Conflict. the Trigger Status Resource is in a state that does not allow the requested modification.'
+          content: {}    
+        501:
+          description: Not implemented.
+          content: {}
     get:
-      summary: "Check the CI trigger."
+      summary: "Get a CI trigger resource."
       description: "According to SVA OpenCaching Cache management specification (SVTA2046)."
       tags:
         - OC_CMI_trigger_v2
@@ -177,6 +229,9 @@ paths:
         403:
           description: Forbidden.
           content: {}
+        404:
+          description: Not found.
+          content: {}    
     delete:
       summary: "delete the corresponding trigger resource"
       description: "According to SVA OpenCaching specification 2046."
@@ -197,56 +252,6 @@ paths:
           content: {}
         404:
           description: "Not found"
-          content: {}
-        501:
-          description: "Not implemented"
-          content: {}
-    post:
-      tags:
-        - OC_CMI_trigger_v2
-      summary: "Mofication of a trigger resource according to SVTA2046"
-      description: 'Modification of existing triggers is useful for uCDN to correct an error in trigger specification or trigger extension(s) that may govern when the trigger is to be processed. uCDN can request modification of an existing trigger resource by sending an updated trigger representation to the trigger URI using HTTP POST command. dCDN MAY accept modifications of the trigger specifications, trigger extensions and trigger labels, when the trigger is in a "pending" state, i.e., dCDN did not start its processing yet. dCDN MAY also accept a request to change the trigger state subject to the following constraints: the requested state is "cancelled", and the trigger was in either "pending" or "active" state when dCDN receives the request; the requested state is "active", and the trigger was in a "pending" state when dCDN received the request'
-      operationId: OC_CMI_modifyTriggerResource
-      requestBody:
-        description: "A trigger ressource for content management. The URL(s) present in the specs property should conform to the callbacks format (see below)."
-        content:
-          application/cdni;ptype=ci-trigger.v2:
-            schema:
-              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
-        required: true
-      responses:
-        200:
-          description: Modification has been processed.
-          content:
-            application/cdni;ptype=;ptype=ci-trigger.v2:
-              schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
-          links:
-            getTriggerId:
-              operationId: OC_CI_status
-              parameters:
-                triggerId: "$response.header.Location"
-                description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
-        202:
-          description: Modification accepted but not yet complete.
-          content:
-            application/cdni;ptype=;ptype=ci-trigger.v2:
-              schema:
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
-          links:
-            getTriggerId:
-              operationId: OC_CI_status
-              parameters:
-                triggerId: "$response.header.Location"
-                description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
-        400:
-          description: Command is invalid.
-          content: {}
-        404:
-          description: "Not found"
-          content: {}
-        409:
-          description: "Conflict."
           content: {}
         501:
           description: "Not implemented"
@@ -284,8 +289,13 @@ paths:
         200:
           description: "A trigger ressource collection for content management."
           content:
+            application/cdni;ptype=ci-trigger-collection:
+              schema:
+                description: 'CMI 1.0'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2-14'
             application/cdni;ptype=ci-trigger-collection.v2:
               schema:
+                description: 'CMI 1.1'
                 $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2'
         304:
           description: "not modified."
@@ -296,7 +306,9 @@ paths:
         403:
           description: Forbidden.
           content: {}
-
+        404:
+          description: Not found.
+          content: {}
   # Bucket API
   /OC/CMI/bucket/{bucketNameOrId}:
     parameters:
