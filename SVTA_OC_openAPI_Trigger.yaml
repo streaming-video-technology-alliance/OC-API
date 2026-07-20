@@ -1293,7 +1293,7 @@ components:
           description: 'List of objects in one of the recognized formats. Either "data" or "href" MUST be set.'
           type: array
           items:
-            type: string
+            $ref: "#/components/schemas/CI_objectEntry"
         href:
           description: 'URL pointing to an external object list or object in one of the recognized formats. Either "data" or "href" MUST be set.'
           type: string
@@ -1301,6 +1301,22 @@ components:
         type:
           description: "Object list type to be used when parsing and interpreting this object list. By default, each record in the list is assumed to represent an object that does not require additional processing."
           $ref: "#/components/schemas/CI_objectListType"
+    CI_objectEntry:
+      description: 'ObjectEntry is a metadata object describing an object and its associated metadata, to be used with ObjectList data property.'
+      type: object
+      required:
+        - href
+      properties:
+        href:
+          description: 'URL pointing to an external object in one of the recognized formats.'
+          type: string
+          format: uri
+        type:
+          description: 'ObjectList type to be used when processing this object. By default, ObjectEntry object is assumed to represent an object and does not require additional processing.'
+          $ref: "#/components/schemas/CI_objectListType"
+        size:
+          description: 'Object size, in bytes. Can be used to decide to download the object based on size. For example, dCDN may ignore objects that are too small or too large.'
+          type: integer
     CI_objectListType:
       type: string
       enum: [hls, mss, dash, json, text]

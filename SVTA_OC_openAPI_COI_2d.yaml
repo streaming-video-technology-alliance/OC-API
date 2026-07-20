@@ -73,7 +73,7 @@ components:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
         - $ref: '#/components/schemas/MI.SourceExtended'
     MI.SourceExtended:
-      description: 'An alternative to the CDNi standard MI.Source object with additional metadata. It inherits all the attributes of the Source object (acquistion-auth, endpoints, and protocol), with the following additional properties.'
+      description: 'An alternative to the CDNi standard MI.Source object with additional metadata. It inherits all the attributes of the Source object (acquisition-auth, endpoints, and protocol), with the following additional properties.'
       allOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Source'
         - $ref: '#/components/schemas/MI_SourceExt'
@@ -97,7 +97,7 @@ components:
           description: 'HTTP host header to be used instead of the hostname of each endpoint when retrieving content from the source. The host MUST conform to the Domain Name System (DNS) syntax defined in RFC-1034 and RFC-1123.'
           type: string
         sni-host:
-          description: 'The Server Name Indication (SNI) to be used during the TLS handshake when establishing a secure connection with an endpoint. The sni-host MUST conform to the Domain Name System (DNS) syntax defined in [RFC1034] and [RFC1123]'
+          description: 'The Server Name Indication (SNI) to be used during the TLS handshake when establishing a secure connection with an endpoint. The default is to use the value set for origin-host, and if this field is not set, use the value of the endpoint.'
           type: string
         endpoint-is-expression:
           description: 'If the endpoint-is-expression property is set to “True”,  the value of the endpoint will be evaluated as a MEL expression'
@@ -109,7 +109,7 @@ components:
           description: 'If the sni-host-is-expression property is set to “True”,  the value of the sni-host will be evaluated as a MEL expression'
           type: boolean
         webroot:  
-          description: The path element that is prepended to a resource's URI before retrieving content from the source. 
+          description: 'The path element that is prepended to a resource URI before retrieving content from the source. The string MUST start with a "/".'
           type: string
         follow-redirects:
           description: 'If the follow-redirects property is set to True, HTTP redirect responses returned from the source will be followed when retrieving content.  Otherwise, the HTTP redirect response is returned to the client.'
@@ -119,11 +119,11 @@ components:
           description: 'A timeout (in milliseconds) to apply when connecting to the source server.  If the connection is not established within timeout-ms, this source is abandoned and the next source in the MI.SourceMetadataExtended sources array is tried.  Once a connection is established, timeout-ms is used on subsequent reads of data from the uCDN.'
           type: integer
         failover-errors: 
-          description: 'Array of HTTP response error status codes (https://tools.ietf.org/html/RFC-7231, page-47), that if returned from the uCDN, will trigger a failover to the next source in the MI.SourceMetadataExtended sources array.  If the uCDN returns an HTTP error code that is not in the failover-errors array, that error code is returned to the client of the dCDN.'
+          description: 'Array of HTTP response error status codes  (see Sections 15.5 and 15.6 of [RFC9110]), that if returned from the uCDN, will trigger a failover to the next source in the MI.SourceMetadataExtended sources array.  If the uCDN returns an HTTP error code that is not in the failover-errors array, that error code is returned to the client of the dCDN. Note that use of the http-code-failover property overrides this setting. '
           type: array
           items:
             type: string
-            description: Any HTTP status code from 100 to 599, or one of the special values  “4xx” or “5xx”, where “xx” implies everything from 00 to 99. Note that use of 4xx would specify that 416 responses are cached.
+            description: Any HTTP status code from 100 to 599, or one of the special values “2xx”, “3xx”, “4xx” or “5xx”, where “xx” implies everything from 00 to 99. While  repeated and redundant values in the array are allowed, they SHOULD be avoided for efficiency (no reason to specify both 5xx and 503, for example). 
         connection-control:
           description: 'Specifies how connection related errors and timeouts are handled. When specified, overrides the timeout-ms property'
           $ref: '#/components/schemas/MI_SourceConnectionControl'
@@ -161,7 +161,7 @@ components:
         - $ref: '#/components/schemas/MI.EndpointDetentionTrigger'
     MI.EndpointDetentionTrigger:
       type: object
-      description: 'HttpErrorCodeTrigger is a subobject of EndpointDetention that defines a trigger for detention based on HTTP error codes. Any HTTP code received from an EndPoint that matches against the list of defined HTTP error codes counts against a single EndPointTrigger for detention.'
+      description: 'MI.EndpointDetentionTrigger is a subobject of MI.EndpointDetention and defines a trigger for a specific kind of error against an endpoint.'
       required:
         - trigger-value
       properties:
@@ -354,7 +354,9 @@ components:
           type: integer
         http-code-failover-actions:
           description: 'Specifies the different HTTP codes for which failover actions against the Origin/uCDN must be done.'
-          $ref: '#/components/schemas/MI_HTTPCodeFailoverActions'
+          type: array
+          items:
+            $ref: '#/components/schemas/MI_HTTPCodeFailoverActions'
     MI_HTTPCodeFailoverActions:
       oneOf:
         - $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_link'
@@ -425,7 +427,7 @@ components:
         - $ref: '#/components/schemas/MI.HeaderAuth'
     MI.HeaderAuth:
       type: object
-      description: '"Header based" authentication is used to pass an HTTP header (secret-name) and value (secret-value) to a uCDN when requesting content. The header name and value are agreed upon between parties out of band.'
+      description: 'The MI.HeaderAuth metadata object is used in the auth-value property of the MI.Auth object, as defined in [RFC8006] section 4.2.7, and MAY be applied to any source by including or referencing it under its authentication property. This method of authentication provides a simple capability for a mutually agreed upon header to be added by the CDN to all requests sent to a specific source/origin. Note that if a dynamically generated header value is required, the RequestTransform capabilities within StageProcessing can be used as an alternative to synthesize a value.'
       required:
         - header-name
         - header-value
@@ -442,7 +444,11 @@ components:
           "auth-value":
           {
            "header-name": "X-Origin-Auth",
-           "header-value": "SECRETKEYJKSDHFSIUHKWRGHFUI4UFH78HW4NF7"
+           "header-value": { 
+                "secret-store-id": "my-key-vault", 
+                "secret-path": 
+                  "/source/keys/origin.example.com_header" 
+              } 
            }
           }
     MI_AWSv4Auth:
@@ -456,8 +462,6 @@ components:
         - access-key-id
         - secret-access-key
         - aws-region
-        - aws-service
-        - host-name
       properties: 
         access-key-id:
           description: 'The preconfigured ID of the pre-shared authorization secret.'
@@ -469,7 +473,7 @@ components:
           description: 'The AWS region name that is hosting the service and shares the key ID and corresponding pre-shared secret.'
           type: string
         aws-service:
-          description: 'The AWS service name that is serving the upstream requests.'
+          description: 'The AWS service name that is serving the upstream requests. The default is "s3" if not specified.'
           type: string
         host-name:
           description: 'The host name to use as part of the signature calculation.'

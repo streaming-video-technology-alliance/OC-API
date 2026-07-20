@@ -20,10 +20,42 @@ paths:
         schema:
           type: string
           format: url-path-style
+    get:
+      tags:
+        - OC_RRI
+      summary: Routing Request API for delegation in recursive mode (request-driven session from SVTA2048).
+      operationId: OC_RRI_requestdriven
+      responses:
+        200:
+          description: 'Returns the requested object.'
+          content:
+            {} 
+        302:
+        307:
+          description: ''
+          headers: 
+            Location:
+              schema:
+                type: string
+                format: url
+        400:
+          description: 'Command is invalid.'
+        403:
+          description: 'Forbidden.'
+        404:
+          description: 'Not found.'
+        425:
+          description: 'Too early.'
+        500:
+          description: ''
+          content:
+            'application/cdni':
+              schema:
+                $ref: '#/components/schemas/RI_error'      
     post:
       tags:
         - OC_RRI
-      summary: Routing Request API for HTTP redirect method in recursive mode (reponse-driven session from SVTA2048).
+      summary: Routing Request API for delegation in recursive mode (reponse-driven session from SVTA2048).
       operationId: OC_RRI_responsedriven
       requestBody:
         description: 'The object communicated by the uCDN, fetched from the origin and possibly modified'
@@ -53,37 +85,7 @@ paths:
           content:
             'application/cdni':
               schema:
-                $ref: '#/components/schemas/RI_error'      
-        501:
-          description: ''
-          content:
-            'application/cdni':
-              schema:
-                $ref: '#/components/schemas/RI_error'      
-        502:
-          description: ''
-          content:
-            'application/cdni':
-              schema:
-                $ref: '#/components/schemas/RI_error'      
-        503:
-          description: ''
-          content:
-            'application/cdni':
-              schema:
-                $ref: '#/components/schemas/RI_error'      
-        504:
-          description: ''
-          content:
-            'application/cdni':
-              schema:
-                $ref: '#/components/schemas/RI_error'      
-        505:
-          description: ''
-          content:
-            'application/cdni':
-              schema:
-                $ref: '#/components/schemas/RI_error'      
+                $ref: '#/components/schemas/RI_error'  
   /OC/RRI/routing_request:
     post:
       tags:
@@ -131,9 +133,11 @@ components:
     FCI.RequestRoutingInterface:
       type: object
       description: 'To advertize about the dCDN Request Routing Interface endpoint'
+      required:
+        - protocol
       properties:
         forwarding-hosts:
-          description: 'One or more uCDN hosts to which this forward target is attached.  A forwarding host SHOULD be a host that was published in a HostMatch object by the uCDN as defined in Section 4.1.2 of [RFC8006]'
+          description: 'One or more uCDN hosts to which this request routing interface is attached. A forwarding host SHALL be a host that was published in a HostMatch object by the uCDN, as defined in Section 4.1.2 of [RFC8006].'
           type: array
           items:
              $ref: './SVTA_OC_openAPI_COI.yaml#/components/schemas/MI_endpoint'
@@ -145,13 +149,11 @@ components:
           type: array
           items:
             type: string
-            enum: ["CDNI_7975", "OC_RECURSIVE"]
+            enum: ["RFC7975", "OC_RECURSIVE"]
         oc-recursive-start:
           description: 'The way to initiate an OC-RECURSIVE session. By default, request mode is assumed.'
-          type: array
-          items:
-            type: string
-            enum: ["Request", "Response"]
+          type: string
+          enum: ["Request", "Response"]
         oc-recursive-http-methods:
           description: 'A list of HTTP request methods supported. By default, only GET is supported.'
           type: array
@@ -163,7 +165,7 @@ components:
           type: array
           items:
             type: string
-            enum: ["HTTP1.X", "HTTP2", "HTTP3"]
+            enum: ["HTTP1.x", "HTTP2", "HTTP3"]
     FCI.RequestRoutingInterfaceTarget:
       type: object
       description: 'The request routing interface target object gives the necessary information to construct the target URI for HTTP forwarding.'
@@ -187,7 +189,7 @@ components:
       type: string
     RI_method:
       type: string
-      enum: [GET, HEAD]
+      enum: [GET, HEAD, OPTIONS]
     RI_iprange:
       type: array
       items:
@@ -219,7 +221,6 @@ components:
       description: 'dns or http property is required. not both'
       required:
         - cdn-path
-        - max-hops
       properties:
         dns:
           $ref: '#/components/schemas/RI_dnsredirectionrequest'
@@ -232,7 +233,6 @@ components:
             type: string
         max-hops:
           type: integer
-          default: 1
       example: 
         value: { 
           "http": {
@@ -311,14 +311,14 @@ components:
           $ref: '#/components/schemas/RI_method'
           description: 'The HTTP method part of the request line (Section 3.1.1 of [RFC7230]) '
         cs-version:
-          $ref: '#/components/schemas/RI_ipaddress'
+          $ref: '#/components/schemas/RI_version'
           description: 'The HTTP-version part of the request line (as defined in section 3.1.1 of RFC7230])'
     RI_statuscodes:
       type: integer
       enum: [302, 303, 307]
     RI_version:
       type: string
-      enum: [HTTP/1.1, http/2]
+      enum: [HTTP/1.1, HTTP/2, HTTP/3]
     RI_reason:
       type: string
     RI_httpredirectionresponse:

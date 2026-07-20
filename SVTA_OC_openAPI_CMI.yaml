@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Open Caching API - Cache Management Interface (COI)
+  title: Open Caching API - Cache Management Interface (CMI)
   description: "This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It exposes API and data model object elements for content management in the dCDN  Open Caching infrastructure."
   contact:
     email: guillaume.bichot@broadpeak.tv
@@ -87,7 +87,7 @@ paths:
                 $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
           links:
             getTriggerId:
-              operationId: OC_CMI_status
+              operationId: OC_CMI_triggerResourceCheck
               parameters:
                 triggerId: "$response.header.Location"
                 description: 'The value returned in the "Location" header of the HTTP response is the URI to be used with "GET /OC/CI/status/{triggerId}".'
@@ -151,7 +151,7 @@ paths:
         - OC_CMI_trigger_v2
       summary: For the uCDN to MODIFY an existing (created) trigger thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
-      operationId: OC_CI_trigger
+      operationId: OC_CMI_trigger_Modify
       requestBody:
         description: 'The trigger resource to be modified.'
         content:
@@ -256,59 +256,6 @@ paths:
         501:
           description: "Not implemented"
           content: {}
-  /OC/CMI/{bucketIdType}/{bucketId}/triggers/{filter}:
-    parameters:
-      - name: bucketIdType
-        in: path
-        description: "All cache management operations, except for cache bucket management, take place in the context of a cache bucket, indicated in all interface requests. the way to identify the bucket"
-        required: true
-        schema:
-          type: string
-          enum: [name, id]
-      - name: bucketId
-        in: path
-        description: 'The bucket name ("default" is the name of the default bucket ) or bucket ID'
-        required: true
-        schema:
-          type: string
-      - name: filter
-        in: path
-        description: 'Specifies the filter value used to select the triggers in the collection. For per-label trigger collections, this attribute MUST contain the corresponding label value. For per-state trigger collections, it MUST contain the trigger state shared by all triggers in the collection.'
-        required: true
-        schema:
-          oneOf:
-            - $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_status"
-            - $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_triggerLabel"
-    get:
-      summary: "Check the CI trigger collection."
-      description: "According to SVA OpenCaching Cache management specification (SVTA2046 release 1 and above)."
-      tags:
-        - OC_CMI_trigger_v2
-      operationId: OC_CMI_triggerResourceCollectionCheck
-      responses:
-        200:
-          description: "A trigger ressource collection for content management."
-          content:
-            application/cdni;ptype=ci-trigger-collection:
-              schema:
-                description: 'CMI 1.0'
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2-14'
-            application/cdni;ptype=ci-trigger-collection.v2:
-              schema:
-                description: 'CMI 1.1'
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2'
-        304:
-          description: "not modified."
-          content: {}
-        400:
-          description: Command is invalid.
-          content: {}
-        403:
-          description: Forbidden.
-          content: {}
-        404:
-          description: Not found.
-          content: {}
   # Bucket API
   /OC/CMI/bucket/{bucketNameOrId}:
     parameters:
@@ -321,13 +268,13 @@ paths:
     put:
       tags:
         - OC_CMI_bucket
-      summary: "When creating a new cache bucket the parameter bucketNameOrID MUST be  considered as a name; uniqueness of the bucket name, per tenant, is enforced. If a bucket exist with the same name then it is considered as a modification request (an ID exist). In case of successful object creation, the dCDN allocates a unique bucket identifier for subsequent trigger requests for the bucket, and returns cache bucket status. The special bucket “default” is automatically allocated and assigned to all tenant objects."
+      summary: "When creating a new cache bucket the parameter bucketNameOrID MUST be considered as a name; uniqueness of the bucket name, per tenant, is enforced. If a bucket exist with the same name then it is considered as a modification request (an ID exist). In case of successful object creation, the dCDN allocates a unique bucket identifier for subsequent trigger requests for the bucket, and returns cache bucket status. The special bucket “default” is automatically allocated and assigned to all tenant objects."
       description: ""
       operationId: OC_CMI_bucket_create_modify
       requestBody:
         description: "Bucket structure partially filed as e.g. (name, type, quota)"
         content:
-          application/json;:
+          application/json:
             schema:
               $ref: "#/components/schemas/CMI.CacheBucket"
         required: true
@@ -341,7 +288,7 @@ paths:
         201:
           description: "bucket (full) structure created."
           content:
-            application/cdni;ptype=ci-trigger-status:
+            application/json:
               schema:
                 $ref: "#/components/schemas/CMI.CacheBucket"
         400:
@@ -366,6 +313,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CMI.CacheBucket"
+        304:
+          description: "Not modified."
         400:
           description: "Command is invalid. "
         403:
@@ -378,14 +327,46 @@ paths:
         - OC_CMI_bucket
       operationId: OC_CMI_bucket_delete
       responses:
-        200:
-          description: "Bucket status"
+        204:
+          description: "No content"
         400:
           description: "Command is invalid. "
         403:
           description: Forbidden.
         404:
           description: "Not found. There was no Bucket"
+        409: 
+          description: "Not empty bucket"
+    post:
+      tags:
+        - OC_CMI_bucket
+      summary: "If a bucket exist with the same name or ID then it is considered as a modification request."
+      description: ""
+      operationId: OC_CMI_bucke_modify
+      requestBody:
+        description: "Bucket structure partially filed as e.g. (name, type, quota)"
+        content:
+          application/json;:
+            schema:
+              $ref: "#/components/schemas/CMI.CacheBucket"
+        required: true
+      responses:
+        200:
+          description: "Bucket (full) structure modified. "
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CMI.CacheBucket"
+        400:
+          description: "Command is invalid."
+        403:
+          description: Forbidden.
+        404:
+          description: "Not found. There was no bucket with that ID or name "
+        409:
+          description: "Conflict"
+        500:
+          description: "server error"    
   /OC/CMI/bucket/:
     get:
       description: "To query the collection of cache bucket objects"
@@ -417,7 +398,7 @@ components:
     # MI (configuration) objects
     MI_CMI_payloadtype:
       type: string
-      enum: [MI.CacheBucketRef, MI.GroupingExtended, MI.CachePriority]
+      enum: [MI.CacheBucketRef, MI.GroupingExtended, MI.CachePriority, MI.ObjectList]
     MI_CMI_payloadvalue:
       oneOf:
         - $ref: "#/components/schemas/MI.CacheBucketRef"
@@ -428,12 +409,12 @@ components:
       type: object
       description: "object used for linking configuration metadata objects to CMI.CacheBucket objects managed by the Cache Management Interface using the Cache Bucket API. This object provides a reference to the cache bucket using the Cache Management Interface URI, and optionally specifies which footprint(s) it is to be applied to. When used without footprint(s), MI.CacheBucketRef can be used to bind a specific type of content (e.g. images) or uCDN configuration subset with a cache bucket. The footprint further supports cache separation based on geography and/or multiple cache layers within dCDN."
       required:
-        - bucket-url
+        - bucket-uri
       properties:
         bucket-uri:
           description: "URI uniquely identifying an CMI.CacheBucket"
           type: string
-          format: url
+          format: Uri
         footprints:
           description: "OPTIONAL footprints to be applied to the cache bucket, as published by the dCDN, using FCI"
           type: array
@@ -484,7 +465,7 @@ components:
         type:
           description: "Object list type to be used when parsing and interpreting this object list. By default each record in the list is assumed to represent an object that does not require additional processing."
           type: string
-          enum: [“hls”, “dash”, “mss”, “text”, “json”]
+          enum: [hls, dash, mss, text, json]
     # CMI objects
     CMI.CacheBucket:
       type: object
@@ -501,7 +482,7 @@ components:
         status:
           description: "Current bucket status. The bucket is marked active when there is an active CDN configuration associated with it. In absence of an active configuration, the bucket is marked idle and can be removed. Additionally, the storage buckets MAY be degraded or offline when some or all objects stored within  are no longer available, due to a fault."
           type: string
-          enum: [“active”, “idle”, “degraded”, “offline”]
+          enum: [active, idle, degraded, offline]
         type:
           description: "Bucket type.This property is immutable and cannot be changed after the bucket is created."
           type: string
@@ -534,6 +515,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/CI_CMI_schedulePolicy'
             - $ref: '#/components/schemas/CI_CMI_prepositionPolicy'
+            - $ref: '#/components/schemas/CI_CMI_purgePolicy'            
     CI_CMI_schedulePolicy:
       description: "Schedule specifying when the trigger SHOULD run, consisting of one or more schedule windows. Each one of the windows in the schedule MAY be a one-off time window, or have a recurrence associated with it. The schedules are encoded using JSON-based iCalendar (jCal) format. jCal is specified in [RFC7265], and describes JSON encoding of the iCalendar standard [RFC5545]."
       required:
@@ -544,8 +526,6 @@ components:
           type: string
     CI_CMI_purgePolicy:
       description: 'The purge policy extension specifies how the dCDN manages purge trigger requests. The main purpose of this extension is to provide support for copyright infringement and similar content takedown use case requirements.'
-      required:
-        - schedule
       properties:
         delete-objects:
           description: 'Policy regulating purging of objects from the dCDN cache nodes. If set to “True”, the dCDN MUST delete the objects from its cache nodes before completing the trigger. Otherwise, the dCDN MAY mark the purged objects as no longer available to end-users before the trigger completion and defer the actual purge to a later time.'
@@ -579,7 +559,7 @@ components:
           description: 'Policy to determine whether the dCDN is eligible to retrievecache objects from a number of cache nodes in parallel.'
           type: boolean
           default: True
-        preposition-max-bandiwdth:
+        preposition-max-bandwidth:
           description: "Aggregate bandwidth cap to be enforced by the dCDN when retrieving objects from the object source, to rate-limit load on the uCDN origin. When not specified, the limit is not enforced. The dCDN SHOULD consider the implications of combining concurrent pre-positioning with maximum bandwidth limits, when both properties are present in the same trigger. In Mbps"
           type: integer
         preposition-metadata-include:
