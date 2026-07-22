@@ -10,13 +10,20 @@ externalDocs:
   url: "https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/"
 paths:
 # Trigger V2 latest (v19)
-  /OC/CI/V2/triggers:
+  /OC/CI/V2/triggers?statusType=extended:
+    parameters:
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     post:
       tags:
         - OC_CI_trigger_v2
       summary: For the uCDN to allow the dCDN fetching the configuration metadata or content thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/).
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/ for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
-      operationId: OC_CI_trigger
+      operationId: OC_CI_trigger_v2_create
       requestBody:
         description: 'The trigger command.'
         content:
@@ -33,7 +40,7 @@ paths:
               description: 'This callback is used by the ISP OC/dCDN to retrieve the metadata elements referenced in the ci-trigger-command object and potentially generic metadata object (metadata_urls property) as specified in RFC8006.'
               tags:
               - OC_CI
-              operationId: oc_ci_get_metadata
+              operationId: OC_CI_get_metadata
               parameters:
                 - name: pathName
                   in: path
@@ -59,7 +66,7 @@ paths:
               description: "This callback is used by the ISP OC/dCDN to retrieve the content elements referenced in the ci-trigger-command.create.v2."
               tags:
                 - OC_CI
-              operationId: oc_ci_getcontent
+              operationId: OC_CI_get_metadata
               parameters:
                 - name: pathName
                   in: path
@@ -88,7 +95,7 @@ paths:
                 $ref: '#/components/schemas/ci-trigger-v2' 
           links:
             getTriggerId:
-              operationId: OC_CI_status
+              operationId: OC_CI_trigger_v2_status
               parameters:
                 triggerId: '$response.header.Location'
                 description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
@@ -102,8 +109,8 @@ paths:
       summary: 'Fetch the trigger index'
       description: 'According to the https://datatracker.ietf.org/doc/draft-ietf-cdni-ci-triggers-rfc8007bis/ for the Trigger protocol'
       tags: 
-        - OC_CI_trigger_v2
-      operationId: OC_CI_index
+        - OC_CI_trigger_collections_v2
+      operationId: OC_CI_trigger_v2_index
       responses:
         200:
           description: 'list of trigger collections'
@@ -111,29 +118,32 @@ paths:
             application/cdni;ptype=ci-trigger-index.v2:
               schema:
                 $ref: '#/components/schemas/ci-trigger-index-v2'
-        304:
-          description: 'not modified.'
-          content: {}
         400:
           description: Command is invalid.
-          content: {}
         403:
-          description: Forbidden.
-          content: {}   
-  /OC/CI/V2/triggers/state/{status}:
+          description: Forbidden. 
+        501:
+          description: Not Implemented.
+  /OC/CI/V2/triggers/state/{status}?statusType=extended:
     parameters:
       - in: path
         name: status
-        description: 'The status a trigger collection'
+        description: 'The status of a trigger collection'
         required: true
         schema:
           $ref: '#/components/schemas/CI_status'
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     get: 
       summary: 'Get the collection filtered with the status.'
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis/ for the Trigger protocol and RFC 8006.'
       tags:
-        - OC_OCI_trigger_v2
-      operationId: OC_CI_collection_status
+        - OC_CI_trigger_v2_collection_status
+      operationId: OC_CI_trigger_v2_collection_status
       responses:
         200:
           description: 'Get the trigger collection filtered with a status '
@@ -143,14 +153,13 @@ paths:
                   $ref: '#/components/schemas/ci-trigger-collection-v2'
         400:
           description: Command is invalid.
-          content: {}
         403:
           description: Forbidden.
-          content: {}
         404:
           description: Not found.
-          content: {}    
-  /OC/CI/V2/triggers/label/{label}:
+        501:
+          description: Not Implemented.
+  /OC/CI/V2/triggers/label/{label}?statusType=extended:
     parameters:
       - in: path
         name: label
@@ -158,12 +167,18 @@ paths:
         required: true
         schema:
           $ref: '#/components/schemas/CI_triggerLabel'
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     get: 
       summary: 'Get the collection filtered with a label.'
-      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006.'
+      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis for the Trigger protocol and RFC 8006.'
       tags:
         - OC_OCI_trigger_v2
-      operationId: OC_CI_collection_label
+      operationId: OC_CI_trigger_v2_collection_label
       responses:
         200:
           description: 'Get the trigger collection filtered with a label '
@@ -173,14 +188,13 @@ paths:
                   $ref: '#/components/schemas/ci-trigger-collection-v2'
         400:
           description: Command is invalid.
-          content: {}
         403:
           description: Forbidden.
-          content: {}
         404:
           description: Not found.
-          content: {}
-  /OC/CI/V2/triggers/{triggerId}:
+        501:
+          description: Not Implemented.
+  /OC/CI/V2/triggers/{triggerId}?statusType=extended:
     parameters:
       - in: path
         name: triggerId
@@ -189,12 +203,18 @@ paths:
         schema:
           type: string
           format: url
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     post:
       tags:
-        - OC_CI_trigger_v2
+        - OC_CI_trigger_v2_modify
       summary: For the uCDN to MODIFY and existing (created) trigger resource thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis).
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
-      operationId: OC_CI_trigger_modify
+      operationId: OC_CI_trigger_v2_modify
       requestBody:
         description: 'The trigger command to be modified.'
         content:
@@ -207,13 +227,13 @@ paths:
         200:
           description: 'Modified.'
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
                 $ref: '#/components/schemas/ci-trigger-v2' 
         202:
           description: 'The command has been accepted but the modification is not fully complete yet.'
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
                 $ref: '#/components/schemas/ci-trigger-v2' 
         400:
@@ -236,7 +256,7 @@ paths:
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis.'
       tags:
         - OC_OCI_trigger_v2
-      operationId: OC_CI_status
+      operationId: OC_CI_trigger_v2_status
       responses:
         200:
           description: 'The trigger resource.'
@@ -246,40 +266,46 @@ paths:
                 $ref: '#/components/schemas/ci-trigger-v2' 
         400:
           description: Command is invalid.
-          content: {}
         403:
           description: Forbidden.
-          content: {}
         404:
           description: Not found.
-          content: {}  
+        501:
+          description: not implemented.           
     delete: 
       summary: 'delete the corresponding trigger resource'
       description: 'According to SVA OpenCaching specification and  https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis for the Trigger protcol and RFC 8006.'
       tags:
         - OC_OCI_trigger_v2
-      operationId: OC_CI_delete
+      operationId: OC_CI_trigger_v2_delete
       responses:
-        200:
+        202:
+          description: 'Accepted. Trigger resource under deletion'
+        204:
           description: 'trigger resource deleted'
-          content: {}
         400:
           description: Command is invalid.
-          content: {}
         403:
           description: Forbidden.
-          content: {}
         404:
           description: Not found.
-          content: {}
+        501:
+          description: not implemented.
  # Trigger V2 API v14
-  /OC/CI/V2_14/triggers:
+  /OC/CI/V2_14/triggers?statusType=extended:
+    parameters:
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     post:
       tags:
         - OC_CI_trigger_v2_14
       summary: For the uCDN to allow the dCDN fetching the configuration metadata or content thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
-      operationId: OC_CI_trigger
+      operationId: OC_CI_trigger_v2_14_create
       requestBody:
         description: 'The trigger command.'
         content:
@@ -351,7 +377,7 @@ paths:
                 $ref: '#/components/schemas/ci-trigger-status-v2' 
           links:
             getTriggerId:
-              operationId: OC_CI_status
+              operationId: OC_CI_trigger_v2_14_status
               parameters:
                 triggerId: '$response.header.Location'
                 description: 'The value returned in the "Location" header of the HTTP response is the URL to be used with "GET /OC/CI/status/{triggerId}".'
@@ -366,7 +392,7 @@ paths:
       description: 'According to the https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol'
       tags: 
         - OC_CI_trigger_v2_14
-      operationId: OC_CI_collection
+      operationId: OC_CI_trigger_v2_14_collection
       responses:
         200:
           description: 'list of trigger resources'
@@ -376,14 +402,13 @@ paths:
                 $ref: '#/components/schemas/ci-trigger-collection-v2-14'
         400:
           description: Command is invalid.
-          content: {}
         403:
           description: Forbidden.
-          content: {}
         404:
           description: Not found.
-          content: {}    
-  /OC/CI/V2_14/triggers/state/{status}:
+        501:
+          description: not implemented.      
+  /OC/CI/V2_14/triggers/state/{status}?statusType=extended:
     parameters:
       - in: path
         name: status
@@ -391,12 +416,18 @@ paths:
         required: true
         schema:
           $ref: '#/components/schemas/CI_status'
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     get: 
       summary: 'Get the collection filtered with the status.'
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006.'
       tags:
         - OC_OCI_trigger_v2_14
-      operationId: OC_CI_collection_status
+      operationId: OC_CI_trigger_v2_14_collection_status
       responses:
         200:
           description: 'Get the trigger collection filtered with a status '
@@ -413,7 +444,7 @@ paths:
         404:
           description: Not found.
           content: {}    
-  /OC/CI/V2_14/triggers/label/{label}:
+  /OC/CI/V2_14/triggers/label/{label}?statusType=extended:
     parameters:
       - in: path
         name: label
@@ -421,12 +452,18 @@ paths:
         required: true
         schema:
           $ref: '#/components/schemas/CI_triggerLabel'
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     get: 
       summary: 'Get the collection filtered with a label.'
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006.'
       tags:
         - OC_OCI_trigger_v2
-      operationId: OC_CI_collection_label
+      operationId: OC_CI_trigger_v2_14_collection_label
       responses:
         200:
           description: 'Get the trigger collection filtered with a label '
@@ -443,7 +480,7 @@ paths:
         404:
           description: Not found.
           content: {}
-  /OC/CI/V2_14/triggers/{triggerId}:
+  /OC/CI/V2_14/triggers/{triggerId}?statusType=extended:
     parameters:
       - in: path
         name: triggerId
@@ -452,12 +489,18 @@ paths:
         schema:
           type: string
           format: url
+      - in: query
+        name: statusType
+        description: 'Only valid with GET'
+        required: false
+        schema:
+          type: string
     post:
       tags:
         - OC_CI_trigger_v2_14
       summary: For the uCDN to MODIFY an existing (created) trigger thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
-      operationId: OC_CI_trigger
+      operationId: OC_CI_trigger_v2_14_modify
       requestBody:
         description: 'The trigger resource to be modified.'
         content:
@@ -499,12 +542,12 @@ paths:
       description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006.'
       tags:
         - OC_OCI_trigger_v2_14
-      operationId: OC_CI_status
+      operationId: OC_CI_trigger_v2_14_status
       responses:
         200:
           description: 'Preposioning metadata/configuration status.'
           content:
-            application/cdni;ptype=ci-trigger-status:
+            application/cdni;ptype=ci-trigger-status.v2:
               schema:
                 $ref: '#/components/schemas/ci-trigger-status-v2' 
         304:
@@ -524,7 +567,7 @@ paths:
       description: 'According to SVA OpenCaching specification and  https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14.'
       tags:
         - OC_OCI_trigger_v2-14
-      operationId: OC_CI_delete
+      operationId: OC_CI_trigger_v2_14_delete
       responses:
         200:
           description: 'trigger command deleted'
@@ -706,18 +749,25 @@ components:
         [
           FCI.CITEndpoint,
           FCI.CITScope,
+          FCI.CITExtendedStatus,
+# The following capability types are only valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14'
           FCI.CITObjectListType,
           FCI.CITPrivateUrlType,
-          FCI.CITExtendedStatus,
+# The following capability types are only valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-19'
+          FCI.CITContentObjectType,
+          FCI.CITUrlType
         ]
     FCI_TRIGGER_capabilityvalue:
       oneOf:
         - $ref: "#/components/schemas/FCI.CITEndpoint"
         - $ref: "#/components/schemas/FCI.CITScope"
+        - $ref: "#/components/schemas/FCI.CITExtendedStatus"
+# The following capability values are only valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14'
         - $ref: "#/components/schemas/FCI.CITObjectListType"
         - $ref: "#/components/schemas/FCI.CITPrivateUrlType"
-
-        - $ref: "#/components/schemas/FCI.CITExtendedStatus"
+# The following capability values are only valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-19'
+        - $ref: "#/components/schemas/FCI.CITContentObjectType"
+        - $ref: "#/components/schemas/FCI.CITUrlType"
     FCI.CITEndpoint:
       description: 'The CI/T trigger endpoint capability object is used to advertise one or more CI/T interface endpoints along with CI/T interface versions supported by these endpoints. The capability type is "FCI.CITEndpoint". Version 1, as originally defined in [RFC8007], is the default if this capability is not explicitly declared.'
       type: object
@@ -772,6 +822,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CI_objectListType"
+    FCI.CITContentObjectType:
+      description: 'Given dCDN supports "content-objectlist" trigger spec, the CI/T Content Object Type capability object is used to indicate support for one or more Content Object types listed in Section 7.5 by the type property of the "ContentObject" object. The capability type is "FCI.CITContentObjectType". Not valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14.'
+      properties:
+        content-object-types:
+          description: 'A list of supported ContentObject types.'
+          type: array
+          items:
+            $ref: "#/components/schemas/CI_contentObjectType"
     FCI.CITPrivateUrlType:
       description: 'Valid only with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14. The CI/T Private URL capability object is used to indicate support for operations on private URLs (see Section 4.3.1 for details).'
       properties:
@@ -779,7 +837,7 @@ components:
           description: "Indicate whether private URL type is supported by dCDN. In case of missing or an empty attribute, MUST be interpreted as no support for private URLs."
           type: boolean
     FCI.CITUrlType:
-      description: 'The CI/T URL capability object is used to indicate support for URLs.'
+      description: 'The CI/T URL capability object is used to indicate support for URLs. Not valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14.'
       properties:
         url-type-support:
           description: 'Array of supported URL types.'
@@ -954,7 +1012,7 @@ components:
           $ref: "#/components/schemas/CI_patterns"
           description: 'The content the trigger applies to. Not allowed with the "preposition" trigger'
     CI_time:
-      type: number
+      type: integer
       description: A JSON number, seconds since the UNIX epoch (00:00:00 UTC on 1 January 1970)
     CI_triggeraction:
       description: 'A trigger action is used in a trigger resource to describe trigger actions. It was initially referred to in [RFC8007] as "Trigger Type". All trigger actions MUST be registered in the IANA "CDNI CI/T Trigger Types" registry (see Section 7.2). dCDN receiving a request containing a trigger action that it does not recognize or does not support MUST reject the request by creating a trigger with a "failed" state and the "errors" array containing an Error.v2 Description with error "eunsupported" (see Section 4.1.6.2).'
@@ -964,6 +1022,8 @@ components:
     ci-trigger-command-create-v2:
       description: 'Valid only with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14'
       type: object
+      required:
+        - trigger-specs
       properties:
         trigger-specs:
           $ref: "#/components/schemas/ci-trigger-v2"
@@ -972,10 +1032,10 @@ components:
           items:
             type: string
     ci-trigger-command-modify-v2:
-      description: 'Valid only with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14'
+      description: 'Valid only with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14. One of "specs" and "desired-status" propeeties should be set.'
       type: object
       properties:
-        trigger-specs:
+        specs:
           $ref: "#/components/schemas/ci-trigger-v2"
         desired-status: 
           $ref: "#/components/schemas/CI_status"
@@ -989,7 +1049,7 @@ components:
         - status
       properties:
         trigger:
-          description: 'Defines the type of the CI/T trigger action. It is optional for trigger updates, otherwise mandatory.'
+          description: 'The Trigger Specification POSTed in the body of the CI/T Command. Note that this need not be a byte-for-byte copy. For example, in the JSON representation dCDN may re-serialize the information differently.'
           $ref: '#/components/schemas/ci-trigger-v2'
         ctime:
           $ref: '#/components/schemas/CI_time'
@@ -1003,7 +1063,7 @@ components:
         status:
           description: 'The current trigger state. '
           $ref: '#/components/schemas/CI_status'
-        state-reason:
+        status-reason:
           description: "A human-readable explanation for the object state. Not mandatory"
           type: string
         errors:
@@ -1055,11 +1115,11 @@ components:
       type: object
       required:
         - status
-        - collections
+        - collection
       properties:
         status:
           $ref: '#/components/schemas/CI_status'
-        collections:
+        collection:
           type: string
           format: url
     CI_filteredCollectionLabelLink:
@@ -1067,16 +1127,19 @@ components:
       type: object
       required:
         - label
-        - collections
+        - collection
       properties:
         label:
           type: string
-        collections:
+        collection:
           type: string
           format: url
     ci-trigger-v2:
       description: 'MUST use a MIME media type of "application/cdni; ptype=ci-trigger.v2". Please note that dCDN MUST include all existing trigger attributes in the trigger resource representation when requested by uCDN.'
       type: object
+      required:
+        - action
+        - specs
       properties:
         action:
           description: " Defines the type of the CI/T trigger action. It is optional for trigger updates, otherwise mandatory."
@@ -1095,6 +1158,7 @@ components:
             oneOf:
               - $ref: "#/components/schemas/CI_GenericTriggerExtension-v14"
               - $ref: "#/components/schemas/CI_GenericTriggerExtension"
+# The following properties are not valid with https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14'
         labels:
           description: "Array of trigger labels, as described in Section 4.1.4. Not mandatory. By default, no label. "
           type: array
@@ -1131,6 +1195,9 @@ components:
           type: integer
         total-nodes-count:
           description: 'The total number of unique dCDN nodes affected by the trigger.  This attribute is "optional-to-implement". When supported, the dCDN SHOULD include this attribute in the trigger resource representations requested by	attribute in the trigger resource representations requested by the uCDN.'
+          type: integer
+        total-objects-size:
+          description: 'Total aggregate size of objects affected by the trigger, in bytes. This attribute is "optional-to-implement". When supported, the dCDN SHOULD include this attribute in the trigger resource representations requested by the uCDN.'
           type: integer
         objects:
           description: 'List of objects derived by the dCDN when processing the trigger. When the "content-objectlist" trigger specification is used, the trigger MAY include one or more manifest files that form a hierarchical structure (e.g., media HLS playlists referenced by master HLS playlists, or JSON object lists referenced by other JSON object lists). The purpose of this optional attribute is to provide a single, flattened list of content objects derived from the input trigger. The dCDN SHOULD only send this attribute in the trigger resource representation when it advertises support for the extended representation via FCI and and the extended representation is requested by the uCDN.'
@@ -1219,7 +1286,7 @@ components:
           items:
             type: string
         url-type:
-          decription: 'type of URL used. URL Type as defined in Section 4.3.1. When omitted or empty, the "published" URL type is assumed.'
+          description: 'type of URL used. URL Type as defined in Section 4.3.1. When omitted or empty, the "published" URL type is assumed.'
           $ref: "#/components/schemas/CI_URLtype"
     CI_triggerSpecCcids:
       description: ' CI_triggerThe "ccids" spec type allows uCDN to specify the Content Collection IDentifier (CCID) of content to which the trigger applies. The CCID is a grouping of content as defined by [RFC8006]. The "ccids" spec type is valid only for the content spec subject (see Section 4.1.2.2).'
@@ -1327,7 +1394,7 @@ components:
         - href
       properties:
         href:
-          description: 'URL pointing to an external object list or object in one of the recognized formats. Either "data" or "href" MUST be set.'
+          description: 'URL pointing to an external object.'
           type: string
           format: url
         type:
@@ -1453,9 +1520,6 @@ components:
             format: URL
     CI_UTCWindow:
       type: object
-      required:
-        - start
-        - end
       properties:
         start:
           description: 'Internet date and time as defined in [RFC3339]. At least one of "start" or "end" MUST be present and non-empty. If "start" is empty or not specified, the time range is considered to begin at an arbitrary (unspecified) time.'
@@ -1507,7 +1571,6 @@ components:
           enum: [state, label]
         filter-value:
           description: "Specifies the filter value used to select the triggers in the collection. For per-label trigger collections, this attribute MUST contain the corresponding label value. For per-state trigger collections, it MUST contain the trigger state shared by all triggers in the collection."
-          type: string
           oneOf:
             - $ref: "#/components/schemas/CI_status"
             - $ref: "#/components/schemas/CI_triggerLabel"
@@ -1526,7 +1589,7 @@ components:
           oneOf:
             - $ref: "#/components/schemas/CI_status"
             - $ref: "#/components/schemas/CI_triggerLabel"
-        collectionuri:
+        collection-uri:
           description: 'URI of the trigger collection.'
           type: string
     CI_filteredCollection:
@@ -1549,6 +1612,7 @@ components:
       description: "An Error.v2 Description is used to report the failure of a trigger."
       required:
         - error
+        - specs
         - cdn-id
       properties:
         error:
@@ -1574,17 +1638,19 @@ components:
           description: 'Array of trigger spec objects from the corresponding "specs" array in the trigger resource. Only those specs to which the error applies are listed.'
           type: array
           items:
-            $ref: "#/components/schemas/CI_triggerSpec"
+            oneOf:
+              - $ref: "#/components/schemas/CI_GenericTriggerSpec-v14"
+              - $ref: "#/components/schemas/CI_GenericTriggerSpec"
         extensions:
           description: 'Array of trigger extension objects copied from the corresponding "extensions" array in the trigger resource. Only those extensions to which the error applies are included, but those extensions MUST be exactly as they appear in the trigger resource. The "extensions" array SHOULD be used only if the error relates to extension objects. Property omission should be interpreted as "the error is not related to any extension".'
           type: array
           items:
             $ref: "#/components/schemas/CI_GenericTriggerExtension"
         cdn-id:
-          description: 'The CDN PID of the CDN where the error occurred. The "cdn-id" property is used by the originating uCDN or by the propagating dCDN to distinguish in which CDN the error occurred. An empty array is allowed and is equivalent to omitting "objects" from the Error.v2 Description.'
+          description: 'The CDN PID of the CDN where the error occurred. The "cdn-id" property is used by the originating uCDN or by the propagating dCDN to distinguish in which CDN the error occurred.'
           type: string
         objects:
-          description: "List of objects that failed to be processed during trigger execution."
+          description: 'List of objects that failed to be processed during trigger execution. An empty array is allowed and is equivalent to omitting "objects" from the Error v2 Description.'
           type: array
           items:
             oneOf:

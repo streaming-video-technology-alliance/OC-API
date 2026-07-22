@@ -31,6 +31,12 @@ paths:
           content:
             {} 
         302:
+          description: ''
+          headers: 
+            Location:
+              schema:
+                type: string
+                format: url        
         307:
           description: ''
           headers: 
@@ -68,6 +74,13 @@ paths:
           content:
             {}
         302:
+          description: ''
+          headers: 
+            Location:
+              schema:
+                type: string
+                format: url
+        307:
           description: ''
           headers: 
             Location:

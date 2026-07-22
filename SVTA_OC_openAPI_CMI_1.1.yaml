@@ -4,15 +4,15 @@ info:
   description: "This is the Open Caching API model as exposed by an ISP( dCDN) according to the Streaming Video Technology Alliance (SVTA). It exposes API and data model object elements for content management in the dCDN  Open Caching infrastructure."
   contact:
     email: guillaume.bichot@broadpeak.tv
-  version: 1.0.0
+  version: 1.1.0
 externalDocs:
   description: "Corresponding SVTA 2046 specification"
   url: "https://www.svta.org/product/svta2046/"
 security:
   - bearerToken: []
 paths:
-  # Trigger v2(v14) API SVTA 2046
-  /OC/CMI/{bucketIdType}/{bucketId}/V2_14/triggers:
+  # Trigger v2 API SVTA 2046
+  /OC/CMI/{bucketIdType}/{bucketId}/triggers:
     parameters:
       - name: bucketIdType
         in: path
@@ -36,10 +36,10 @@ paths:
       requestBody:
         description: "A trigger ressource for content management. The URL(s) present in the specs property should conform to the callbacks format (see below)."
         content:
-          application/cdni;ptype=ci-trigger-command.create.v2:
+          application/cdni;ptype=ci-trigger.v2:
             schema:
-              description: 'CMI 1.0'
-              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-create-v2"       
+              description: 'CMI 1.1'
+              $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         required: true
       callbacks:
         requestContent:
@@ -73,10 +73,10 @@ paths:
         201:
           description: Created.
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
-                description: 'CMI 1.0'
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
           links:
             getTriggerId:
               operationId: OC_CMI_triggerResourceCheck
@@ -99,10 +99,10 @@ paths:
         200:
           description: "list of triggers"
           content:
-            application/cdni;ptype=ci-trigger-collection:
+            application/cdni;ptype=ci-trigger-index.v2:
               schema:
-                description: 'CMI 1.0'
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-collection-v2-14'
+                description: 'CMI 1.1'
+                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-index-v2'
         304:
           description: "not modified."
           content: {}
@@ -137,16 +137,12 @@ paths:
     post:
       tags:
         - OC_CMI_trigger_v2
-      summary: For the uCDN to MODIFY an existing (created) trigger thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14).
-      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-14 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
+      summary: For the uCDN to MODIFY an existing (created) trigger thanks to the CI/trigger API V2 (https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-19).
+      description: 'According to SVA OpenCaching specification and https://datatracker.ietf.org/doc/html/draft-ietf-cdni-ci-triggers-rfc8007bis-19 for the Trigger protocol and RFC 8006 (+ RFC8804) for the metadata structure.'
       operationId: OC_CMI_trigger_Modify
       requestBody:
         description: 'The trigger resource to be modified.'
         content:
-          application/cdni;ptype=ci-trigger-command.modify.v2:
-            schema:
-              description: 'CMI 1.0'
-              $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-command-modify-v2' 
           application/cdni;ptype=ci-trigger.v2:
             schema:
               description: 'CMI 1.1'
@@ -156,17 +152,17 @@ paths:
         200:
           description: 'Modified.'
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
-                description: 'CMI 1.0'
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         202:
           description: 'The command has been accepted but the modification is not fully complete yet.'
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
-                description: 'CMI 1.0'
-                $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2' 
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         400:
           description: Command is invalid.
           content: {}
@@ -192,10 +188,10 @@ paths:
         200:
           description: "A trigger ressource for content management."
           content:
-            application/cdni;ptype=ci-trigger-status.v2:
+            application/cdni;ptype=ci-trigger.v2:
               schema:
-                description: 'CMI 1.0'
-                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-status-v2"
+                description: 'CMI 1.1'
+                $ref: "./SVTA_OC_openAPI_Trigger.yaml#/components/schemas/ci-trigger-v2"
         304:
           description: "not modified."
           content: {}
@@ -244,7 +240,7 @@ paths:
     put:
       tags:
         - OC_CMI_bucket
-      summary: "When creating a new cache bucket the parameter bucketNameOrID MUST be considered as a name; uniqueness of the bucket name, per tenant, is enforced. If a bucket exist with the same name then it is considered as a modification request (an ID exist). In case of successful object creation, the dCDN allocates a unique bucket identifier for subsequent trigger requests for the bucket, and returns cache bucket status. The special bucket “default” is automatically allocated and assigned to all tenant objects."
+      summary: "When creating a new cache bucket the parameter bucketNameOrID MUST be  considered as a name; uniqueness of the bucket name, per tenant, is enforced. If a bucket exist with the same name then it is considered as a modification request (an ID exist). In case of successful object creation, the dCDN allocates a unique bucket identifier for subsequent trigger requests for the bucket, and returns cache bucket status. The special bucket “default” is automatically allocated and assigned to all tenant objects."
       description: ""
       operationId: OC_CMI_bucket_create_modify
       requestBody:
@@ -277,42 +273,6 @@ paths:
           description: "Conflict"
         500:
           description: "server error"
-    get:
-      description: "To query an individual cache bucket object"
-      tags:
-        - OC_CMI_bucket
-      operationId: OC_CMI_bucket_read
-      responses:
-        200:
-          description: "Bucket full structure"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CMI.CacheBucket"
-        304:
-          description: "Not modified."
-        400:
-          description: "Command is invalid. "
-        403:
-          description: Forbidden.
-        404:
-          description: "Not found. There was no Bucket"
-    delete:
-      description: "To delete an individual cache bucket object. A cache bucket can be deleted only when there is no active uCDN configuration utilizing it."
-      tags:
-        - OC_CMI_bucket
-      operationId: OC_CMI_bucket_delete
-      responses:
-        204:
-          description: "No content"
-        400:
-          description: "Command is invalid. "
-        403:
-          description: Forbidden.
-        404:
-          description: "Not found. There was no Bucket"
-        409: 
-          description: "Not empty bucket"
     post:
       tags:
         - OC_CMI_bucket
@@ -343,6 +303,42 @@ paths:
           description: "Conflict"
         500:
           description: "server error"    
+    get:
+      description: "To query an individual cache bucket object"
+      tags:
+        - OC_CMI_bucket
+      operationId: OC_CMI_bucket_read
+      responses:
+        200:
+          description: "Bucket full structure"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CMI.CacheBucket"
+        304:
+          description: "Not modified."
+        400:
+          description: "Command is invalid. "
+        403:
+          description: Forbidden.
+        404:
+          description: "Not found. There was no Bucket"
+    delete:
+      description: "To delete an individual cache bucket object. A cache bucket can be deleted only when there is no active uCDN configuration utilizing it."
+      tags:
+        - OC_CMI_bucket
+      operationId: OC_CMI_bucket_delete
+      responses:
+        204:
+          description: "No Content."
+        400:
+          description: "Command is invalid. "
+        403:
+          description: Forbidden.
+        404:
+          description: "Not found. There was no Bucket"
+        409: 
+          description: "Not empty bucket"
   /OC/CMI/bucket/:
     get:
       description: "To query the collection of cache bucket objects"
@@ -374,13 +370,12 @@ components:
     # MI (configuration) objects
     MI_CMI_payloadtype:
       type: string
-      enum: [MI.CacheBucketRef, MI.GroupingExtended, MI.CachePriority, MI.ObjectList]
+      enum: [MI.CacheBucketRef, MI.GroupingExtended, MI.CachePriority]
     MI_CMI_payloadvalue:
       oneOf:
         - $ref: "#/components/schemas/MI.CacheBucketRef"
         - $ref: "#/components/schemas/MI.GroupingExtended"
         - $ref: "#/components/schemas/MI.CachePriority"
-        - $ref: "#/components/schemas/MI.ObjectList"
     MI.CacheBucketRef:
       type: object
       description: "object used for linking configuration metadata objects to CMI.CacheBucket objects managed by the Cache Management Interface using the Cache Bucket API. This object provides a reference to the cache bucket using the Cache Management Interface URI, and optionally specifies which footprint(s) it is to be applied to. When used without footprint(s), MI.CacheBucketRef can be used to bind a specific type of content (e.g. images) or uCDN configuration subset with a cache bucket. The footprint further supports cache separation based on geography and/or multiple cache layers within dCDN."
@@ -398,14 +393,18 @@ components:
             $ref: "./SVTA_OC_openAPI_COI.yaml#/components/schemas/MI.Footprint"
     MI.GroupingExtended:
       type: object
-      description: "The MI.GroupingExtended object is an alternative to the CDNI standard MI.Grouping object that defines the association of a configuration with content collection identifiers. Usage of MI.GroupingExtended metadata is exclusive of MI.Grouping usage."
-      required:
-        - type
+      description: 'The MI.GroupingExtended object is an alternative to the CDNI standard MI.Grouping object that defines the association of a configuration with content collection identifiers. As opposed to  MI.Grouping,which creates static association of content objects matching a configuration section with one label,  MI.GroupingExtended allows dynamic association of one or more labels, using in-band HTTP response header(s) and/or CI/T v2 trigger labels.'
       properties:
         type:
-          description: "Type of grouping. The “wildcard” grouping will match all objects stored under the parent object (MI.HostData or MI.PathMetadata). The “header-match” grouping will derive the identifier from the response header provided with the object (e.g., “Surrogate-Key”)."
+          description: 'Type of grouping. The “static” grouping will match all objects matching  the parent configuration  object (e.g., MI.HostData or MI.PathMetadata). The “dynamic” grouping will derive the identifier from the response header provided with the object and/or CI/T v2 trigger labels, when ingested via a CI/T v2 interface. In case of static grouping, the “ccid” attribute is used, and all other attributes are ignored.'
           type: string
-          enum: [wildcard, header-match]
+          enum: [static, dynamic]
+          default: static
+        ccid-label:
+          description: 'Trigger labels that are used to define one or more content collection identifiers (CCID). This attribute should point to the key part in the key-value pairs, and can refer to any type of trigger labels, including trigger, ObjectList and ObjectEntry labels.'
+          type: array
+          items:
+            type: string         
         ccid:
           description: "Array of content collection identifiers"
           type: array
@@ -421,8 +420,23 @@ components:
       description: "The MI.CachePriority object defines the association of configuration sections with a response header used by the uCDN to communicate cache priority of the objects in that configuration section. uCDN SHOULD use one priority header in a response. In case of multiple priority headers encountered in the same response, dCDN MAY use any one of them to set the object priority."
       required:
         - cache-priority-header
+        - cache-priority-label
       properties:
+        type:
+          description: 'Type of grouping. The “static” grouping will match all objects matching  the parent configuration  object (e.g., MI.HostData or MI.PathMetadata). The “dynamic” grouping will derive the identifier from the response header provided with the object and/or CI/T v2 trigger labels, when ingested via a CI/T v2 interface. In case of static grouping, the “ccid” attribute is used, and all other attributes are ignored.'
+          type: string
+          enum: [static, dynamic]
+          default: static
+        priority: 
+          description: 'Static cache object priority value. An integer between -32768 and 32768'
+          type: integer
+          default: 0
         cache-priority-header:
+          description: "Response header(s) used to define the cache priority. dCDN SHOULD reject use of standard HTTP headers in this context."
+          type: array
+          items:
+            type: string
+        cache-priority-label:
           description: "Response header(s) used to define the cache priority. dCDN SHOULD reject use of standard HTTP headers in this context."
           type: array
           items:
@@ -483,23 +497,95 @@ components:
       enum:
         [
           preposition-policy,
-          schedule-policy,
           purge-policy,
+          repeat-policy,
+          filter-object-policy,
+          label-object-policy
         ]
     CI_CMI_triggerExtensionValue:
           description: "CDNI trigger extension object"
           oneOf:
-            - $ref: '#/components/schemas/CI_CMI_schedulePolicy'
             - $ref: '#/components/schemas/CI_CMI_prepositionPolicy'
-            - $ref: '#/components/schemas/CI_CMI_purgePolicy'            
-    CI_CMI_schedulePolicy:
-      description: "Schedule specifying when the trigger SHOULD run, consisting of one or more schedule windows. Each one of the windows in the schedule MAY be a one-off time window, or have a recurrence associated with it. The schedules are encoded using JSON-based iCalendar (jCal) format. jCal is specified in [RFC7265], and describes JSON encoding of the iCalendar standard [RFC5545]."
+            - $ref: '#/components/schemas/CI_CMI_purgePolicy' 
+            - $ref: '#/components/schemas/CI_CMI_repeatPolicy'            
+            - $ref: '#/components/schemas/CI_CMI_filterobjectPolicy'            
+            - $ref: '#/components/schemas/CI_CMI_labelobjectPolicy'            
+    CI_CMI_repeatPolicy:
+      description: 'The uCDN may wish to repeat a trigger operation over time. The RepeatPolicy extension allows the automatic creation of multiple trigger objects based on the main trigger specification. The RepeatPolicy extension object enables such spawning of periodic triggers, and governs the repetition schedule and error handling.'
       required:
+        - repeat
+        - max-empty
         - schedule
       properties:
+        repeat:
+          description: 'Toggling of trigger repetition.'
+          type: boolean
+        max-errors: 
+          description: 'Maximum allowed number of consecutive dependent trigger failures. Once reached, the main trigger state is set to “failed”, and the spawning of dependent triggers stops. The special value of zero disables this behavior.'
+          type: integer
+          default: 0
+        max-empty: 
+          description: 'The maximum allowed number of consecutive dependent triggers that result in zero objects affected  (e.g., purge/invalidation that doesn’t affect any data). Once reached, the main trigger state is set to “failed”, and the spawning of dependent triggers stops. The special value of zero disables this behavior.'
+          type: integer
+          default: 0
         schedule:
-          description: 'Schedule specifying when the trigger SHOULD run,consisting of one or more schedule windows. JSON-encoded jCal object'
+          description: 'Dependent trigger execution schedule in crontab-like format. The schedule is specified using five fields separated by spaces.  The fields are integer patterns that specify the following:minute (0-59), hour (0-23), day of 	the month (1-31), month of the year (1-12), day of the week (0-6 with 0=Sunday).Each of these five patterns may be either an asterisk (meaning all legal values) or a list of elements separated by commas.  An element is either a number or two numbers separated by a minus sign (meaning an inclusive range).  Note that the specification of days may be made by two fields (day of the month and day of the week).  Both are adhered to if specified as a list of elements.  Times are always interpreted as Coordinated Universal Time (UTC).'
           type: string
+    CI_CMI_filterobjectPolicy: 
+      description: 'With the introduction of object list functionality to the CI/T framework, the uCDNs can create triggers that reference large sets of objects in a concise and structured way, and leverage formats already in use within the uCDN.'     
+      properties: 
+        include-filters: 
+          description: 'Set of object filters that determine which objects should be retained.'
+          type: array
+          items:
+            $ref: '#/components/schemas/CI_CMI_filterobjectPolicy_objectFilter'
+        exclude-filters: 
+          description: 'Set of object filters that determine which objects should be retained.'
+          type: array
+          items:
+            $ref: '#/components/schemas/CI_CMI_filterobjectPolicy_objectFilter'
+        default-allow:
+          description: 'Default filter matching policy' 
+          type: boolean
+          default: true
+    CI_CMI_filterobjectPolicy_objectFilter:
+      required:
+        - match-type
+        - filter-expr
+      properties: 
+        match-type: 
+          description: 'Object list type matching the filter expression'
+          $ref: './SVTA_OC_openAPI_Trigger.yaml#/components/schemas/CI_objectListType'
+        match-subtype:
+          description: 'Object list subtype matching the filter expression. one of “hls:master” or “hls:media”, matching HLS playlist definitions specified in [RFC8216]. The subtype attribute is formatted as a colon-separated string, where the first part  MUST match the “match-type” attribute value. '
+          type: string
+        match-attr: 
+          description: 'Object list attribute matching the filter expression. If not specified, the filter applies to all object lists of the given type. Array of key-value String pairs'
+          type: array
+          items:
+            type: string
+        filter-type:
+          description: 'Filter expression type.'
+          type: string
+          enum: [pcre2, xpath, jsonpath]
+        filter-expr:
+          description: 'Filter expression. Encoded in Base64 format'
+          type: string
+    CI_CMI_labelobjectPolicy:
+      description: ''
+      required:
+        - label-scope
+      properties:
+        label-scope: 
+          description: 'Types of labels'
+          type: array
+          items:
+            type: string
+            enum: [trigger, objectlist, objectentry]
+        recursive:
+          description: 'Apply labels to all cache objects in the label scope'
+          type: boolean
+          default: true 
     CI_CMI_purgePolicy:
       description: 'The purge policy extension specifies how the dCDN manages purge trigger requests. The main purpose of this extension is to provide support for copyright infringement and similar content takedown use case requirements.'
       properties:
